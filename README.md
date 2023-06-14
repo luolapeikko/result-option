@@ -13,7 +13,7 @@ npm install mharj-result
 With builder functions
 
 ```typescript
-import {safeResult, safeAsyncResult} from 'mharj-result';
+import {safeResultBuilder, safeAsyncResultBuilder} from 'mharj-result';
 
 const testFunction = safeResultBuilder((value: string) => {
 	if (value === 'error') {
@@ -21,8 +21,8 @@ const testFunction = safeResultBuilder((value: string) => {
 	}
 	return value;
 });
-// wrap fs function to SyncResult
-const accessSync = safeResultBuilder(fs.accessSync); 
+// wrap fs function to return IResult
+const accessSync = safeResultBuilder(fs.accessSync);
 
 const testPromiseFunction = safeAsyncResultBuilder(async (value: string) => {
 	if (value === 'error') {
@@ -30,50 +30,43 @@ const testPromiseFunction = safeAsyncResultBuilder(async (value: string) => {
 	}
 	return value;
 });
-// wrap fs/promises function to AsyncResult
+// wrap fs/promises function to return Promise<IResult>
 const writeFile = safeAsyncResultBuilder(fsPromise.writeFile);
 ```
 
-With direct class usage
+With safeAsyncResult wrapper
 
 ```typescript
-import PromiseResult from 'mharj-result';
-
-const result = await safeAsyncResult(Promise.resolve(value)); // or () => Promise.resolve(value)
-await expect(result.isOk()).to.be.eventually.true;
-await expect(result.isErr()).to.be.eventually.false;
-await expect(result.ok()).to.be.eventually.equal(value);
-await expect(result.err()).to.be.eventually.equal(undefined);
-await expect(result.unwrap()).to.be.eventually.equal(value);
-await expect(result.unwrapOrDefault('world')).to.be.eventually.equal(value);
-
-const result = await safeAsyncResult<string>(Promise.reject(new Error('oops'))); // or () => Promise.reject(new Error('oops'))
-await expect(result.isOk()).to.be.eventually.false;
-await expect(result.isErr()).to.be.eventually.true;
-await expect(result.ok()).to.be.eventually.equal(undefined);
-await expect(result.err()).to.be.eventually.eql(error);
-await expect(result.unwrap()).to.be.eventually.rejectedWith(error);
-await expect(result.unwrapOrDefault('world')).to.be.eventually.equal('world');
-```
-
-```typescript
-import FunctionResult from 'mharj-result';
-
-const result = safeResult(() => value);};
+import {safeAsyncResult} from 'mharj-result';
+const value = 'hello';
+const result = await safeAsyncResult<string>(Promise.resolve(value)); // or () => Promise.resolve(value))
 expect(result.isOk()).to.be.true;
 expect(result.isErr()).to.be.false;
-expect(result.ok()).to.be.equal(value);
-expect(result.err()).to.be.equal(undefined);
-expect(result.unwrap()).to.be.equal(value);
-expect(result.unwrapOrDefault('world')).to.be.equal(value);
+expect(result.ok()).to.be.equal(value); // gets the value or undefined if error
+expect(result.err()).to.be.equal(undefined); // gets the error or undefined if value is ok
+expect(result.unwrap()).to.be.equal(value); // gets the value or throws the error
+expect(result.unwrapOrDefault('world')).to.be.equal(value); // gets the value or default value if error
+```
 
-const result = safeResult<string>(() => {
-	throw new Error('oops');
-});
-expect(result.isOk()).to.be.false;
-expect(result.isErr()).to.be.true;
-expect(result.ok()).to.be.equal(undefined);
-expect(result.err()).to.be.eql(error);
-expect(() => result.unwrap()).to.throw(error);
-expect(result.unwrapOrDefault('world')).to.be.equal('world');
+Direct Result usage (Promises need handle all errors as Err objects, else use safe functions)
+
+```typescript
+import {Ok, Err, IResult} from 'mharj-result';
+
+async function demo(): Promise<IResult<string, unknown>> {
+	try {
+		const loadString: string = await xxyyLoading....
+		return new Ok(loadString);
+	} catch (error) {
+		return new Err(error);
+	}
+}
+
+const result: IResult<string, unknown> = await demo();
+if (result.isOk()) {
+	console.debug(result.ok());
+} else {
+	console.error(result.err());
+}
+const data = result.unwrap(); // gets the value or throws the error
 ```

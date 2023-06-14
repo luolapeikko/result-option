@@ -1,33 +1,50 @@
 import {IResult} from './IResult';
 
 export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements IResult<ReturnType, ErrorType> {
-	protected value: ReturnType | undefined;
-	protected error: ErrorType | undefined;
+	private readonly value: ReturnType | undefined;
+	private readonly error: ErrorType | undefined;
+	private readonly isNotError: boolean;
+
+	constructor(isNotError: true, value: ReturnType);
+	constructor(isNotError: false, value: ErrorType);
+	constructor(isNotError: boolean, value: ErrorType | ReturnType) {
+		this.isNotError = isNotError;
+		if (isNotError === true) {
+			this.value = value as ReturnType;
+		} else {
+			this.error = value as ErrorType;
+		}
+	}
+
 	public ok(): ReturnType | undefined {
-		return this.value;
+		return this.isNotError === true ? this.value : undefined;
 	}
 
 	public isOk(): boolean {
-		return this.value !== undefined;
+		return this.isNotError === true;
 	}
 
 	public err(): ErrorType | undefined {
-		return this.error as ErrorType | undefined;
+		return this.isNotError === false ? (this.error as ErrorType) : undefined;
 	}
 
 	public isErr(): boolean {
-		return this.error !== undefined;
+		return this.isNotError === false;
 	}
 
 	public unwrap(): ReturnType {
+		if (this.isNotError === true) {
+			return this.value as ReturnType;
+		}
 		if (this.error !== undefined) {
 			throw this.error;
 		}
-		return this.value as ReturnType;
+		// istanbul ignore next
+		throw new TypeError('Result: No error was set');
 	}
 
 	public unwrapOrDefault(defaultValue: ReturnType): ReturnType {
-		if (this.error !== undefined) {
+		if (this.isNotError === false) {
 			return defaultValue;
 		}
 		return this.value as ReturnType;
