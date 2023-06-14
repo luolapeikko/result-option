@@ -15,23 +15,23 @@ With builder functions
 ```typescript
 import {safeResult, safeAsyncResult} from 'mharj-result';
 
-const testFunction = safeResult((value: string) => {
+const testFunction = safeResultBuilder((value: string) => {
 	if (value === 'error') {
 		throw new Error('oops');
 	}
 	return value;
 });
 // wrap fs function to SyncResult
-const accessSync = safeResult(fs.accessSync); 
+const accessSync = safeResultBuilder(fs.accessSync); 
 
-const testPromiseFunction = safeAsyncResult(async (value: string) => {
+const testPromiseFunction = safeAsyncResultBuilder(async (value: string) => {
 	if (value === 'error') {
 		throw new Error('oops');
 	}
 	return value;
 });
 // wrap fs/promises function to AsyncResult
-const writeFile = safeAsyncResult(fsPromise.writeFile);
+const writeFile = safeAsyncResultBuilder(fsPromise.writeFile);
 ```
 
 With direct class usage
@@ -39,7 +39,7 @@ With direct class usage
 ```typescript
 import PromiseResult from 'mharj-result';
 
-const result = PromiseResult.from<string>(Promise.resolve(value));
+const result = await safeAsyncResult(Promise.resolve(value)); // or () => Promise.resolve(value)
 await expect(result.isOk()).to.be.eventually.true;
 await expect(result.isErr()).to.be.eventually.false;
 await expect(result.ok()).to.be.eventually.equal(value);
@@ -47,7 +47,7 @@ await expect(result.err()).to.be.eventually.equal(undefined);
 await expect(result.unwrap()).to.be.eventually.equal(value);
 await expect(result.unwrapOrDefault('world')).to.be.eventually.equal(value);
 
-const result = PromiseResult.from<string>(Promise.reject(new Error('oops')));
+const result = await safeAsyncResult<string>(Promise.reject(new Error('oops'))); // or () => Promise.reject(new Error('oops'))
 await expect(result.isOk()).to.be.eventually.false;
 await expect(result.isErr()).to.be.eventually.true;
 await expect(result.ok()).to.be.eventually.equal(undefined);
@@ -59,7 +59,7 @@ await expect(result.unwrapOrDefault('world')).to.be.eventually.equal('world');
 ```typescript
 import FunctionResult from 'mharj-result';
 
-const result = FunctionResult.from<string>(() => value);
+const result = safeResult(() => value);};
 expect(result.isOk()).to.be.true;
 expect(result.isErr()).to.be.false;
 expect(result.ok()).to.be.equal(value);
@@ -67,7 +67,7 @@ expect(result.err()).to.be.equal(undefined);
 expect(result.unwrap()).to.be.equal(value);
 expect(result.unwrapOrDefault('world')).to.be.equal(value);
 
-const result = FunctionResult.from<string>(() => {
+const result = safeResult<string>(() => {
 	throw new Error('oops');
 });
 expect(result.isOk()).to.be.false;

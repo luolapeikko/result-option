@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {AsyncResult} from './AsyncResult';
+import {IResult, isResult, ResultOrReturnType} from './IResult';
+import {Err} from './Err';
+import {Ok} from './Ok';
 
 /**
  * build safe wrapper for async callback function
  * @template TArgs function arguments
  * @template ReturnType return type
  * @template ErrorType error type
- * @param func async callback function
+ * @param func async Promise or callback function
  * @returns PromiseResult
  * @example
  * const safeAsyncFunc = safeAsyncResult(async (arg1: string, arg2: number) => {
@@ -18,8 +20,41 @@ import {AsyncResult} from './AsyncResult';
  * // wrap fs/promises function to PromiseResult
  * const resultWriteFile = safeAsyncResult(writeFile);
  */
-export function safeAsyncResult<TArgs extends any[], ReturnType, ErrorType = unknown>(func: (...args: TArgs) => Promise<ReturnType>) {
-	return (...args: TArgs): AsyncResult<ReturnType, ErrorType> => {
-		return AsyncResult.from<ReturnType, ErrorType>(() => func(...args));
+export function safeAsyncResultBuilder<TArgs extends any[], ReturnType, ErrorType = unknown>(
+	func: (...args: TArgs) => Promise<ResultOrReturnType<ReturnType, ErrorType>>,
+) {
+	return async (...args: TArgs): Promise<IResult<ReturnType, ErrorType>> => {
+		try {
+			const data = await func(...args);
+			// if data is already a Result, return it
+			if (isResult(data)) {
+				return data;
+			}
+			return new Ok<ReturnType, ErrorType>(data);
+		} catch (err) {
+			return new Err<ReturnType, ErrorType>(err as ErrorType);
+		}
 	};
+}
+
+/**
+ * safe	wrapper for async function
+ * @param func
+ * @template ReturnType return type
+ * @template ErrorType error type
+ * @returns IResult Promise
+ */
+export async function safeAsyncResult<ReturnType, ErrorType = unknown>(
+	func: Promise<ResultOrReturnType<ReturnType, ErrorType>> | (() => Promise<ResultOrReturnType<ReturnType, ErrorType>>),
+): Promise<IResult<ReturnType, ErrorType>> {
+	try {
+		const data = await (typeof func === 'function' ? func() : func);
+		// if data is already a Result, return it
+		if (isResult(data)) {
+			return data;
+		}
+		return new Ok<ReturnType, ErrorType>(data);
+	} catch (err) {
+		return new Err<ReturnType, ErrorType>(err as ErrorType);
+	}
 }

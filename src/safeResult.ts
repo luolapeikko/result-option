@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {SyncResult} from './SyncResult';
+import {IResult, isResult, ResultOrReturnType} from './IResult';
+import {Err} from './Err';
+import {Ok} from './Ok';
 
 /**
  * build safe wrapper for callback function
@@ -7,10 +9,39 @@ import {SyncResult} from './SyncResult';
  * @template ReturnType return type
  * @template ErrorType error type
  * @param func callback function
- * @returns FunctionResult
+ * @returns IResult
  */
-export function safeResult<TArgs extends any[], ReturnType, ErrorType = unknown>(func: (...args: TArgs) => ReturnType) {
-	return (...args: TArgs): SyncResult<ReturnType, ErrorType> => {
-		return SyncResult.from<ReturnType, ErrorType>(() => func(...args));
+export function safeResultBuilder<TArgs extends any[], ReturnType, ErrorType = unknown>(func: (...args: TArgs) => ResultOrReturnType<ReturnType, ErrorType>) {
+	return (...args: TArgs): IResult<ReturnType, ErrorType> => {
+		try {
+			const data = func(...args);
+			// if data is already a Result, return it
+			if (isResult(data)) {
+				return data;
+			}
+			return new Ok<ReturnType, ErrorType>(data);
+		} catch (err) {
+			return new Err<ReturnType, ErrorType>(err as ErrorType);
+		}
 	};
+}
+
+/**
+ * safe wrapper for function
+ * @param func
+ * @template ReturnType return type
+ * @template ErrorType error type
+ * @returns IResult
+ */
+export function safeResult<ReturnType, ErrorType = unknown>(func: () => ResultOrReturnType<ReturnType, ErrorType>): IResult<ReturnType, ErrorType> {
+	try {
+		const data = func();
+		// if data is already a Result, return it
+		if (isResult(data)) {
+			return data;
+		}
+		return new Ok<ReturnType, ErrorType>(data);
+	} catch (err) {
+		return new Err<ReturnType, ErrorType>(err as ErrorType);
+	}
 }
