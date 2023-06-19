@@ -1,10 +1,18 @@
 import {IResult} from './IResult';
 
+/**
+ * AbstractResult class for Result implementation
+ */
 export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements IResult<ReturnType, ErrorType> {
 	private readonly value: ReturnType | undefined;
 	private readonly error: ErrorType | undefined;
 	private readonly isNotError: boolean;
 
+	/**
+	 * AbstractResult constructor
+	 * @param isNotError determines if the result is an error or not
+	 * @param value actual value or error in the result
+	 */
 	constructor(isNotError: true, value: ReturnType);
 	constructor(isNotError: false, value: ErrorType);
 	constructor(isNotError: boolean, value: ErrorType | ReturnType) {

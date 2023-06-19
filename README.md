@@ -8,8 +8,7 @@ A lightweight library for representing the Rust style Result class for function 
 npm install mharj-result
 ```
 
-## Interface methods
-[IResult](IResult.md)
+## [Documentation](./docs/)
 
 ## usage
 

@@ -13,7 +13,7 @@
 		}
 	},
 	"scripts": {
-		"doc": "jsdoc2md --files ./src/IResult.ts --configure ./jsdoc2md.json > ./IResult.md",
+		"doc": "typedoc",
 		"build": "tsup src/index.ts --format cjs,esm --dts --clean",
 		"prepublishOnly": "npm run build",
 		"test": "nyc mocha",
@@ -21,8 +21,7 @@
 		"lint": "eslint src"
 	},
 	"files": [
-		"dist",
-		"IResult.md"
+		"dist"
 	],
 	"repository": "github:mharj/result",
 	"keywords": [
@@ -56,12 +55,6 @@
 	"author": "mharj",
 	"license": "MIT",
 	"devDependencies": {
-		"@babel/cli": "^7.22.5",
-		"@babel/core": "^7.22.5",
-		"@babel/plugin-proposal-class-properties": "^7.18.6",
-		"@babel/plugin-proposal-object-rest-spread": "^7.20.7",
-		"@babel/preset-env": "^7.22.5",
-		"@babel/preset-typescript": "^7.22.5",
 		"@types/chai": "^4.3.5",
 		"@types/chai-as-promised": "^7.1.5",
 		"@types/mocha": "^10.0.1",
@@ -77,14 +70,12 @@
 		"eslint-plugin-jsdoc": "^44.2.3",
 		"eslint-plugin-prettier": "^4.2.1",
 		"eslint-plugin-sonarjs": "^0.19.0",
-		"jsdoc-babel": "^0.5.0",
-		"jsdoc-to-markdown": "^8.0.0",
 		"mocha": "^10.2.0",
 		"nyc": "^15.1.0",
 		"prettier": "^2.8.8",
 		"ts-node": "^10.9.1",
 		"tsup": "^6.7.0",
-		"typescript": "^5.1.3"
+		"typedoc": "^0.24.8"
 	},
 	"dependencies": {
 		"tslib": "^2.5.3"

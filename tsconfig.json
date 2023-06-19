@@ -26,6 +26,10 @@
 		"strictNullChecks": true,
 		"noUnusedLocals": true
 	},
+	"typedocOptions": {
+        "entryPoints": ["src/index.ts"],
+        "out": "docs"
+    },
 	"include": [
 		"src/**/*",
 		"src/**/**/*"

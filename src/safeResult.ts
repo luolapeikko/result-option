@@ -10,6 +10,8 @@ import {Ok} from './Ok';
  * @template ErrorType error type
  * @param func callback function
  * @returns IResult
+ * @example
+ * const existsSync = safeResultBuilder(fs.existsSync);
  */
 export function safeResultBuilder<TArgs extends any[], ReturnType, ErrorType = unknown>(func: (...args: TArgs) => ResultOrReturnType<ReturnType, ErrorType>) {
 	return (...args: TArgs): IResult<ReturnType, ErrorType> => {
