@@ -51,10 +51,10 @@ export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements
 		throw new TypeError('Result: No error was set');
 	}
 
-	public unwrapOrDefault(defaultValue: ReturnType): ReturnType {
+	public unwrapOrDefault<T extends ReturnType = ReturnType>(defaultValue: T): Exclude<ReturnType, undefined> | T {
 		if (this.isNotError === false) {
 			return defaultValue;
 		}
-		return this.value as ReturnType;
+		return this.value as T;
 	}
 }

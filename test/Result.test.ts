@@ -210,5 +210,23 @@ describe('FunctionResult', () => {
 			expect(() => result.unwrap()).to.throw(staticError);
 			expect(result.unwrapOrDefault('world')).to.be.equal('world');
 		});
+
+		it('should have correct number type if default number value is provided', async () => {
+			const result = new Err<number | undefined>(staticError);
+			const value = result.unwrapOrDefault(1);
+			expect(value).to.be.equal(1);
+		});
+
+		it('should have correct undefined or number type if default undefined value is provided', async () => {
+			const result = new Err<number | undefined>(staticError);
+			const value: undefined | number = result.unwrapOrDefault(undefined);
+			expect(value).to.be.equal(undefined);
+		});
+
+		it('should have correct undefined type if default undefined value is provided', async () => {
+			const result = new Err<undefined>(staticError);
+			const value = result.unwrapOrDefault(undefined);
+			expect(value).to.be.equal(undefined);
+		});
 	});
 });
