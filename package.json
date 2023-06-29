@@ -1,6 +1,6 @@
 {
 	"name": "mharj-result",
-	"version": "0.2.7",
+	"version": "0.3.0",
 	"description": "Rust style Result for TypeScript/Javascript",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
