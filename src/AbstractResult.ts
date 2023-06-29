@@ -1,9 +1,10 @@
-import {IResult} from './IResult';
+import {ConstructorWithValueOf} from './ValueOf';
+import {Result} from './Result';
 
 /**
  * AbstractResult class for Result implementation
  */
-export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements IResult<ReturnType, ErrorType> {
+export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements Result<ReturnType, ErrorType> {
 	private readonly value: ReturnType | undefined;
 	private readonly error: ErrorType | undefined;
 	private readonly isNotError: boolean;
@@ -14,6 +15,7 @@ export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements
 	 * @param value actual value or error in the result
 	 */
 	constructor(isNotError: true, value: ReturnType);
+
 	constructor(isNotError: false, value: ErrorType);
 	constructor(isNotError: boolean, value: ErrorType | ReturnType) {
 		this.isNotError = isNotError;
@@ -51,10 +53,24 @@ export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements
 		throw new TypeError('Result: No error was set');
 	}
 
-	public unwrapOrDefault<T extends ReturnType = ReturnType>(defaultValue: T): Exclude<ReturnType, undefined> | T {
+	public unwrapOr<T extends ReturnType = ReturnType>(defaultValue: T): Exclude<ReturnType, undefined> | T {
 		if (this.isNotError === false) {
 			return defaultValue;
 		}
 		return this.value as T;
+	}
+
+	public unwrapOrElse(fn: () => ReturnType): ReturnType {
+		if (this.isNotError === true) {
+			return this.value as ReturnType;
+		}
+		return fn();
+	}
+
+	public unwrapOrValueOf(BaseConstructor: ConstructorWithValueOf<ReturnType>): ReturnType {
+		if (this.isNotError === true) {
+			return this.value as ReturnType;
+		}
+		return new BaseConstructor().valueOf();
 	}
 }

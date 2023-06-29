@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {IResult, isResult, ResultOrReturnType} from './IResult';
+import {isResult, Result, ResultOrReturnType} from './Result';
 import {Err} from './Err';
 import {Ok} from './Ok';
 
@@ -23,16 +23,16 @@ import {Ok} from './Ok';
 export function safeAsyncResultBuilder<TArgs extends any[], ReturnType, ErrorType = unknown>(
 	func: (...args: TArgs) => Promise<ResultOrReturnType<ReturnType, ErrorType>>,
 ) {
-	return async (...args: TArgs): Promise<IResult<ReturnType, ErrorType>> => {
+	return async (...args: TArgs): Promise<Result<ReturnType, ErrorType>> => {
 		try {
 			const data = await func(...args);
 			// if data is already a Result, return it
 			if (isResult(data)) {
 				return data;
 			}
-			return new Ok<ReturnType, ErrorType>(data);
+			return Ok<ReturnType, ErrorType>(data);
 		} catch (err) {
-			return new Err<ReturnType, ErrorType>(err as ErrorType);
+			return Err<ReturnType, ErrorType>(err as ErrorType);
 		}
 	};
 }
@@ -42,19 +42,19 @@ export function safeAsyncResultBuilder<TArgs extends any[], ReturnType, ErrorTyp
  * @param func
  * @template ReturnType return type
  * @template ErrorType error type
- * @returns IResult Promise
+ * @returns Result Promise
  */
 export async function safeAsyncResult<ReturnType, ErrorType = unknown>(
 	func: Promise<ResultOrReturnType<ReturnType, ErrorType>> | (() => Promise<ResultOrReturnType<ReturnType, ErrorType>>),
-): Promise<IResult<ReturnType, ErrorType>> {
+): Promise<Result<ReturnType, ErrorType>> {
 	try {
 		const data = await (typeof func === 'function' ? func() : func);
 		// if data is already a Result, return it
 		if (isResult(data)) {
 			return data;
 		}
-		return new Ok<ReturnType, ErrorType>(data);
+		return Ok<ReturnType, ErrorType>(data);
 	} catch (err) {
-		return new Err<ReturnType, ErrorType>(err as ErrorType);
+		return Err<ReturnType, ErrorType>(err as ErrorType);
 	}
 }

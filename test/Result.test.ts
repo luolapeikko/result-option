@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
-import {Err, IResult, Ok, safeAsyncResult, safeAsyncResultBuilder, safeResult, safeResultBuilder} from '../src';
+import {Err, Ok, Result, safeAsyncResult, safeAsyncResultBuilder, safeResult, safeResultBuilder} from '../src';
 
 const expect = chai.expect;
 
@@ -25,122 +25,126 @@ describe('FunctionResult', () => {
 	describe('Ok', () => {
 		it('should resolve a value result from Ok Result', async () => {
 			const value = 'hello';
-			const result: IResult<string> = new Ok(value);
+			const result: Result<string> = Ok(value);
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
 
 		it('should resolve a value result from safeResult', async () => {
 			const value = 'hello';
-			const result: IResult<string> = safeResult<string, unknown>(() => value);
+			const result: Result<string> = safeResult<string, unknown>(() => value);
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
 
 		it('should resolve a value result from safeResult with Ok', async () => {
 			const value = 'hello';
-			const result: IResult<string> = safeResult<string, unknown>(() => new Ok(value));
+			const result: Result<string> = safeResult<string, unknown>(() => Ok(value));
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
+			expect(result.unwrapOrElse(() => 'world')).to.be.equal(value);
+			expect(result.unwrapOrValueOf(String)).to.be.equal(value);
 		});
 
 		it('should resolve with safeResultBuilder function', async () => {
 			const value = 'hello';
-			const result: IResult<string> = testFunction(value);
+			const result: Result<string> = testFunction(value);
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
 		it('should resolve with safeAsyncResult Promise', async () => {
 			const value = 'hello';
-			const result: IResult<string> = await safeAsyncResult(Promise.resolve(value));
+			const result: Result<string> = await safeAsyncResult(Promise.resolve(value));
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
 		it('should resolve with safeAsyncResult callback Promise', async () => {
 			const value = 'hello';
-			const result: IResult<string> = await safeAsyncResult(() => Promise.resolve(value));
+			const result: Result<string> = await safeAsyncResult(() => Promise.resolve(value));
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
 
 		it('should resolve with safeAsyncResult callback Promise with Ok', async () => {
 			const value = 'hello';
-			const result: IResult<string> = await safeAsyncResult(() => Promise.resolve(new Ok(value)));
+			const result: Result<string> = await safeAsyncResult(() => Promise.resolve(Ok(value)));
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
 		it('should resolve with safeAsyncResultBuilder function', async () => {
 			const value = 'hello';
-			const result: IResult<string> = await testAsyncFunction(value);
+			const result: Result<string> = await testAsyncFunction(value);
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
 
 		it('should resolve with dual safeResult chain', async () => {
 			const value = 'hello';
 			const callback = safeResultBuilder((v: string) => testFunction(v));
-			const result: IResult<string> = callback(value);
+			const result: Result<string> = callback(value);
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
 
 		it('should resolve with dual safeAsyncResult chain', async () => {
 			const value = 'hello';
 			const callback = safeAsyncResultBuilder((v: string) => testAsyncFunction(v));
-			const result: IResult<string> = await callback(value);
+			const result: Result<string> = await callback(value);
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOrDefault('world')).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
 	});
 	describe('Err', () => {
 		it('should create a error result from Err', async () => {
-			const result = new Err(staticError);
+			const result = Err(staticError);
 			expect(result.isOk()).to.be.false;
 			expect(result.isErr()).to.be.true;
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(staticError);
 			expect(() => result.unwrap()).to.throw(staticError);
-			expect(result.unwrapOrDefault('world')).to.be.equal('world');
+			expect(result.unwrapOr('world')).to.be.equal('world');
+			expect(result.unwrapOrElse(() => 'world')).to.be.equal('world');
+			expect(result.unwrapOrValueOf(String)).to.be.equal('');
 		});
 
 		it('should create a error result from safeResult', async () => {
@@ -152,19 +156,19 @@ describe('FunctionResult', () => {
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(staticError);
 			expect(() => result.unwrap()).to.throw(staticError);
-			expect(result.unwrapOrDefault('world')).to.be.equal('world');
+			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
 		it('should create a error result from safeResult with Err', async () => {
 			const result = safeResult<string>(() => {
-				return new Err(staticError);
+				return Err(staticError);
 			});
 			expect(result.isOk()).to.be.false;
 			expect(result.isErr()).to.be.true;
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(staticError);
 			expect(() => result.unwrap()).to.throw(staticError);
-			expect(result.unwrapOrDefault('world')).to.be.equal('world');
+			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
 		it('should create a error result from safeResultBuilder', async () => {
@@ -174,7 +178,7 @@ describe('FunctionResult', () => {
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(staticError);
 			expect(() => result.unwrap()).to.throw(staticError);
-			expect(result.unwrapOrDefault('world')).to.be.equal('world');
+			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
 		it('should create a error result from safeResultAsyncBuilder', async () => {
@@ -184,7 +188,7 @@ describe('FunctionResult', () => {
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(staticError);
 			expect(() => result.unwrap()).to.throw(staticError);
-			expect(result.unwrapOrDefault('world')).to.be.equal('world');
+			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
 		it('should create a error result from safeAsyncResult', async () => {
@@ -196,36 +200,36 @@ describe('FunctionResult', () => {
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(staticError);
 			expect(() => result.unwrap()).to.throw(staticError);
-			expect(result.unwrapOrDefault('world')).to.be.equal('world');
+			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
 		it('should create a error result from safeAsyncResult with Err', async () => {
 			const result = await safeAsyncResult<string>(async () => {
-				return new Err(staticError);
+				return Err(staticError);
 			});
 			expect(result.isOk()).to.be.false;
 			expect(result.isErr()).to.be.true;
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(staticError);
 			expect(() => result.unwrap()).to.throw(staticError);
-			expect(result.unwrapOrDefault('world')).to.be.equal('world');
+			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
 		it('should have correct number type if default number value is provided', async () => {
-			const result = new Err<number | undefined>(staticError);
-			const value = result.unwrapOrDefault(1);
+			const result = Err<number | undefined>(staticError);
+			const value = result.unwrapOr(1);
 			expect(value).to.be.equal(1);
 		});
 
 		it('should have correct undefined or number type if default undefined value is provided', async () => {
-			const result = new Err<number | undefined>(staticError);
-			const value: undefined | number = result.unwrapOrDefault(undefined);
+			const result = Err<number | undefined>(staticError);
+			const value: undefined | number = result.unwrapOr(undefined);
 			expect(value).to.be.equal(undefined);
 		});
 
 		it('should have correct undefined type if default undefined value is provided', async () => {
-			const result = new Err<undefined>(staticError);
-			const value = result.unwrapOrDefault(undefined);
+			const result = Err<undefined>(staticError);
+			const value = result.unwrapOr(undefined);
 			expect(value).to.be.equal(undefined);
 		});
 	});
