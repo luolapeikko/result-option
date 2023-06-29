@@ -6,7 +6,7 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/b6385c57b8fbfa43be06/test_coverage)](https://codeclimate.com/github/mharj/result/test_coverage)
 ![example workflow](https://github.com/mharj/result/actions/workflows/main.yml/badge.svg)
 
-A lightweight library for representing the Rust style Result and Option class for function callback or promise in TypeScript/JavaScript.
+A lightweight library for representing the Rust style Result and Option classes for function callback or promise in TypeScript/JavaScript.
 
 ## install
 
