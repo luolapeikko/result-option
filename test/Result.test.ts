@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
@@ -36,13 +37,19 @@ describe('FunctionResult', () => {
 
 		it('should resolve a value result from safeResult', async () => {
 			const value = 'hello';
-			const result: Result<string> = safeResult<string, unknown>(() => value);
+			const result: Result<string, Error> = safeResult<string, Error>(() => value);
 			expect(result.isOk()).to.be.true;
 			expect(result.isErr()).to.be.false;
 			expect(result.ok()).to.be.equal(value);
 			expect(result.err()).to.be.equal(undefined);
 			expect(result.unwrap()).to.be.equal(value);
 			expect(result.unwrapOr('world')).to.be.equal(value);
+			expect(
+				result.match({
+					Ok: (value) => `${value} world`,
+					Err: (err) => `${err.message} world`,
+				}),
+			).to.be.equal(`${value} world`);
 		});
 
 		it('should resolve a value result from safeResult with Ok', async () => {
@@ -145,6 +152,12 @@ describe('FunctionResult', () => {
 			expect(result.unwrapOr('world')).to.be.equal('world');
 			expect(result.unwrapOrElse(() => 'world')).to.be.equal('world');
 			expect(result.unwrapOrValueOf(String)).to.be.equal('');
+			expect(
+				result.match({
+					Ok: (value) => `${value} world`,
+					Err: (err) => `${err.message} world`,
+				}),
+			).to.be.equal('oops world');
 		});
 
 		it('should create a error result from safeResult', async () => {

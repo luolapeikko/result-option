@@ -96,4 +96,22 @@ export interface Option<ValueType> {
 	 * Some(2).eq(Some(2)) // true
 	 */
 	eq(other: Option<ValueType>): boolean;
+
+	/**
+	 * match executes the given function if the option is a Some value, otherwise returns the default value.
+	 * @template Output type of the result
+	 * @param solver map of functions to execute
+	 * @param defaultValue optional default value
+	 * @returns {Output | undefined} the result of the executed function or the default value
+	 * @example
+	 * const output: string = Some(1).match(
+	 *   new Map([
+	 *     [1, () => 'one'],
+	 *     [2, () => 'two'],
+	 *   ]),
+	 *   'other',
+	 * );
+	 */
+	match<Output>(solver: Map<ValueType, () => Output>): Output | undefined;
+	match<Output>(solver: Map<ValueType, () => Output>, defaultValue: Output): Output;
 }

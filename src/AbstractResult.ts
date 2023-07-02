@@ -73,4 +73,12 @@ export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements
 		}
 		return new BaseConstructor().valueOf();
 	}
+
+	public match<Output>(solver: {Ok: (value: ReturnType) => Output; Err: (err: ErrorType) => Output}): Output {
+		if (this.isNotError === true) {
+			return solver.Ok(this.value as ReturnType);
+		} else {
+			return solver.Err(this.error as ErrorType);
+		}
+	}
 }

@@ -91,6 +91,20 @@ export interface Result<ReturnType, ErrorType = unknown> {
 	 * Err<number>(new Error('broken')).unwrapOrValueOf(Number) // 0
 	 */
 	unwrapOrValueOf(cons: ConstructorWithValueOf<ReturnType>): ReturnType;
+
+	/**
+	 * Solve the result with the given solver
+	 * @template Output Type of the output
+	 * @param solver solver to use
+	 * @returns {Output} returns the output of the solver
+	 * @example
+	 * const res: Result<string, Error> = Ok<string, Error>('hello');
+	 * const data: string = res.match({
+	 *   Ok: (value) => `${value} world`,
+	 *   Err: (err) => `${err.message} world`,
+	 * });
+	 */
+	match<Output>(solver: {Ok: (value: ReturnType) => Output; Err: (err: ErrorType) => Output}): Output;
 }
 
 /**

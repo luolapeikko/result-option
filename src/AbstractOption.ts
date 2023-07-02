@@ -79,6 +79,17 @@ export class AbstractOption<ReturnType> implements Option<ReturnType> {
 		return true;
 	}
 
+	public match<Output>(solver: Map<ReturnType, () => Output>, defaultValue?: Output | undefined): Output | undefined;
+	public match<Output>(solver: Map<ReturnType, () => Output>, defaultValue: Output): Output;
+	public match<Output>(solver: Map<ReturnType, () => Output>, defaultValue?: Output | undefined): Output | undefined {
+		for (const [key, value] of solver.entries()) {
+			if (this._isSome && this.value === key) {
+				return value();
+			}
+		}
+		return defaultValue;
+	}
+
 	private toNone(): void {
 		this._isSome = false;
 		this.value = undefined;

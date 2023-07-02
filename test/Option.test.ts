@@ -22,6 +22,24 @@ describe('Option', () => {
 			const instace = Some(value);
 			expect(instace.take().isSome()).to.be.true;
 			expect(instace.isNone()).to.be.true;
+			expect(
+				Some(1).match(
+					new Map([
+						[1, () => 'one'],
+						[2, () => 'two'],
+					]),
+					'other',
+				),
+			).to.be.equal('one');
+			expect(
+				Some(-1).match(
+					new Map([
+						[1, () => 'one'],
+						[2, () => 'two'],
+					]),
+					'other',
+				),
+			).to.be.equal('other');
 		});
 	});
 	describe('None', () => {
@@ -39,6 +57,23 @@ describe('Option', () => {
 			const instace = None<string>();
 			expect(instace.take().isNone()).to.be.true;
 			expect(instace.isNone()).to.be.true;
+			expect(
+				None<number>().match(
+					new Map([
+						[1, () => 'one'],
+						[2, () => 'two'],
+					]),
+					'other',
+				),
+			).to.be.equal('other');
+			expect(
+				None<number>().match(
+					new Map([
+						[1, () => 'one'],
+						[2, () => 'two'],
+					]),
+				),
+			).to.be.equal(undefined);
 		});
 	});
 });

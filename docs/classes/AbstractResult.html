@@ -37,7 +37,7 @@
 <ul class="tsd-hierarchy">
 <li><a href="../interfaces/Result.html" class="tsd-signature-type tsd-kind-interface">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">ReturnType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">ErrorType</span><span class="tsd-signature-symbol">&gt;</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L7">AbstractResult.ts:7</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L7">AbstractResult.ts:7</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -58,6 +58,7 @@
 <div class="tsd-index-list"><a href="AbstractResult.html#err" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>err</span></a>
 <a href="AbstractResult.html#isErr" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Err</span></a>
 <a href="AbstractResult.html#isOk" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Ok</span></a>
+<a href="AbstractResult.html#match" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>match</span></a>
 <a href="AbstractResult.html#ok" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>ok</span></a>
 <a href="AbstractResult.html#unwrap" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>unwrap</span></a>
 <a href="AbstractResult.html#unwrapOr" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>unwrap<wbr/>Or</span></a>
@@ -96,7 +97,7 @@
 <h4 class="tsd-returns-title">Returns <a href="AbstractResult.html" class="tsd-signature-type tsd-kind-class">AbstractResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">ReturnType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">ErrorType</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L17">AbstractResult.ts:17</a></li></ul></aside></li>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L17">AbstractResult.ts:17</a></li></ul></aside></li>
 <li class="tsd-signature tsd-anchor-link" id="constructor.new_AbstractResult-1"><span class="tsd-kind-constructor-signature">new <wbr/>Abstract<wbr/>Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">ReturnType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">ErrorType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">isNotError</span>, <span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="AbstractResult.html" class="tsd-signature-type tsd-kind-class">AbstractResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">ReturnType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">ErrorType</span><span class="tsd-signature-symbol">&gt;</span><a href="#constructor.new_AbstractResult-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <section class="tsd-panel">
@@ -115,24 +116,24 @@
 <h5><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type tsd-kind-type-parameter">ErrorType</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="AbstractResult.html" class="tsd-signature-type tsd-kind-class">AbstractResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">ReturnType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">ErrorType</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L19">AbstractResult.ts:19</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L19">AbstractResult.ts:19</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="error" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>error</span><a href="#error" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">ErrorType</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L9">AbstractResult.ts:9</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L9">AbstractResult.ts:9</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="isNotError" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>is<wbr/>Not<wbr/>Error</span><a href="#isNotError" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">is<wbr/>Not<wbr/>Error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L10">AbstractResult.ts:10</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L10">AbstractResult.ts:10</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="value" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>value</span><a href="#value" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">ReturnType</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L8">AbstractResult.ts:8</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L8">AbstractResult.ts:8</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="err" class="tsd-anchor"></a>
@@ -150,7 +151,7 @@
 </div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/Result.html">Result</a>.<a href="../interfaces/Result.html#err">err</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L37">AbstractResult.ts:37</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L37">AbstractResult.ts:37</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="isErr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>is<wbr/>Err</span><a href="#isErr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -166,7 +167,7 @@
 </div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/Result.html">Result</a>.<a href="../interfaces/Result.html#isErr">isErr</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L41">AbstractResult.ts:41</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L41">AbstractResult.ts:41</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="isOk" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>is<wbr/>Ok</span><a href="#isOk" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -182,7 +183,66 @@
 </div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/Result.html">Result</a>.<a href="../interfaces/Result.html#isOk">isOk</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L33">AbstractResult.ts:33</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L33">AbstractResult.ts:33</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="match" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>match</span><a href="#match" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="match.match-1"><span class="tsd-kind-call-signature">match</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">solver</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span><a href="#match.match-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Solve the result with the given solver</p>
+</div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li>
+<h4><span class="tsd-kind-type-parameter">Output</span></h4>
+<div class="tsd-comment tsd-typography"><p>Type of the output</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">solver</span>: <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">Err</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">err</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">Ok</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h5>
+<div class="tsd-comment tsd-typography"><p>solver to use</p>
+</div>
+<div class="tsd-comment tsd-typography"></div>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">Err</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">err</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span><span class="tsd-signature-symbol">)</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter-signature">
+<ul class="tsd-signatures">
+<li class="tsd-signature"><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">err</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">err</span>: <span class="tsd-signature-type tsd-kind-type-parameter">ErrorType</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type tsd-kind-type-parameter">Output</span></h4></li></ul></li></ul></li>
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">Ok</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span><span class="tsd-signature-symbol">)</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter-signature">
+<ul class="tsd-signatures">
+<li class="tsd-signature"><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">Output</span></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type tsd-kind-type-parameter">ReturnType</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type tsd-kind-type-parameter">Output</span></h4></li></ul></li></ul></li></ul></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type tsd-kind-type-parameter">Output</span></h4><p>returns the output of the solver</p>
+
+<div class="tsd-comment tsd-typography">
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-8">res</span><span class="hl-1">: </span><span class="hl-5">Result</span><span class="hl-1">&lt;</span><span class="hl-5">string</span><span class="hl-1">, </span><span class="hl-5">Error</span><span class="hl-1">&gt; = </span><span class="hl-0">Ok</span><span class="hl-1">&lt;</span><span class="hl-5">string</span><span class="hl-1">, </span><span class="hl-5">Error</span><span class="hl-1">&gt;(</span><span class="hl-2">&#39;hello&#39;</span><span class="hl-1">);</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-8">data</span><span class="hl-1">: </span><span class="hl-5">string</span><span class="hl-1"> = </span><span class="hl-4">res</span><span class="hl-1">.</span><span class="hl-0">match</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-0">Ok</span><span class="hl-4">:</span><span class="hl-1"> (</span><span class="hl-4">value</span><span class="hl-1">) </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">`</span><span class="hl-3">${</span><span class="hl-4">value</span><span class="hl-3">}</span><span class="hl-2"> world`</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-0">Err</span><span class="hl-4">:</span><span class="hl-1"> (</span><span class="hl-4">err</span><span class="hl-1">) </span><span class="hl-3">=&gt;</span><span class="hl-1"> </span><span class="hl-2">`</span><span class="hl-3">${</span><span class="hl-4">err</span><span class="hl-10">.</span><span class="hl-4">message</span><span class="hl-3">}</span><span class="hl-2"> world`</span><span class="hl-1">,</span><br/><span class="hl-1">});</span>
+</code><button>Copy</button></pre>
+</div><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/Result.html">Result</a>.<a href="../interfaces/Result.html#match">match</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L77">AbstractResult.ts:77</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="ok" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>ok</span><a href="#ok" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -198,7 +258,7 @@
 </div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/Result.html">Result</a>.<a href="../interfaces/Result.html#ok">ok</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L29">AbstractResult.ts:29</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L29">AbstractResult.ts:29</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="unwrap" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>unwrap</span><a href="#unwrap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -216,7 +276,7 @@
 </div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/Result.html">Result</a>.<a href="../interfaces/Result.html#unwrap">unwrap</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L45">AbstractResult.ts:45</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L45">AbstractResult.ts:45</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="unwrapOr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>unwrap<wbr/>Or</span><a href="#unwrapOr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -245,7 +305,7 @@
 </div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/Result.html">Result</a>.<a href="../interfaces/Result.html#unwrapOr">unwrapOr</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L56">AbstractResult.ts:56</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L56">AbstractResult.ts:56</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="unwrapOrElse" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>unwrap<wbr/>Or<wbr/>Else</span><a href="#unwrapOrElse" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -275,7 +335,7 @@
 </div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/Result.html">Result</a>.<a href="../interfaces/Result.html#unwrapOrElse">unwrapOrElse</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L63">AbstractResult.ts:63</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L63">AbstractResult.ts:63</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="unwrapOrValueOf" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>unwrap<wbr/>Or<wbr/>Value<wbr/>Of</span><a href="#unwrapOrValueOf" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -299,7 +359,7 @@
 </div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/Result.html">Result</a>.<a href="../interfaces/Result.html#unwrapOrValueOf">unwrapOrValueOf</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/mharj/result/blob/ab753ef/src/AbstractResult.ts#L70">AbstractResult.ts:70</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/mharj/result/blob/e47c22c/src/AbstractResult.ts#L70">AbstractResult.ts:70</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -326,6 +386,7 @@
 <li><a href="#err" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>err</span></a></li>
 <li><a href="#isErr" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Err</span></a></li>
 <li><a href="#isOk" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Ok</span></a></li>
+<li><a href="#match" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>match</span></a></li>
 <li><a href="#ok" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>ok</span></a></li>
 <li><a href="#unwrap" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>unwrap</span></a></li>
 <li><a href="#unwrapOr" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>unwrap<wbr/>Or</span></a></li>
