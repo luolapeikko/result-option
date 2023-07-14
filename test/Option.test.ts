@@ -54,6 +54,7 @@ describe('Option', () => {
 			expect(None<string>().unwrapOrElse(() => 'demo')).to.be.equal('demo');
 			expect(None<string>().unwrapOrValueOf(String)).to.be.equal(''); // string default value is empty string
 			expect(() => None<string>().expect('some error')).to.throw('some error');
+			expect(() => None<string>().expect(new Error('another error'))).to.throw('another error');
 			const instace = None<string>();
 			expect(instace.take().isNone()).to.be.true;
 			expect(instace.isNone()).to.be.true;

@@ -42,11 +42,14 @@ export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements
 		return this.isNotError === false;
 	}
 
-	public unwrap(): ReturnType {
+	public unwrap(err?: (err: ErrorType) => Error): ReturnType {
 		if (this.isNotError === true) {
 			return this.value as ReturnType;
 		}
 		if (this.error !== undefined) {
+			if (err !== undefined) {
+				throw err(this.error);
+			}
 			throw this.error;
 		}
 		// istanbul ignore next

@@ -63,7 +63,7 @@ export interface Result<ReturnType, ErrorType = unknown> {
 	 * Ok<number>(2).unwrap() // 2
 	 * Err<number>(new Error('broken')).unwrap() // throws Error('broken')
 	 */
-	unwrap(err?: (err: Error) => Error): ReturnType;
+	unwrap(err?: (err: ErrorType) => Error): ReturnType;
 	/**
 	 * Unwrap the value, if it is an error, return the default value
 	 * @param {ReturnType} value default value to return if the result is an error

@@ -143,12 +143,14 @@ describe('FunctionResult', () => {
 	});
 	describe('Err', () => {
 		it('should create a error result from Err', async () => {
+			const demoError = new Error('demo');
 			const result = Err(staticError);
 			expect(result.isOk()).to.be.false;
 			expect(result.isErr()).to.be.true;
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(staticError);
 			expect(() => result.unwrap()).to.throw(staticError);
+			expect(() => result.unwrap(() => demoError)).to.throw(demoError);
 			expect(result.unwrapOr('world')).to.be.equal('world');
 			expect(result.unwrapOrElse(() => 'world')).to.be.equal('world');
 			expect(result.unwrapOrValueOf(String)).to.be.equal('');
@@ -244,6 +246,11 @@ describe('FunctionResult', () => {
 			const result = Err<undefined>(staticError);
 			const value = result.unwrapOr(undefined);
 			expect(value).to.be.equal(undefined);
+		});
+
+		it('should give "No error was set" error if error is undefined', async () => {
+			const result = Err<undefined>(undefined);
+			expect(() => result.unwrap()).to.throw('Result: No error was set');
 		});
 	});
 });
