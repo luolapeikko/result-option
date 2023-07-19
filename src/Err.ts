@@ -4,7 +4,7 @@ import {IErr} from './Result';
 /**
  * Err class for Result implementation
  */
-export class ErrClass<ReturnType, ErrorType = unknown> extends AbstractResult<ReturnType, ErrorType> {
+class ErrClass<ReturnType, ErrorType = unknown> extends AbstractResult<ReturnType, ErrorType> {
 	constructor(error: ErrorType) {
 		super(false, error);
 	}
