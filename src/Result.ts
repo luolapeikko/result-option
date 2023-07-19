@@ -87,7 +87,7 @@ export interface ResultImplementation<ReturnType, ErrorType = unknown> {
 	match<Output>(solver: {Ok: (value: ReturnType) => Output; Err: (err: ErrorType) => Output}): Output;
 }
 
-export interface IOk<ReturnType, ErrorType = unknown> extends Omit<ResultImplementation<ReturnType, ErrorType>, 'isOk' | 'isErr'> {
+export interface IOk<ReturnType, ErrorType = unknown> extends Omit<ResultImplementation<ReturnType, ErrorType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
 	/**
 	 * Check that result is not an error
 	 * @returns {boolean} true if result is not an error
@@ -96,15 +96,29 @@ export interface IOk<ReturnType, ErrorType = unknown> extends Omit<ResultImpleme
 	 */
 	isOk: true;
 	/**
+	 * Try to get value, otherwise return undefined
+	 * @returns {ReturnType | undefined} value or undefined
+	 * @example
+	 * Ok<number>(2).ok() // 2
+	 */
+	ok(): ReturnType;
+	/**
 	 * Check that result is an error
 	 * @returns {boolean} true if result is an error
 	 * @example
 	 * Ok<number>(2).isErr // false
 	 */
 	isErr: false;
+	/**
+	 * Try to get the error, otherwise return undefined
+	 * @returns {ErrorType | undefined} error or undefined
+	 * @example
+	 * Ok<number>(2).err() // undefined
+	 */
+	err(): undefined;
 }
 
-export interface IErr<ReturnType, ErrorType = unknown> extends Omit<ResultImplementation<ReturnType, ErrorType>, 'isOk' | 'isErr'> {
+export interface IErr<ReturnType, ErrorType = unknown> extends Omit<ResultImplementation<ReturnType, ErrorType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
 	/**
 	 * Check that result is not an error
 	 * @returns {boolean} true if result is not an error
@@ -113,12 +127,26 @@ export interface IErr<ReturnType, ErrorType = unknown> extends Omit<ResultImplem
 	 */
 	isOk: false;
 	/**
+	 * Try to get value, otherwise return undefined
+	 * @returns {ReturnType | undefined} value or undefined
+	 * @example
+	 * Err<number>(new Error('broken')).ok() // undefined
+	 */
+	ok(): undefined;
+	/**
 	 * Check that result is an error
 	 * @returns {boolean} true if result is an error
 	 * @example
 	 * Err<number>(new Error('broken')).isErr // true
 	 */
 	isErr: true;
+	/**
+	 * Try to get the error, otherwise return undefined
+	 * @returns {ErrorType | undefined} error or undefined
+	 * @example
+	 * Err<number>(new Error('broken')).err() // Error('broken')
+	 */
+	err(): ErrorType;
 }
 
 /**
