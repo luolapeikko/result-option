@@ -1,5 +1,5 @@
 import {AbstractOption} from './AbstractOption';
-import {Option} from './Option';
+import {ISome} from './Option';
 
 class SomeClass<ReturnType> extends AbstractOption<ReturnType> {
 	constructor(value: ReturnType) {
@@ -7,6 +7,6 @@ class SomeClass<ReturnType> extends AbstractOption<ReturnType> {
 	}
 }
 
-export function Some<ReturnType>(value: ReturnType): Option<ReturnType> {
-	return new SomeClass(value);
+export function Some<ReturnType>(value: ReturnType): ISome<ReturnType> {
+	return new SomeClass(value) as ISome<ReturnType>;
 }

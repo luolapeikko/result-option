@@ -1,5 +1,5 @@
 import {AbstractOption} from './AbstractOption';
-import {Option} from './Option';
+import {INone} from './Option';
 
 class NoneClass<ReturnType> extends AbstractOption<ReturnType> {
 	constructor() {
@@ -7,6 +7,6 @@ class NoneClass<ReturnType> extends AbstractOption<ReturnType> {
 	}
 }
 
-export function None<ReturnType>(): Option<ReturnType> {
-	return new NoneClass();
+export function None<ReturnType>(): INone<ReturnType> {
+	return new NoneClass() as INone<ReturnType>;
 }

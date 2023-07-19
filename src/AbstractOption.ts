@@ -1,22 +1,22 @@
 import {ConstructorWithValueOf} from './ValueOf';
-import {Option} from './Option';
+import {OptionImplementation, Option, ISome, INone} from './Option';
 
-export class AbstractOption<ReturnType> implements Option<ReturnType> {
+export class AbstractOption<ReturnType> implements OptionImplementation<ReturnType> {
 	private _isSome: boolean;
 	private value: ReturnType | undefined;
-	constructor(isSome: false);
 
+	constructor(isSome: false);
 	constructor(isSome: true, value: ReturnType);
 	constructor(isSome: boolean, value?: ReturnType) {
 		this._isSome = isSome;
 		this.value = value;
 	}
 
-	public isNone(): boolean {
+	public get isNone(): boolean {
 		return !this._isSome;
 	}
 
-	public isSome(): boolean {
+	public get isSome(): boolean {
 		return this._isSome;
 	}
 
@@ -64,13 +64,13 @@ export class AbstractOption<ReturnType> implements Option<ReturnType> {
 
 	public clone(): Option<ReturnType> {
 		if (this._isSome) {
-			return new AbstractOption<ReturnType>(true, this.value as ReturnType);
+			return new AbstractOption<ReturnType>(true, this.value as ReturnType) as ISome<ReturnType>;
 		}
-		return new AbstractOption<ReturnType>(false);
+		return new AbstractOption<ReturnType>(false) as INone<ReturnType>;
 	}
 
 	public eq(other: Option<ReturnType>): boolean {
-		if (this._isSome !== other.isSome()) {
+		if (this._isSome !== other.isSome) {
 			return false;
 		}
 		if (this._isSome) {

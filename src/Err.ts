@@ -1,5 +1,5 @@
 import {AbstractResult} from './AbstractResult';
-import {Result} from './Result';
+import {IErr} from './Result';
 
 /**
  * Err class for Result implementation
@@ -10,6 +10,6 @@ export class ErrClass<ReturnType, ErrorType = unknown> extends AbstractResult<Re
 	}
 }
 
-export function Err<ReturnType, ErrorType = unknown>(error: ErrorType): Result<ReturnType, ErrorType> {
-	return new ErrClass(error);
+export function Err<ReturnType, ErrorType = unknown>(error: ErrorType): IErr<ReturnType, ErrorType> {
+	return new ErrClass(error) as IErr<ReturnType, ErrorType>;
 }

@@ -1,27 +1,7 @@
 import {AbstractResult} from './AbstractResult';
 import {ConstructorWithValueOf} from './ValueOf';
 
-/**
- * Result interface
- * @interface Result
- * @template ReturnType Type of the return value
- * @template ErrorType Type of the error, default is unknown
- * @example
- * async function action(): Promise<Result<number>> {
- *   try {
- *     return Ok<number>(await getNumber());
- *   } catch (e) {
- *     return Err<number>(e);
- *   }
- * }
- * const result = await action();
- * if (result.isOk()) {
- *   console.log('Result: ' + result.unwrap());
- * } else {
- *   console.log('Error: ', result.err());
- * }
- */
-export interface Result<ReturnType, ErrorType = unknown> {
+export interface ResultImplementation<ReturnType, ErrorType = unknown> {
 	/**
 	 * Try to get value, otherwise return undefined
 	 * @returns {ReturnType | undefined} value or undefined
@@ -34,10 +14,10 @@ export interface Result<ReturnType, ErrorType = unknown> {
 	 * Check that result is not an error
 	 * @returns {boolean} true if result is not an error
 	 * @example
-	 * Ok<number>(2).isOk() // true
-	 * Err<number>(new Error('broken')).isOk() // false
+	 * Ok<number>(2).isOk // true
+	 * Err<number>(new Error('broken')).isOk // false
 	 */
-	isOk(): boolean;
+	isOk: boolean;
 	/**
 	 * Try to get the error, otherwise return undefined
 	 * @returns {ErrorType | undefined} error or undefined
@@ -50,10 +30,10 @@ export interface Result<ReturnType, ErrorType = unknown> {
 	 * Check that result is an error
 	 * @returns {boolean} true if result is an error
 	 * @example
-	 * Ok<number>(2).isErr() // false
-	 * Err<number>(new Error('broken')).isErr() // true
+	 * Ok<number>(2).isErr // false
+	 * Err<number>(new Error('broken')).isErr // true
 	 */
-	isErr(): boolean;
+	isErr: boolean;
 	/**
 	 * Unwrap the value, if it is an error, throws the error
 	 * @param {ErrorType} err optional error to throw instead of the result error
@@ -106,6 +86,62 @@ export interface Result<ReturnType, ErrorType = unknown> {
 	 */
 	match<Output>(solver: {Ok: (value: ReturnType) => Output; Err: (err: ErrorType) => Output}): Output;
 }
+
+export interface IOk<ReturnType, ErrorType = unknown> extends Omit<ResultImplementation<ReturnType, ErrorType>, 'isOk' | 'isErr'> {
+	/**
+	 * Check that result is not an error
+	 * @returns {boolean} true if result is not an error
+	 * @example
+	 * Ok<number>(2).isOk // true
+	 */
+	isOk: true;
+	/**
+	 * Check that result is an error
+	 * @returns {boolean} true if result is an error
+	 * @example
+	 * Ok<number>(2).isErr // false
+	 */
+	isErr: false;
+}
+
+export interface IErr<ReturnType, ErrorType = unknown> extends Omit<ResultImplementation<ReturnType, ErrorType>, 'isOk' | 'isErr'> {
+	/**
+	 * Check that result is not an error
+	 * @returns {boolean} true if result is not an error
+	 * @example
+	 * Err<number>(new Error('broken')).isOk // false
+	 */
+	isOk: false;
+	/**
+	 * Check that result is an error
+	 * @returns {boolean} true if result is an error
+	 * @example
+	 * Err<number>(new Error('broken')).isErr // true
+	 */
+	isErr: true;
+}
+
+/**
+ * Result type
+ * @interface Result
+ * @template ReturnType Type of the return value
+ * @template ErrorType Type of the error, default is unknown
+ * @example
+ * async function action(): Promise<Result<number>> {
+ *   try {
+ *     return Ok<number>(await getNumber());
+ *   } catch (e) {
+ *     return Err<number>(e);
+ *   }
+ * }
+ * const result = await action();
+ * if (result.isOk) {
+ *   console.log('Result: ' + result.ok());
+ * } else {
+ *   console.log('Error: ', result.err());
+ * }
+ */
+export type Result<ReturnType, ErrorType = unknown> = IOk<ReturnType, ErrorType> | IErr<ReturnType, ErrorType>;
 
 /**
  * Utility type for ReturnType or Result

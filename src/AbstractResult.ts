@@ -1,10 +1,10 @@
 import {ConstructorWithValueOf} from './ValueOf';
-import {Result} from './Result';
+import {ResultImplementation} from './Result';
 
 /**
  * AbstractResult class for Result implementation
  */
-export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements Result<ReturnType, ErrorType> {
+export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements ResultImplementation<ReturnType, ErrorType> {
 	private readonly value: ReturnType | undefined;
 	private readonly error: ErrorType | undefined;
 	private readonly isNotError: boolean;
@@ -30,7 +30,7 @@ export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements
 		return this.isNotError === true ? this.value : undefined;
 	}
 
-	public isOk(): boolean {
+	public get isOk(): boolean {
 		return this.isNotError === true;
 	}
 
@@ -38,7 +38,7 @@ export abstract class AbstractResult<ReturnType, ErrorType = unknown> implements
 		return this.isNotError === false ? (this.error as ErrorType) : undefined;
 	}
 
-	public isErr(): boolean {
+	public get isErr(): boolean {
 		return this.isNotError === false;
 	}
 
