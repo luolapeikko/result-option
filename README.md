@@ -15,5 +15,5 @@ npm install mharj-result
 ```
 
 ## [Documentation](https://mharj.github.io/result/)
-- [Result](https://mharj.github.io/result/interfaces/Result.html)
-- [Option](https://mharj.github.io/result/interfaces/Option.html)
+- [Result](https://mharj.github.io/result/types/Result.html)
+- [Option](https://mharj.github.io/result/types/Option.html)

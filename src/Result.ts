@@ -151,7 +151,6 @@ export interface IErr<ReturnType, ErrorType = unknown> extends Omit<ResultImplem
 
 /**
  * Result type
- * @interface Result
  * @template ReturnType Type of the return value
  * @template ErrorType Type of the error, default is unknown
  * @example
