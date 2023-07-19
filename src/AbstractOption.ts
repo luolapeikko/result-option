@@ -1,5 +1,5 @@
+import {INone, ISome, Option, OptionImplementation} from './Option';
 import {ConstructorWithValueOf} from './ValueOf';
-import {OptionImplementation, Option, ISome, INone} from './Option';
 
 export class AbstractOption<ReturnType> implements OptionImplementation<ReturnType> {
 	private _isSome: boolean;
