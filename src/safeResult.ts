@@ -12,6 +12,7 @@ import {Ok} from './Ok';
  * @returns Result
  * @example
  * const existsSync = safeResultBuilder(fs.existsSync);
+ * const result: Result<boolean> = existsSync('test.txt');
  */
 export function safeResultBuilder<TArgs extends any[], ReturnType, ErrorType = unknown>(func: (...args: TArgs) => ResultOrReturnType<ReturnType, ErrorType>) {
 	return (...args: TArgs): Result<ReturnType, ErrorType> => {
@@ -34,6 +35,11 @@ export function safeResultBuilder<TArgs extends any[], ReturnType, ErrorType = u
  * @template ReturnType return type
  * @template ErrorType error type
  * @returns Result
+ * @example
+ * function test(): number {
+ * 	 throw new Error('asd');
+ * }
+ * const value: Result<number> = safeResult(test);
  */
 export function safeResult<ReturnType, ErrorType = unknown>(func: () => ResultOrReturnType<ReturnType, ErrorType>): Result<ReturnType, ErrorType> {
 	try {

@@ -1,17 +1,13 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "es2020",
-		"lib": [
-			"es2020"
-		],
+		"target": "es2021",
+		"lib": ["es2021", "dom"],
 		"rootDir": "./src",
 		"outDir": "./dist",
 		"moduleResolution": "node",
 		"sourceRoot": "./src",
-		"types": [
-			"node"
-		],
+		"types": ["node"],
 		"sourceMap": true,
 		"strict": true,
 		"declaration": true,
@@ -19,6 +15,7 @@
 		"inlineSources": true,
 		"inlineSourceMap": false,
 		"forceConsistentCasingInFileNames": true,
+		"noUncheckedIndexedAccess": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
 		"noImplicitAny": true,
@@ -27,16 +24,9 @@
 		"noUnusedLocals": true
 	},
 	"typedocOptions": {
-        "entryPoints": ["src/index.ts"],
-        "out": "docs"
-    },
-	"include": [
-		"src/**/*",
-		"src/**/**/*"
-	],
-	"exclude": [
-		"node_modules",
-		"**/*.spec.ts",
-		"test"
-	]
+		"entryPoints": ["src/index.ts"],
+		"out": "docs"
+	},
+	"include": ["src/**/*", "src/**/**/*"],
+	"exclude": ["node_modules", "**/*.spec.ts", "test"]
 }
