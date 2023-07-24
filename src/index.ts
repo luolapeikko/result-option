@@ -9,3 +9,4 @@ export * from './safeResult';
 export * from './safeAsyncResult';
 export * from './Some';
 export * from './ValueOf';
+export * from './optionUtils';

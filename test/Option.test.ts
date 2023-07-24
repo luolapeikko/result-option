@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
-import {None, Option, Some} from '../src';
+import {None, Option, Some, undefinedOptionWrap} from '../src';
 import {exactType} from './helper';
 
 const expect = chai.expect;
@@ -83,6 +83,19 @@ describe('Option', () => {
 					]),
 				),
 			).to.be.equal(undefined);
+		});
+	});
+	describe('undefinedOptionWrap', () => {
+		it('should build option with undefinedOptionWrap', async () => {
+			const values = ['one', 'two', 'three'] as const;
+			type Values = (typeof values)[number];
+			const check = (value: string): Option<Values> => {
+				return undefinedOptionWrap(values.find((v) => v === value));
+			};
+			expect(check('one').isSome).to.be.true;
+			expect(check('two').isSome).to.be.true;
+			expect(check('three').isSome).to.be.true;
+			expect(check('four').isSome).to.be.false;
 		});
 	});
 });
