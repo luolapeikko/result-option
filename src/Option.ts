@@ -38,7 +38,7 @@ export interface OptionImplementation<ValueType> {
 	 * Some(2).unwrapOr(0) // 2
 	 * None<number>().unwrapOr(0) // 0
 	 */
-	unwrapOr(def: ValueType): ValueType;
+	unwrapOr<DefType>(def: DefType): DefType | ValueType;
 	/**
 	 * unwraps an option and if not a Some value returns the result of the given function.
 	 * @param fn function to call
@@ -46,7 +46,7 @@ export interface OptionImplementation<ValueType> {
 	 * Some(2).unwrapOrElse(() => 0) // 2
 	 * None<number>().unwrapOrElse(() => 2 + 2) // 4
 	 */
-	unwrapOrElse(fn: () => ValueType): ValueType;
+	unwrapOrElse<DefType>(fn: () => DefType): DefType | ValueType;
 	/**
 	 * unwraps an option and if not a Some value returns the default value from the constructor.
 	 * @param cons Constructor

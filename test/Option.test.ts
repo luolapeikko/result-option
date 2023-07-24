@@ -48,6 +48,11 @@ describe('Option', () => {
 			} else {
 				exactType(option, None<number>());
 			}
+			// const value check
+			const constValue = 'demo' as const;
+			expect(Some(constValue).isSome).to.be.true;
+			const demoValue: 'demo' | 'another' = Some(constValue).unwrapOr('another');
+			expect(demoValue).to.be.equal('demo');
 		});
 	});
 	describe('None', () => {
@@ -83,6 +88,11 @@ describe('Option', () => {
 					]),
 				),
 			).to.be.equal(undefined);
+
+			// const value check
+			expect(None<'demo'>().isNone).to.be.true;
+			const demoValue: 'demo' | 'another' = None<'demo'>().unwrapOr('another');
+			expect(demoValue).to.be.equal('another');
 		});
 	});
 	describe('undefinedOptionWrap', () => {

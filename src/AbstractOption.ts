@@ -35,14 +35,14 @@ export class AbstractOption<ReturnType> implements OptionImplementation<ReturnTy
 		throw err !== undefined ? err(error) : error;
 	}
 
-	public unwrapOr(def: ReturnType): ReturnType {
+	public unwrapOr<DefType>(def: DefType): DefType | ReturnType {
 		if (this._isSome) {
 			return this.value as ReturnType;
 		}
 		return def;
 	}
 
-	public unwrapOrElse(fn: () => ReturnType): ReturnType {
+	public unwrapOrElse<DefType>(fn: () => DefType): DefType | ReturnType {
 		if (this._isSome) {
 			return this.value as ReturnType;
 		}
