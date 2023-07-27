@@ -1,15 +1,18 @@
-import {AbstractResult} from './AbstractResult';
-import {IOk} from './Result';
+import {Result} from './Result';
+import {ResultBuilder, isResult} from './ResultBuilder';
 
 /**
- * Ok class for Result implementation
+ * Build Ok result or return if already a Result
+ * @template OkType ok type
+ * @template ErrType error type
+ * @param value - value to wrap or return if already a Result
+ * @returns {Result<OkType, ErrType>} - Result
+ * @example
+ * Ok<number>(2) // Result<number, unknown>
  */
-class OkClass<ReturnType, ErrorType = unknown> extends AbstractResult<ReturnType, ErrorType> {
-	constructor(value: ReturnType) {
-		super(true, value);
+export function Ok<OkType = unknown, ErrType = unknown>(value: OkType | Result<OkType, ErrType>): Result<OkType, ErrType> {
+	if (isResult(value)) {
+		return value;
 	}
-}
-
-export function Ok<ReturnType, ErrorType = unknown>(value: ReturnType): IOk<ReturnType, ErrorType> {
-	return new OkClass(value) as IOk<ReturnType, ErrorType>;
+	return new ResultBuilder<OkType, ErrType>(true, value) as Result<OkType, ErrType>;
 }

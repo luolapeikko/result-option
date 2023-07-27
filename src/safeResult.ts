@@ -1,30 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {isResult, Result, ResultOrReturnType} from './Result';
+import {Result, ResultOrOkType} from './Result';
 import {Err} from './Err';
 import {Ok} from './Ok';
 
 /**
  * build safe wrapper for callback function
  * @template TArgs function arguments
- * @template ReturnType return type
- * @template ErrorType error type
+ * @template OkType return type
+ * @template ErrType error type
  * @param func callback function
  * @returns Result
  * @example
  * const existsSync = safeResultBuilder(fs.existsSync);
  * const result: Result<boolean> = existsSync('test.txt');
  */
-export function safeResultBuilder<TArgs extends any[], ReturnType, ErrorType = unknown>(func: (...args: TArgs) => ResultOrReturnType<ReturnType, ErrorType>) {
-	return (...args: TArgs): Result<ReturnType, ErrorType> => {
+export function safeResultBuilder<TArgs extends any[], OkType = unknown, ErrType = unknown>(func: (...args: TArgs) => ResultOrOkType<OkType, ErrType>) {
+	return (...args: TArgs): Result<OkType, ErrType> => {
 		try {
-			const data = func(...args);
-			// if data is already a Result, return it
-			if (isResult(data)) {
-				return data;
-			}
-			return Ok<ReturnType, ErrorType>(data);
+			return Ok<OkType, ErrType>(func(...args));
 		} catch (err) {
-			return Err<ReturnType, ErrorType>(err as ErrorType);
+			return Err<OkType, ErrType>(err as ErrType);
 		}
 	};
 }
@@ -32,8 +27,8 @@ export function safeResultBuilder<TArgs extends any[], ReturnType, ErrorType = u
 /**
  * safe wrapper for function
  * @param func
- * @template ReturnType return type
- * @template ErrorType error type
+ * @template OkType return type
+ * @template ErrType error type
  * @returns Result
  * @example
  * function test(): number {
@@ -41,15 +36,10 @@ export function safeResultBuilder<TArgs extends any[], ReturnType, ErrorType = u
  * }
  * const value: Result<number> = safeResult(test);
  */
-export function safeResult<ReturnType, ErrorType = unknown>(func: () => ResultOrReturnType<ReturnType, ErrorType>): Result<ReturnType, ErrorType> {
+export function safeResult<OkType = unknown, ErrType = unknown>(func: () => ResultOrOkType<OkType, ErrType>): Result<OkType, ErrType> {
 	try {
-		const data = func();
-		// if data is already a Result, return it
-		if (isResult(data)) {
-			return data;
-		}
-		return Ok<ReturnType, ErrorType>(data);
+		return Ok<OkType, ErrType>(func());
 	} catch (err) {
-		return Err<ReturnType, ErrorType>(err as ErrorType);
+		return Err<OkType, ErrType>(err as ErrType);
 	}
 }

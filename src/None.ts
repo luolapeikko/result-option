@@ -1,12 +1,6 @@
-import {AbstractOption} from './AbstractOption';
+import {OptionBuilder} from './OptionBuilder';
 import {INone} from './Option';
 
-class NoneClass<ReturnType> extends AbstractOption<ReturnType> {
-	constructor() {
-		super(false);
-	}
-}
-
-export function None<ReturnType>(): INone<ReturnType> {
-	return new NoneClass() as INone<ReturnType>;
+export function None<SomeType>(): INone<SomeType> {
+	return new OptionBuilder<SomeType>(false) as INone<SomeType>;
 }

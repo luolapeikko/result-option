@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {isResult, Result, ResultOrReturnType} from './Result';
+import {Result, ResultOrOkType} from './Result';
 import {Err} from './Err';
 import {Ok} from './Ok';
 
 /**
  * build safe wrapper for async callback function
  * @template TArgs function arguments
- * @template ReturnType return type
- * @template ErrorType error type
+ * @template OkType return type
+ * @template ErrType error type
  * @param func async Promise or callback function
  * @returns PromiseResult
  * @example
@@ -27,19 +27,14 @@ import {Ok} from './Ok';
  *   console.log('error writing file', result.err());
  * }
  */
-export function safeAsyncResultBuilder<TArgs extends any[], ReturnType, ErrorType = unknown>(
-	func: (...args: TArgs) => Promise<ResultOrReturnType<ReturnType, ErrorType>>,
+export function safeAsyncResultBuilder<TArgs extends any[], OkType = unknown, ErrType = unknown>(
+	func: (...args: TArgs) => Promise<ResultOrOkType<OkType, ErrType>>,
 ) {
-	return async (...args: TArgs): Promise<Result<ReturnType, ErrorType>> => {
+	return async (...args: TArgs): Promise<Result<OkType, ErrType>> => {
 		try {
-			const data = await func(...args);
-			// if data is already a Result, return it directly
-			if (isResult(data)) {
-				return data;
-			}
-			return Ok<ReturnType, ErrorType>(data);
+			return Ok<OkType, ErrType>(await func(...args));
 		} catch (err) {
-			return Err<ReturnType, ErrorType>(err as ErrorType);
+			return Err<OkType, ErrType>(err as ErrType);
 		}
 	};
 }
@@ -47,23 +42,18 @@ export function safeAsyncResultBuilder<TArgs extends any[], ReturnType, ErrorTyp
 /**
  * safe	wrapper for async Promise
  * @param func async Promise or callback function
- * @template ReturnType return type
- * @template ErrorType error type
+ * @template OkType return type
+ * @template ErrType error type
  * @returns Result Promise
  * @example
  * const data = await safeAsyncResult<unknown, SyntaxError>(res.json());
  */
-export async function safeAsyncResult<ReturnType, ErrorType = unknown>(
-	func: Promise<ResultOrReturnType<ReturnType, ErrorType>> | (() => Promise<ResultOrReturnType<ReturnType, ErrorType>>),
-): Promise<Result<ReturnType, ErrorType>> {
+export async function safeAsyncResult<OkType = unknown, ErrType = unknown>(
+	func: Promise<ResultOrOkType<OkType, ErrType>> | (() => Promise<ResultOrOkType<OkType, ErrType>>),
+): Promise<Result<OkType, ErrType>> {
 	try {
-		const data = await (typeof func === 'function' ? func() : func);
-		// if data is already a Result, return it directly
-		if (isResult(data)) {
-			return data;
-		}
-		return Ok<ReturnType, ErrorType>(data);
+		return Ok<OkType, ErrType>(await (typeof func === 'function' ? func() : func));
 	} catch (err) {
-		return Err<ReturnType, ErrorType>(err as ErrorType);
+		return Err<OkType, ErrType>(err as ErrType);
 	}
 }

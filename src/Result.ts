@@ -1,15 +1,26 @@
-import {AbstractResult} from './AbstractResult';
-import {ConstructorWithValueOf} from './ValueOf';
+import {IAnd, IAndThen} from './interfaces/IAnd';
+import {IClone} from './interfaces/IClone';
+import {IEquals} from './interfaces/IEquals';
+import {IOr, IOrElse} from './interfaces/IOr';
+import {IUnWrap} from './interfaces/IUnWrap';
+import {Option} from './Option';
 
-export interface ResultImplementation<ReturnType, ErrorType = unknown> {
+export interface IResultImplementation<OkType, ErrType>
+	extends IUnWrap<OkType, ErrType>,
+		IEquals<Result>,
+		IOr<Result, Result<OkType, ErrType>>,
+		IOrElse<Result, Result<OkType, ErrType>, ErrType>,
+		IAnd<Result, Result<OkType, ErrType>>,
+		IClone<Result<OkType, ErrType>>,
+		IAndThen<OkType, Result, IErr<OkType, ErrType>> {
 	/**
 	 * Try to get value, otherwise return undefined
-	 * @returns {ReturnType | undefined} value or undefined
+	 * @returns {OkType | undefined} value or undefined
 	 * @example
 	 * Ok<number>(2).ok() // 2
 	 * Err<number>(new Error('broken')).ok() // undefined
 	 */
-	ok(): ReturnType | undefined;
+	ok(): OkType | undefined;
 	/**
 	 * Check that result is not an error
 	 * @returns {boolean} true if result is not an error
@@ -20,12 +31,12 @@ export interface ResultImplementation<ReturnType, ErrorType = unknown> {
 	isOk: boolean;
 	/**
 	 * Try to get the error, otherwise return undefined
-	 * @returns {ErrorType | undefined} error or undefined
+	 * @returns {ErrType | undefined} error or undefined
 	 * @example
 	 * Ok<number>(2).err() // undefined
 	 * Err<number>(new Error('broken')).err() // Error('broken')
 	 */
-	err(): ErrorType | undefined;
+	err(): ErrType | undefined;
 	/**
 	 * Check that result is an error
 	 * @returns {boolean} true if result is an error
@@ -34,43 +45,6 @@ export interface ResultImplementation<ReturnType, ErrorType = unknown> {
 	 * Err<number>(new Error('broken')).isErr // true
 	 */
 	isErr: boolean;
-	/**
-	 * Unwrap the value, if it is an error, throws the error
-	 * @param {ErrorType} err optional error to throw instead of the result error
-	 * @returns {ReturnType} returns the value
-	 * @throws {ErrorType} throws the error if the result is an error
-	 * @example
-	 * Ok<number>(2).unwrap() // 2
-	 * Err<number>(new Error('broken')).unwrap() // throws Error('broken')
-	 */
-	unwrap(err?: (err: ErrorType) => Error): ReturnType;
-	/**
-	 * Unwrap the value, if it is an error, return the default value
-	 * @param {ReturnType} value default value to return if the result is an error
-	 * @returns {ReturnType} returns the value or the default value
-	 * @example
-	 * Ok<number>(2).unwrapOr(0) // 2
-	 * Err<number>(new Error('broken')).unwrapOr(0) // 0
-	 */
-	unwrapOr(value: ReturnType): ReturnType;
-	/**
-	 * unwraps an option and if not a Ok value returns the result of the given function.
-	 * @param fn function to call
-	 * @returns {ReturnType} returns the value
-	 * @example
-	 * Ok<number>(2).unwrapOrElse(() => 0) // 2
-	 * Err<number>(new Error('broken')).unwrapOrElse(() => 0) // 0
-	 */
-	unwrapOrElse(fn: () => ReturnType): ReturnType;
-	/**
-	 * unwraps an result and if not a Ok value returns the default value from the constructor.
-	 * @param cons Constructor
-	 * @returns {ReturnType} returns the value
-	 * @example
-	 * Ok<number>(2).unwrapOrValueOf(Number) // 2
-	 * Err<number>(new Error('broken')).unwrapOrValueOf(Number) // 0
-	 */
-	unwrapOrValueOf(cons: ConstructorWithValueOf<ReturnType>): ReturnType;
 
 	/**
 	 * Solve the result with the given solver
@@ -84,10 +58,15 @@ export interface ResultImplementation<ReturnType, ErrorType = unknown> {
 	 *   Err: (err) => `${err.message} world`,
 	 * });
 	 */
-	match<Output>(solver: {Ok: (value: ReturnType) => Output; Err: (err: ErrorType) => Output}): Output;
+	match<Output>(solver: {Ok: (value: OkType) => Output; Err: (err: ErrType) => Output}): Output;
+
+	/**
+	 * Convert result to option and discard the error type
+	 */
+	toOption(): Option<OkType>;
 }
 
-export interface IOk<ReturnType, ErrorType = unknown> extends Omit<ResultImplementation<ReturnType, ErrorType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
+export interface IOk<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
 	/**
 	 * Check that result is not an error
 	 * @returns {boolean} true if result is not an error
@@ -97,11 +76,11 @@ export interface IOk<ReturnType, ErrorType = unknown> extends Omit<ResultImpleme
 	isOk: true;
 	/**
 	 * Try to get value, otherwise return undefined
-	 * @returns {ReturnType | undefined} value or undefined
+	 * @returns {OkType | undefined} value or undefined
 	 * @example
 	 * Ok<number>(2).ok() // 2
 	 */
-	ok(): ReturnType;
+	ok(): OkType;
 	/**
 	 * Check that result is an error
 	 * @returns {boolean} true if result is an error
@@ -111,14 +90,14 @@ export interface IOk<ReturnType, ErrorType = unknown> extends Omit<ResultImpleme
 	isErr: false;
 	/**
 	 * Try to get the error, otherwise return undefined
-	 * @returns {ErrorType | undefined} error or undefined
+	 * @returns {ErrType | undefined} error or undefined
 	 * @example
 	 * Ok<number>(2).err() // undefined
 	 */
 	err(): undefined;
 }
 
-export interface IErr<ReturnType, ErrorType = unknown> extends Omit<ResultImplementation<ReturnType, ErrorType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
+export interface IErr<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
 	/**
 	 * Check that result is not an error
 	 * @returns {boolean} true if result is not an error
@@ -128,7 +107,7 @@ export interface IErr<ReturnType, ErrorType = unknown> extends Omit<ResultImplem
 	isOk: false;
 	/**
 	 * Try to get value, otherwise return undefined
-	 * @returns {ReturnType | undefined} value or undefined
+	 * @returns {OkType | undefined} value or undefined
 	 * @example
 	 * Err<number>(new Error('broken')).ok() // undefined
 	 */
@@ -142,17 +121,17 @@ export interface IErr<ReturnType, ErrorType = unknown> extends Omit<ResultImplem
 	isErr: true;
 	/**
 	 * Try to get the error, otherwise return undefined
-	 * @returns {ErrorType | undefined} error or undefined
+	 * @returns {ErrType | undefined} error or undefined
 	 * @example
 	 * Err<number>(new Error('broken')).err() // Error('broken')
 	 */
-	err(): ErrorType;
+	err(): ErrType;
 }
 
 /**
- * Result type
- * @template ReturnType Type of the return value
- * @template ErrorType Type of the error, default is unknown
+ * Result type, this type contains types for both Ok and Err
+ * @template OkType Type of the return value, default is unknown
+ * @template ErrType Type of the error, default is unknown
  * @example
  * async function action(): Promise<Result<number>> {
  *   try {
@@ -168,22 +147,11 @@ export interface IErr<ReturnType, ErrorType = unknown> extends Omit<ResultImplem
  *   console.log('Error: ', result.err());
  * }
  */
-export type Result<ReturnType, ErrorType = unknown> = IOk<ReturnType, ErrorType> | IErr<ReturnType, ErrorType>;
+export type Result<OkType = unknown, ErrType = unknown> = IOk<OkType, ErrType> | IErr<OkType, ErrType>;
 
 /**
- * Utility type for ReturnType or Result
- * @template ReturnType Type of the return value
- * @template ErrorType Type of the error, default is unknown
+ * Utility type for OkType or Result
+ * @template OkType Type of the return value
+ * @template ErrType Type of the error, default is unknown
  */
-export type ResultOrReturnType<ReturnType, ErrorType> = ReturnType | Result<ReturnType, ErrorType>;
-
-/**
- * Type guard for Result interface
- * @template ReturnType Type of the return value
- * @template ErrorType Type of the error, default is unknown
- * @param {unknown} value unknown value
- * @returns {boolean} true if value is Result
- */
-export function isResult<ReturnType, ErrorType = unknown>(value: unknown): value is Result<ReturnType, ErrorType> {
-	return value instanceof AbstractResult;
-}
+export type ResultOrOkType<OkType, ErrType> = OkType | Result<OkType, ErrType>;

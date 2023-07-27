@@ -1,6 +1,18 @@
-import {ConstructorWithValueOf} from './ValueOf';
+import {Result} from './Result';
+import {IAnd, IAndThen} from './interfaces/IAnd';
+import {IClone} from './interfaces/IClone';
+import {IEquals} from './interfaces/IEquals';
+import {IOr, IOrElse} from './interfaces/IOr';
+import {IUnWrap} from './interfaces/IUnWrap';
 
-export interface OptionImplementation<ValueType> {
+export interface OptionImplementation<SomeType>
+	extends IUnWrap<SomeType, Error>,
+		IEquals<Option>,
+		IClone<Option<SomeType>>,
+		IOr<Option, Option<SomeType>>,
+		IOrElse<Option, Option<SomeType>>,
+		IAnd<Option, Option<SomeType>>,
+		IAndThen<SomeType, Option, INone<SomeType>> {
 	/**
 	 * Returns true if the option is a Some value.
 	 * @example
@@ -22,40 +34,8 @@ export interface OptionImplementation<ValueType> {
 	 * Some(2).expect('the world is ending') // 2
 	 * None<number>().expect('the world is ending') // throws Error('the world is ending')
 	 */
-	expect(msgOrError: string | Error): ValueType;
-	/**
-	 * unwraps an option and if not a Some value throws an error.
-	 * @param err optional function to transform the error
-	 * @example
-	 * Some(2).unwrap() // 2
-	 * None<number>().unwrap() // throws Error
-	 */
-	unwrap(err?: (err: Error) => Error): ValueType;
-	/**
-	 * unwraps an option and if not a Some value returns the given default value.
-	 * @param def default value
-	 * @example
-	 * Some(2).unwrapOr(0) // 2
-	 * None<number>().unwrapOr(0) // 0
-	 */
-	unwrapOr<DefType>(def: DefType): DefType | ValueType;
-	/**
-	 * unwraps an option and if not a Some value returns the result of the given function.
-	 * @param fn function to call
-	 * @example
-	 * Some(2).unwrapOrElse(() => 0) // 2
-	 * None<number>().unwrapOrElse(() => 2 + 2) // 4
-	 */
-	unwrapOrElse<DefType>(fn: () => DefType): DefType | ValueType;
-	/**
-	 * unwraps an option and if not a Some value returns the default value from the constructor.
-	 * @param cons Constructor
-	 * @returns the default value
-	 * @example
-	 * Some(2).unwrapOrValueOf(Number) // 2
-	 * None<number>().unwrapOrValueOf(Number) // 0
-	 */
-	unwrapOrValueOf(cons: ConstructorWithValueOf<ValueType>): ValueType;
+	expect(msgOrError: string | Error): SomeType;
+
 	/**
 	 * Returns the contained Some value, consuming the self value.
 	 * @example
@@ -64,21 +44,7 @@ export interface OptionImplementation<ValueType> {
 	 * console.log(x.isNone); // true
 	 * console.log(y.isSome); // true
 	 */
-	take(): Option<ValueType>;
-	/**
-	 * Returns a copy of the option.
-	 * @example
-	 * const x = Some(2);
-	 * const y = x.clone(); // y is Some(2)
-	 */
-	clone(): Option<ValueType>;
-	/**
-	 * eq returns true if the option is equal to the given option.
-	 * @param other option to compare
-	 * @example
-	 * Some(2).eq(Some(2)) // true
-	 */
-	eq(other: Option<ValueType>): boolean;
+	take(): Option<SomeType>;
 
 	/**
 	 * match executes the given function if the option is a Some value, otherwise returns the default value.
@@ -95,11 +61,42 @@ export interface OptionImplementation<ValueType> {
 	 *   'other',
 	 * );
 	 */
-	match<Output>(solver: Map<ValueType, () => Output>): Output | undefined;
-	match<Output>(solver: Map<ValueType, () => Output>, defaultValue: Output): Output;
+	match<Output>(solver: Map<SomeType, () => Output>): Output | undefined;
+	match<Output>(solver: Map<SomeType, () => Output>, defaultValue: Output): Output;
+
+	/**
+	 * Replace the actual value with the given one and returns the old Option.
+	 * @param value new value
+	 * @returns {Option<SomeType>} old Option
+	 * @see https://doc.rust-lang.org/std/option/enum.Option.html#method.replace
+	 */
+	replace(value: SomeType): Option<SomeType>;
+
+	/**
+	 * Inserts value into Option.
+	 * @param value new value
+	 * @returns {SomeType} currently set value
+	 * @see https://doc.rust-lang.org/std/option/enum.Option.html#method.insert
+	 */
+	insert(value: SomeType): SomeType;
+
+	/**
+	 * Inserts value into Option if the option is None, then current set value is returned.
+	 * @param value new value
+	 * @returns {SomeType} currently set value
+	 * @see https://doc.rust-lang.org/std/option/enum.Option.html#method.get_or_insert
+	 */
+	getOrInsert(value: SomeType): SomeType;
+
+	/**
+	 * Converts Option to Result with the given error value if the option is None.
+	 * @param err Error value if the option is None
+	 * @returns {Result<SomeType, ErrType>} Result
+	 */
+	toResult<ErrType>(err: ErrType): Result<SomeType, ErrType>;
 }
 
-export interface ISome<ValueType> extends Omit<OptionImplementation<ValueType>, 'isNone' | 'isSome'> {
+export interface ISome<SomeType> extends Omit<OptionImplementation<SomeType>, 'isNone' | 'isSome'> {
 	/**
 	 * Returns true if the option is a None value.
 	 * @example
@@ -114,7 +111,7 @@ export interface ISome<ValueType> extends Omit<OptionImplementation<ValueType>, 
 	isSome: true;
 }
 
-export interface INone<ValueType> extends Omit<OptionImplementation<ValueType>, 'isNone' | 'isSome'> {
+export interface INone<SomeType> extends Omit<OptionImplementation<SomeType>, 'isNone' | 'isSome'> {
 	/**
 	 * Returns true if the option is a None value.
 	 * @example
@@ -130,8 +127,8 @@ export interface INone<ValueType> extends Omit<OptionImplementation<ValueType>, 
 }
 
 /**
- * Option represents an optional value.
- * @template ValueType type of the value
+ * Option represents an optional value: every Option is either Some and contains a value and type, or None which does not any type.
+ * @template SomeType type of the value
  * @example
  * function divide(numerator: number, denominator: number): Option<number> {
  *   if (denominator === 0) {
@@ -146,4 +143,4 @@ export interface INone<ValueType> extends Omit<OptionImplementation<ValueType>, 
  *   console.log('Cannot divide by 0');
  * }
  */
-export type Option<ValueType> = ISome<ValueType> | INone<ValueType>;
+export type Option<SomeType = unknown> = ISome<SomeType> | INone<SomeType>;

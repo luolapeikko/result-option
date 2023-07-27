@@ -22,7 +22,7 @@
 				"allowedNames": ["self"]
 			}
 		],
-		"sort-imports": ["warn", {"ignoreCase": true}],
+		"sort-imports": "off",
 		"sort-keys": [
 			"warn",
 			"asc",
