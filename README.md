@@ -11,9 +11,9 @@ A lightweight library for representing the Rust style Result and Option classes 
 ## install
 
 ```bash
-npm install mharj-result
+npm install @luolapeikko/result-option
 ```
 
-## [Documentation](https://mharj.github.io/result/)
-- [Result](https://mharj.github.io/result/types/Result.html)
-- [Option](https://mharj.github.io/result/types/Option.html)
+## [Documentation](https://luolapeikko.github.io/result-option/)
+- [Result](https://luolapeikko.github.io/result-option/types/Result.html)
+- [Option](https://luolapeikko.github.io/result-option/types/Option.html)
