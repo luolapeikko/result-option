@@ -1,4 +1,4 @@
-# mharj-result
+# @luolapeikko/result-option
 
 [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/)
 [![npm version](https://badge.fury.io/js/@luolapeikko%2Fresult-option.svg)](https://badge.fury.io/js/@luolapeikko%2Fresult-option)
