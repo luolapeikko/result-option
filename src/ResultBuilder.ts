@@ -1,8 +1,8 @@
-import {None} from './None';
-import {Option} from './Option';
-import type {Result, IResultImplementation, IErr} from './Result';
-import {Some} from './Some';
-import {ConstructorWithValueOf} from './ValueOf';
+import type {IErr, IResultImplementation, Result} from './Result.js';
+import {type ConstructorWithValueOf} from './ValueOf.js';
+import {None} from './None.js';
+import {type Option} from './Option.js';
+import {Some} from './Some.js';
 
 /**
  * ResultBuilder class for Result implementation
@@ -21,7 +21,7 @@ export class ResultBuilder<OkType, ErrType> implements IResultImplementation<OkT
 	constructor(isNotError: false, value: ErrType);
 	constructor(isNotError: boolean, value: ErrType | OkType) {
 		this.isNotError = isNotError;
-		if (isNotError === true) {
+		if (isNotError) {
 			this.value = value as OkType;
 		} else {
 			this.error = value as ErrType;
@@ -29,58 +29,58 @@ export class ResultBuilder<OkType, ErrType> implements IResultImplementation<OkT
 	}
 
 	public ok(): OkType | undefined {
-		return this.isNotError === true ? this.value : undefined;
+		return this.isNotError ? this.value : undefined;
 	}
 
 	public get isOk(): boolean {
-		return this.isNotError === true;
+		return this.isNotError;
 	}
 
 	public err(): ErrType | undefined {
-		return this.isNotError === false ? (this.error as ErrType) : undefined;
+		return !this.isNotError ? (this.error as ErrType) : undefined;
 	}
 
 	public get isErr(): boolean {
-		return this.isNotError === false;
+		return !this.isNotError;
 	}
 
 	public unwrap(err?: (err: ErrType) => Error): OkType {
-		if (this.isNotError === true) {
+		if (this.isNotError) {
 			return this.value as OkType;
 		}
 		if (this.error !== undefined) {
 			if (err !== undefined) {
 				throw err(this.error);
 			}
-			throw this.error;
+			throw this.error as Error;
 		}
 		// istanbul ignore next
 		throw new TypeError('Result: No error was set');
 	}
 
 	public unwrapOr<DefType>(defaultValue: DefType): DefType | OkType {
-		if (this.isNotError === true) {
+		if (this.isNotError) {
 			return this.value as OkType;
 		}
 		return defaultValue;
 	}
 
 	public unwrapOrElse<DefType>(fn: () => DefType): DefType | OkType {
-		if (this.isNotError === true) {
+		if (this.isNotError) {
 			return this.value as OkType;
 		}
 		return fn();
 	}
 
 	public unwrapOrValueOf(BaseConstructor: ConstructorWithValueOf<OkType>): OkType {
-		if (this.isNotError === true) {
+		if (this.isNotError) {
 			return this.value as OkType;
 		}
 		return new BaseConstructor().valueOf();
 	}
 
 	public match<Output>(solver: {Ok: (value: OkType) => Output; Err: (err: ErrType) => Output}): Output {
-		if (this.isNotError === true) {
+		if (this.isNotError) {
 			return solver.Ok(this.value as OkType);
 		} else {
 			return solver.Err(this.error as ErrType);
@@ -88,7 +88,7 @@ export class ResultBuilder<OkType, ErrType> implements IResultImplementation<OkT
 	}
 
 	public eq<OtherType extends Result>(other: OtherType): boolean {
-		if (this.isNotError === true) {
+		if (this.isNotError) {
 			return other.isOk && this.value === other.ok();
 		}
 		return other.isErr && this.error === other.err();
@@ -101,7 +101,7 @@ export class ResultBuilder<OkType, ErrType> implements IResultImplementation<OkT
 		return value;
 	}
 
-	public andThen<OutType extends Result<unknown, unknown>>(value: (val: OkType) => OutType): IErr<OkType, ErrType> | OutType {
+	public andThen<OutType extends Result>(value: (val: OkType) => OutType): IErr<OkType, ErrType> | OutType {
 		if (!this.isNotError) {
 			return this as IErr<OkType, ErrType>;
 		}

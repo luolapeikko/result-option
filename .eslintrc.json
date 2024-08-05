@@ -1,16 +1,16 @@
 {
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
-		"ecmaVersion": 2020,
+		"ecmaVersion": 2022,
 		"sourceType": "module",
 		"project": "./tsconfig.test.json"
 	},
-	"plugins": ["@typescript-eslint", "prettier", "sonarjs", "deprecation"],
+	"plugins": ["@typescript-eslint", "@stylistic/ts", "prettier", "sonarjs", "deprecation"],
 	"extends": [
 		"standard",
 		"eslint:recommended",
 		"plugin:@typescript-eslint/eslint-recommended",
-		"plugin:@typescript-eslint/recommended",
+		"plugin:@typescript-eslint/strict-type-checked",
 		"plugin:prettier/recommended",
 		"plugin:sonarjs/recommended"
 	],
@@ -22,19 +22,19 @@
 				"allowedNames": ["self"]
 			}
 		],
-		"sort-imports": "off",
+		"sort-imports": ["warn", {"ignoreCase": true}],
 		"sort-keys": [
 			"warn",
 			"asc",
 			{
 				"caseSensitive": false,
 				"natural": true,
-				"minKeys": 4
+				"minKeys": 5
 			}
 		],
 		"no-unused-vars": "off",
 		"@typescript-eslint/no-unused-vars": [
-			"warn", // or "error"
+			"warn",
 			{
 				"argsIgnorePattern": "^_",
 				"varsIgnorePattern": "^_",
@@ -43,7 +43,7 @@
 		],
 		"deprecation/deprecation": "warn",
 		"lines-between-class-members": "off",
-		"@typescript-eslint/lines-between-class-members": [
+		"@stylistic/ts/lines-between-class-members": [
 			"warn",
 			"always",
 			{
@@ -51,7 +51,17 @@
 				"exceptAfterSingleLine": true
 			}
 		],
+		"@typescript-eslint/consistent-type-imports": ["warn", {"prefer": "type-imports", "fixStyle": "inline-type-imports"}],
+		"@typescript-eslint/no-misused-promises": [
+			"error",
+			{
+				"checksVoidReturn": false
+			}
+		],
+		"@typescript-eslint/unbound-method": "off",
+		"@typescript-eslint/no-confusing-void-expression": "off",
 		"no-use-before-define": "off",
-		"@typescript-eslint/no-use-before-define": ["error", {"functions": false, "classes": false, "ignoreTypeReferences": true}]
+		"@typescript-eslint/no-use-before-define": "error",
+		"@typescript-eslint/no-unnecessary-type-parameters": "off"
 	}
 }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Result, ResultOrOkType} from './Result';
-import {Err} from './Err';
-import {Ok} from './Ok';
+import {type Result, type ResultOrOkType} from './Result.js';
+import {Err} from './Err.js';
+import {Ok} from './Ok.js';
 
 /**
  * build safe wrapper for async callback function
@@ -15,7 +15,7 @@ import {Ok} from './Ok';
  * 	if (arg1 === 'error') {
  * 		throw new Error('oops');
  * 	}
- * 	return Promise.resolve('hello ${arg1} number: ${arg2}'}');
+ * 	return Promise.resolve(`hello ${arg1} number: ${arg2}`);
  * });
  *
  * // wrap fs/promises function to Promised Result

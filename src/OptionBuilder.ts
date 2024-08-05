@@ -1,8 +1,8 @@
-import {Err} from './Err';
-import {Ok} from './Ok';
-import {INone, ISome, Option, OptionImplementation} from './Option';
-import {Result} from './Result';
-import {ConstructorWithValueOf} from './ValueOf';
+import {type INone, type ISome, type Option, type OptionImplementation} from './Option.js';
+import {type ConstructorWithValueOf} from './ValueOf.js';
+import {Err} from './Err.js';
+import {Ok} from './Ok.js';
+import {type Result} from './Result.js';
 
 export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 	private _isSome: boolean;
@@ -82,21 +82,22 @@ export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 		return true;
 	}
 
-	public or<CompareType extends Option<unknown>>(value: CompareType): Option<SomeType> | CompareType {
+	public or<CompareType extends Option>(value: CompareType): Option<SomeType> | CompareType {
 		if (this._isSome) {
 			return this as Option<SomeType>;
 		}
 		return value;
 	}
 
-	public orElse<ElseResult extends Option<unknown>>(callbackFunc: (value: void) => ElseResult): Option<SomeType> | ElseResult {
+	// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+	public orElse<ElseResult extends Option>(callbackFunc: (value: void) => ElseResult): Option<SomeType> | ElseResult {
 		if (this._isSome) {
 			return this as Option<SomeType>;
 		}
 		return callbackFunc();
 	}
 
-	public and<CompareType extends Option<unknown>>(value: CompareType): Option<SomeType> | CompareType {
+	public and<CompareType extends Option>(value: CompareType): Option<SomeType> | CompareType {
 		if (!this._isSome) {
 			return this as Option<SomeType>;
 		}

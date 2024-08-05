@@ -1,11 +1,11 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"module": "NodeNext",
 		"target": "es2021",
 		"lib": ["es2021"],
 		"rootDir": "./src",
 		"outDir": "./dist",
-		"moduleResolution": "node",
+		"moduleResolution": "NodeNext",
 		"sourceRoot": "./src",
 		"types": ["node"],
 		"sourceMap": true,
@@ -21,12 +21,16 @@
 		"noImplicitAny": true,
 		"importHelpers": false,
 		"strictNullChecks": true,
-		"noUnusedLocals": true
+		"noUnusedLocals": true,
+		"esModuleInterop": true
 	},
 	"typedocOptions": {
 		"entryPoints": ["src/index.ts"],
 		"out": "docs"
 	},
 	"include": ["src/**/*", "src/**/**/*"],
-	"exclude": ["node_modules", "**/*.spec.ts", "test"]
+	"exclude": ["node_modules", "**/*.spec.ts", "test"],
+	"ts-node": {
+		"esm": true
+	}
 }

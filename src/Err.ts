@@ -1,5 +1,5 @@
-import {Result} from './Result';
-import {ResultBuilder, isResult} from './ResultBuilder';
+import {isResult, ResultBuilder} from './ResultBuilder.js';
+import {type Result} from './Result.js';
 
 /**
  * Build Err result or return if already a Result

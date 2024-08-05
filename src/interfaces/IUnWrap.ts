@@ -1,4 +1,4 @@
-import {ConstructorWithValueOf} from '../ValueOf';
+import {type ConstructorWithValueOf} from '../ValueOf.js';
 
 export interface IUnWrap<ValueType, ErrorType> {
 	/**

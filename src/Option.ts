@@ -1,9 +1,9 @@
-import {Result} from './Result';
-import {IAnd, IAndThen} from './interfaces/IAnd';
-import {IClone} from './interfaces/IClone';
-import {IEquals} from './interfaces/IEquals';
-import {IOr, IOrElse} from './interfaces/IOr';
-import {IUnWrap} from './interfaces/IUnWrap';
+import {type IAnd, type IAndThen} from './interfaces/IAnd.js';
+import {type IOr, type IOrElse} from './interfaces/IOr.js';
+import {type IClone} from './interfaces/IClone.js';
+import {type IEquals} from './interfaces/IEquals.js';
+import {type IUnWrap} from './interfaces/IUnWrap.js';
+import {type Result} from './Result.js';
 
 export interface OptionImplementation<SomeType>
 	extends IUnWrap<SomeType, Error>,
@@ -61,8 +61,8 @@ export interface OptionImplementation<SomeType>
 	 *   'other',
 	 * );
 	 */
-	match<Output>(solver: Map<SomeType, () => Output>): Output | undefined;
 	match<Output>(solver: Map<SomeType, () => Output>, defaultValue: Output): Output;
+	match<Output>(solver: Map<SomeType, () => Output>): Output | undefined;
 
 	/**
 	 * Replace the actual value with the given one and returns the old Option.

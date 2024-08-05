@@ -1,6 +1,6 @@
-import {None} from './None';
-import {Option} from './Option';
-import {Some} from './Some';
+import {None} from './None.js';
+import {type Option} from './Option.js';
+import {Some} from './Some.js';
 
 /**
  * Simple function to wrap a possible undefined value as None
