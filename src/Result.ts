@@ -64,9 +64,17 @@ export interface IResultImplementation<OkType, ErrType>
 	 * Convert result to option and discard the error type
 	 */
 	toOption(): Option<OkType>;
+
+	/**
+	 * Convert result to string
+	 * @example
+	 * Ok<number>(2).toString() // 'Ok(2)'
+	 * Err<number>(new Error('broken')).toString() // 'Err(Error: broken)'
+	 */
+	toString(): `Ok(${string})` | `Err(${string})`;
 }
 
-export interface IOk<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
+export interface IOk<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err' | 'toString'> {
 	/**
 	 * Check that result is not an error
 	 * @returns {boolean} true if result is not an error
@@ -95,6 +103,7 @@ export interface IOk<OkType, ErrType> extends Omit<IResultImplementation<OkType,
 	 * Ok<number>(2).err() // undefined
 	 */
 	err(): undefined;
+	toString(): `Ok(${string})`;
 }
 
 export interface IErr<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
@@ -126,6 +135,7 @@ export interface IErr<OkType, ErrType> extends Omit<IResultImplementation<OkType
 	 * Err<number>(new Error('broken')).err() // Error('broken')
 	 */
 	err(): ErrType;
+	toString(): `Err(${string})`;
 }
 
 /**

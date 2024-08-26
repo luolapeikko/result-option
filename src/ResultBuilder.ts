@@ -135,6 +135,27 @@ export class ResultBuilder<OkType, ErrType> implements IResultImplementation<OkT
 		}
 		return None<OkType>();
 	}
+
+	public toString(): `Ok(${string})` | `Err(${string})` {
+		if (this.isNotError) {
+			return `Ok(${String(this.value)})`;
+		}
+		return `Err(${this.getErrorInstanceName()}${this.getErrorInstanceMessage()})`;
+	}
+
+	private getErrorInstanceName(): string {
+		if (typeof this.error === 'object' && this.error !== null) {
+			return this.error.constructor.name;
+		}
+		return 'UnknownErrorInstance';
+	}
+
+	private getErrorInstanceMessage(): string {
+		if (this.error instanceof Error) {
+			return `: '${this.error.message}'`;
+		}
+		return `: '${JSON.stringify(this.error)}'`;
+	}
 }
 
 /**

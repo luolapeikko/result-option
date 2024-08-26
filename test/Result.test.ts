@@ -328,4 +328,15 @@ describe('FunctionResult', function () {
 			expect(Err<string, string>('err').toOption().eq(None())).to.be.true;
 		});
 	});
+	describe('toString', function () {
+		it('should convert to string', function () {
+			expect(Ok<string, Error>('hello').toString()).to.be.equal(`Ok(hello)`);
+			expect(String(Ok<string, Error>('hello'))).to.be.equal(`Ok(hello)`);
+			expect(Ok<number, Error>(1).toString()).to.be.equal(`Ok(1)`);
+			expect(Err<string, Error>(stE).toString()).to.be.equal(`Err(Error: 'oops')`);
+			expect(Err<string, Error>(null as unknown as Error).toString()).to.be.equal(`Err(UnknownErrorInstance: 'null')`);
+			expect(Err<string, Error>(undefined as unknown as Error).toString()).to.be.equal(`Err(UnknownErrorInstance: 'undefined')`);
+			expect(Err<string, Error>({} as unknown as Error).toString()).to.be.equal(`Err(Object: '{}')`);
+		});
+	});
 });
