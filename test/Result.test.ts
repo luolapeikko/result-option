@@ -5,7 +5,19 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
-import {Err, None, Ok, type Result, safeAsyncResult, safeAsyncResultBuilder, safeResult, safeResultBuilder, Some} from '../src/index.js';
+import {
+	Err,
+	ErrInstance,
+	fromJsonResult,
+	type IResult,
+	None,
+	Ok,
+	safeAsyncResult,
+	safeAsyncResultBuilder,
+	safeResult,
+	safeResultBuilder,
+	Some,
+} from '../src/index.js';
 
 const expect = chai.expect;
 
@@ -29,7 +41,7 @@ describe('FunctionResult', function () {
 	describe('Ok', function () {
 		it('should resolve a value result from Ok Result', function () {
 			const value = 'hello';
-			const result: Result<string, Error> = Ok<string, Error>(value);
+			const result = Ok<string, Error>(value) as IResult<string, Error>;
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -48,7 +60,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve a value result from safeResult', function () {
 			const value = 'hello';
-			const result: Result<string, Error> = safeResult<string, Error>(() => value);
+			const result: IResult<string, Error> = safeResult<string, Error>(() => value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -65,7 +77,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve a value result from safeResult with Ok', function () {
 			const value = 'hello';
-			const result: Result<string> = safeResult<string>(() => Ok(value));
+			const result: IResult<string> = safeResult<string>(() => Ok(value));
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -78,7 +90,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with safeResultBuilder function', function () {
 			const value = 'hello';
-			const result: Result<string> = testFunction(value);
+			const result: IResult<string> = testFunction(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -88,7 +100,7 @@ describe('FunctionResult', function () {
 		});
 		it('should resolve with safeAsyncResult Promise', async function () {
 			const value = 'hello';
-			const result: Result<string> = await safeAsyncResult(Promise.resolve(value));
+			const result: IResult<string> = await safeAsyncResult(Promise.resolve(value));
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -98,7 +110,7 @@ describe('FunctionResult', function () {
 		});
 		it('should resolve with safeAsyncResult callback Promise', async function () {
 			const value = 'hello';
-			const result: Result<string> = await safeAsyncResult(() => Promise.resolve(value));
+			const result: IResult<string> = await safeAsyncResult(() => Promise.resolve(value));
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -109,7 +121,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with safeAsyncResult callback Promise with Ok', async function () {
 			const value = 'hello';
-			const result: Result<string> = await safeAsyncResult(() => Promise.resolve(Ok(value)));
+			const result: IResult<string> = await safeAsyncResult(() => Promise.resolve(Ok(value)));
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -119,7 +131,7 @@ describe('FunctionResult', function () {
 		});
 		it('should resolve with safeAsyncResultBuilder function', async function () {
 			const value = 'hello';
-			const result: Result<string> = await testAsyncFunction(value);
+			const result: IResult<string> = await testAsyncFunction(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -131,7 +143,7 @@ describe('FunctionResult', function () {
 		it('should resolve with dual safeResult chain', function () {
 			const value = 'hello';
 			const callback = safeResultBuilder((v: string) => testFunction(v));
-			const result: Result<string> = callback(value);
+			const result: IResult<string> = callback(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -143,7 +155,19 @@ describe('FunctionResult', function () {
 		it('should resolve with dual safeAsyncResult chain', async function () {
 			const value = 'hello';
 			const callback = safeAsyncResultBuilder((v: string) => testAsyncFunction(v));
-			const result: Result<string> = await callback(value);
+			const result: IResult<string> = await callback(value);
+			expect(result.isOk).to.be.true;
+			expect(result.isErr).to.be.false;
+			expect(result.ok()).to.be.equal(value);
+			expect(result.err()).to.be.equal(undefined);
+			expect(result.unwrap()).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
+		});
+
+		it('should resolve with dual safeAsyncResult chain', async function () {
+			const value = 'hello';
+			const callback = safeAsyncResultBuilder((v: string) => testFunction(v) as unknown as Promise<IResult<string, unknown>>);
+			const result: IResult<string> = await callback(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -162,6 +186,7 @@ describe('FunctionResult', function () {
 			expect(result.err()).to.be.eql(stE);
 			expect(() => result.unwrap()).to.throw(stE);
 			expect(() => result.unwrap(() => demoError)).to.throw(demoError);
+			expect(() => result.unwrap(demoError)).to.throw(demoError);
 			expect(result.unwrapOr('world')).to.be.equal('world');
 			expect(result.unwrapOrElse(() => 'world')).to.be.equal('world');
 			expect(result.unwrapOrValueOf(String)).to.be.equal('');
@@ -323,9 +348,41 @@ describe('FunctionResult', function () {
 		});
 	});
 	describe('toOption', function () {
-		it('should convert to Optionn', function () {
+		it('should convert to Option', function () {
 			expect(Ok<string, string>('ok').toOption().eq(Some('ok'))).to.be.true;
 			expect(Err<string, string>('err').toOption().eq(None())).to.be.true;
+		});
+	});
+	describe('jsonErr', function () {
+		it('should build error from JSON', function () {
+			const json = {$class: 'Err', value: new Error('hello')} as const;
+			const result = Err<string, Error>(json);
+			expect(result.isErr).to.be.true;
+			expect(result.err().message).to.be.equal('hello');
+			expect(result.toJSON()).to.be.eql(json);
+			expect(fromJsonResult(json).toJSON()).to.be.eql(result.toJSON());
+		});
+	});
+	describe('jsonOk', function () {
+		it('should build Ok from JSON', function () {
+			const json = {$class: 'Ok', value: 'hello'} as const;
+			const result = Ok<string, Error>(json);
+			expect(result.isOk).to.be.true;
+			expect(result.ok()).to.be.equal('hello');
+			expect(result.toJSON()).to.be.eql(json);
+			expect(fromJsonResult(json).toJSON()).to.be.eql(result.toJSON());
+		});
+	});
+	describe('toString', function () {
+		it('should convert to string', function () {
+			expect(Ok<string, Error>('hello').toString()).to.be.equal('Ok(hello)');
+			expect(Err<string, Error>(stE).toString()).to.be.equal(`Err(Error: 'oops')`);
+		});
+	});
+	describe('ErrInstance', function () {
+		it('should convert to string', function () {
+			const brokenErr = new ErrInstance(null);
+			expect(brokenErr.toString()).to.be.equal(`Err(UnknownErrorInstance: 'null')`);
 		});
 	});
 });

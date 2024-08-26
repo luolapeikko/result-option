@@ -1,18 +1,27 @@
-import {type IAnd, type IAndThen} from './interfaces/IAnd.js';
-import {type IOr, type IOrElse} from './interfaces/IOr.js';
-import {type IClone} from './interfaces/IClone.js';
-import {type IEquals} from './interfaces/IEquals.js';
-import {type IUnWrap} from './interfaces/IUnWrap.js';
-import {type Option} from './Option.js';
+import {
+	type IAnd,
+	type IAndThen,
+	type IClone,
+	type IEquals,
+	type IJsonErr,
+	type IJsonOk,
+	type IJsonResult,
+	type IOr,
+	type IOrElse,
+	type IResultMatch,
+	type IUnWrap,
+} from './index.js';
+import {type INone, type IOption, type ISome} from '../option/index.js';
 
 export interface IResultImplementation<OkType, ErrType>
 	extends IUnWrap<OkType, ErrType>,
-		IEquals<Result>,
-		IOr<Result, Result<OkType, ErrType>>,
-		IOrElse<Result, Result<OkType, ErrType>, ErrType>,
-		IAnd<Result, Result<OkType, ErrType>>,
-		IClone<Result<OkType, ErrType>>,
-		IAndThen<OkType, Result, IErr<OkType, ErrType>> {
+		IEquals<IResult>,
+		IOr<IResult, IResult<OkType, ErrType>>,
+		IOrElse<IResult, IResult<OkType, ErrType>, ErrType>,
+		IAnd<IResult, IResult<OkType, ErrType>>,
+		IClone<IResult<OkType, ErrType>>,
+		IAndThen<OkType, IResult, IErr<OkType, ErrType>>,
+		IResultMatch<OkType, ErrType> {
 	/**
 	 * Try to get value, otherwise return undefined
 	 * @returns {OkType | undefined} value or undefined
@@ -47,26 +56,23 @@ export interface IResultImplementation<OkType, ErrType>
 	isErr: boolean;
 
 	/**
-	 * Solve the result with the given solver
-	 * @template Output Type of the output
-	 * @param solver solver to use
-	 * @returns {Output} returns the output of the solver
-	 * @example
-	 * const res: Result<string, Error> = Ok<string, Error>('hello');
-	 * const data: string = res.match({
-	 *   Ok: (value) => `${value} world`,
-	 *   Err: (err) => `${err.message} world`,
-	 * });
-	 */
-	match<Output>(solver: {Ok: (value: OkType) => Output; Err: (err: ErrType) => Output}): Output;
-
-	/**
 	 * Convert result to option and discard the error type
 	 */
-	toOption(): Option<OkType>;
+	toOption(): IOption<OkType>;
+
+	/**
+	 * Convert result to string
+	 */
+	toString(): `Ok(${string})` | `Err(${string})`;
+
+	/**
+	 * Convert result to JSON {$class: 'Ok', value: OkType} or {$class: 'Err', value: ErrType}
+	 * @returns {IJsonResult<OkType, ErrType>} JSON representation of the result
+	 */
+	toJSON(): IJsonResult<OkType, ErrType>;
 }
 
-export interface IOk<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
+export interface IOk<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err' | 'toOption' | 'toJSON'> {
 	/**
 	 * Check that result is not an error
 	 * @returns {boolean} true if result is not an error
@@ -95,9 +101,20 @@ export interface IOk<OkType, ErrType> extends Omit<IResultImplementation<OkType,
 	 * Ok<number>(2).err() // undefined
 	 */
 	err(): undefined;
+
+	/**
+	 * Convert result to option and discard the error type
+	 */
+	toOption(): ISome<OkType>;
+
+	/**
+	 * Convert result to JSON {$class: 'Ok', value: OkType} or {$class: 'Err', value: ErrType}
+	 * @returns {IJsonResult<OkType, ErrType>} JSON representation of the result
+	 */
+	toJSON(): IJsonOk<OkType>;
 }
 
-export interface IErr<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err'> {
+export interface IErr<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err' | 'toJSON'> {
 	/**
 	 * Check that result is not an error
 	 * @returns {boolean} true if result is not an error
@@ -126,6 +143,16 @@ export interface IErr<OkType, ErrType> extends Omit<IResultImplementation<OkType
 	 * Err<number>(new Error('broken')).err() // Error('broken')
 	 */
 	err(): ErrType;
+
+	/**
+	 * Convert result to option and discard the error type
+	 */
+	toOption(): INone<OkType>;
+	/**
+	 * Convert result to JSON {$class: 'Ok', value: OkType} or {$class: 'Err', value: ErrType}
+	 * @returns {IJsonResult<OkType, ErrType>} JSON representation of the result
+	 */
+	toJSON(): IJsonErr<ErrType>;
 }
 
 /**
@@ -147,11 +174,11 @@ export interface IErr<OkType, ErrType> extends Omit<IResultImplementation<OkType
  *   console.log('Error: ', result.err());
  * }
  */
-export type Result<OkType = unknown, ErrType = unknown> = IOk<OkType, ErrType> | IErr<OkType, ErrType>;
+export type IResult<OkType = unknown, ErrType = unknown> = IOk<OkType, ErrType> | IErr<OkType, ErrType>;
 
 /**
  * Utility type for OkType or Result
  * @template OkType Type of the return value
  * @template ErrType Type of the error, default is unknown
  */
-export type ResultOrOkType<OkType, ErrType> = OkType | Result<OkType, ErrType>;
+export type IResultOrOkType<OkType, ErrType> = OkType | IResult<OkType, ErrType>;

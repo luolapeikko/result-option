@@ -1,16 +1,16 @@
-import {type ConstructorWithValueOf} from '../ValueOf.js';
+import {type ConstructorWithValueOf} from './ValueOf.js';
 
 export interface IUnWrap<ValueType, ErrorType> {
 	/**
 	 * Method to unwrap the value or throw an error
-	 * @param {(err: ErrorType) => Error} err - optional function to transform the error
+	 * @param {Error | ((err: ErrorType) => Error)} err - optional error or function to transform the error
 	 * @example
 	 * Ok<number>(2).unwrap() // 2
 	 * Err<number>(new Error('broken')).unwrap() // throws Error('broken')
 	 * Some(2).unwrap() // 2
 	 * None<number>().unwrap() // throws Error
 	 */
-	unwrap(err?: (err: ErrorType) => Error): ValueType;
+	unwrap(err?: Error | ((err: ErrorType) => Error)): ValueType;
 	/**
 	 * Method to unwrap the value or if error return the default value
 	 * @param defaultValue - default value to return

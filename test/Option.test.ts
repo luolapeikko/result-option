@@ -1,3 +1,6 @@
+/* eslint-disable deprecation/deprecation */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
@@ -5,7 +8,21 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
-import {Err, None, nullishOptionWrap, Ok, type Option, Some, undefinedOptionWrap} from '../src/index.js';
+import {
+	Err,
+	type INone,
+	type IOption,
+	type ISome,
+	nanOption,
+	None,
+	nullishOption,
+	nullishOptionWrap,
+	Ok,
+	Option,
+	Some,
+	undefinedOption,
+	undefinedOptionWrap,
+} from '../src/index.js';
 import {exactType} from './helper.js';
 
 const expect = chai.expect;
@@ -45,7 +62,7 @@ describe('Option', function () {
 				),
 			).to.be.equal('other');
 			// Some and None type validation
-			const option = Some(1) as Option<number>;
+			const option = Some(1) as IOption<number>;
 			if (option.isSome) {
 				exactType(option, Some<number>(1));
 			} else {
@@ -60,12 +77,14 @@ describe('Option', function () {
 	});
 	describe('None', function () {
 		it('should verify None option', function () {
+			const demoError = new Error('demo');
 			expect(None<string>().isSome).to.be.false;
 			expect(None<string>().isNone).to.be.true;
 			expect(None<string>().eq(Some('hello'))).to.be.false;
 			expect(None<string>().eq(None<string>())).to.be.true;
-			expect(() => None<string>().unwrap()).to.throw('Option: No value was set');
-			expect(() => None<string>().unwrap((err) => new Error(err.message + '!'))).to.throw('Option: No value was set!');
+			expect(() => None<string>().unwrap()).to.throw('None: No value was set');
+			expect(() => None<string>().unwrap(demoError)).to.throw(demoError);
+			expect(() => None<string>().unwrap((_err) => demoError)).to.throw(demoError);
 			expect(None<string>().unwrapOr('demo')).to.be.equal('demo');
 			expect(None<string>().unwrapOrElse(() => 'demo')).to.be.equal('demo');
 			expect(None<string>().unwrapOrValueOf(String)).to.be.equal(''); // string default value is empty string
@@ -101,27 +120,44 @@ describe('Option', function () {
 	describe('undefinedOptionWrap', function () {
 		it('should build option with undefinedOptionWrap', function () {
 			const values = ['one', 'two', 'three', undefined] as const;
-			type Values = (typeof values)[number];
-			const check = (value: string): Option<Values> => {
-				return undefinedOptionWrap(values.find((v) => v === value));
-			};
+			const ret1: INone<undefined> = undefinedOption(undefined);
+			expect(ret1.isNone).to.be.true;
+			const ret2: ISome<'asd'> = undefinedOption('asd');
+			expect(ret2.isSome).to.be.true;
+			const check = (value: (typeof values)[number]) => undefinedOption(values.find((v) => v === value));
 			expect(check('one').isSome).to.be.true;
 			expect(check('two').isSome).to.be.true;
 			expect(check('three').isSome).to.be.true;
-			expect(check('four').isSome).to.be.false;
+			expect(check(undefined).isSome).to.be.false;
 		});
 	});
 	describe('nullishOptionWrap', function () {
 		it('should build option with nullishOptionWrap', function () {
 			const values = ['one', 'two', 'three', null, undefined] as const;
 			type Values = (typeof values)[number];
-			const check = (value: string): Option<Values> => {
-				return nullishOptionWrap(values.find((v) => v === value));
+			const ret1: INone<undefined> = nullishOption(undefined);
+			expect(ret1.isNone).to.be.true;
+			const ret2: INone<null> = nullishOption(null);
+			expect(ret2.isNone).to.be.true;
+			const ret3: ISome<'asd'> = nullishOption('asd');
+			expect(ret3.isSome).to.be.true;
+
+			const check = (value: string): IOption<Values> => {
+				return nullishOption(values.find((v) => v === value));
 			};
 			expect(check('one').isSome).to.be.true;
 			expect(check('two').isSome).to.be.true;
 			expect(check('three').isSome).to.be.true;
 			expect(check('four').isSome).to.be.false;
+			expect(nullishOption<number>(NaN).isSome).to.be.false;
+		});
+	});
+	describe('nanOptionWrap', function () {
+		it('should build option with nanOptionWrap', function () {
+			expect(nanOption(1).isSome).to.be.true;
+			expect(nanOption(2).isSome).to.be.true;
+			expect(nanOption(3).isSome).to.be.true;
+			expect(nanOption(parseInt('hello', 10)).isSome).to.be.false;
 		});
 	});
 	describe('eq', function () {
@@ -234,6 +270,35 @@ describe('Option', function () {
 		it('should convert to Result', function () {
 			expect(None<string>().toResult('error').eq(Err<string, string>('error'))).to.be.true;
 			expect(Some(2).toResult('error').eq(Ok<number, string>(2))).to.be.true;
+		});
+	});
+	describe('toString', function () {
+		it('should convert to Result', function () {
+			expect(None<string>().toString()).to.be.eq('None()');
+			expect(Some(2).toString()).to.be.eq('Some(2)');
+		});
+	});
+	describe('toJSON', function () {
+		it('should convert to Result', function () {
+			const noneValue = None<string>();
+			const someValue = Some(2);
+			const noneJson = noneValue.toJSON();
+			const someJson = someValue.toJSON();
+			expect(noneJson).to.be.eql({$class: 'None', value: undefined});
+			expect(someJson).to.be.eql({$class: 'Some', value: 2});
+			expect(Option(noneValue).isNone).to.be.true;
+			expect(Option(someValue).isSome).to.be.true;
+			expect(Option(noneJson).isNone).to.be.true;
+			expect(Option(someJson).isSome).to.be.true;
+			expect(() => Option(null as any).isSome).to.throw('Invalid Option instance');
+		});
+	});
+	describe('deprecated', function () {
+		it('should handle deprecated methods', function () {
+			expect(nullishOptionWrap(0).isSome).to.be.true;
+			expect(nullishOptionWrap(NaN).isSome).to.be.false;
+			expect(undefinedOptionWrap(0).isSome).to.be.true;
+			expect(undefinedOptionWrap(undefined).isSome).to.be.false;
 		});
 	});
 });
