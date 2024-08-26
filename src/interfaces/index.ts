@@ -9,3 +9,5 @@ export * from './IResultImplementation.js';
 export * from './IToResult.js';
 export * from './IUnWrap.js';
 export * from './ValueOf.js';
+export * from './IOr.js';
+export * from './IUnWrap.js';

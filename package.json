@@ -1,6 +1,6 @@
 {
 	"name": "@luolapeikko/result-option",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Rust style Result for TypeScript/Javascript",
 	"type": "module",
 	"main": "./dist/index.cjs",
@@ -63,8 +63,8 @@
 		"@types/chai-as-promised": "^7.1.8",
 		"@types/mocha": "^10.0.7",
 		"@types/node": "^18.19.45",
-		"@typescript-eslint/eslint-plugin": "^8.1.0",
-		"@typescript-eslint/parser": "^8.1.0",
+		"@typescript-eslint/eslint-plugin": "^8.2.0",
+		"@typescript-eslint/parser": "^8.2.0",
 		"c8": "^10.1.2",
 		"chai": "^5.1.1",
 		"chai-as-promised": "^8.0.0",

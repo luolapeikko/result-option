@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/return-await */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {type IResult, type IResultOrOkType} from '../interfaces/IResultImplementation.js';
 import {Err} from './Err.js';
 import {Ok} from './Ok.js';
 
+/**
+ * Promise.allSettled wrapper for Result
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
+ */
 async function promiseSettledAsResult<OkType = unknown, ErrType = unknown>(
 	callPromise: Promise<IResultOrOkType<OkType, ErrType>>,
 ): Promise<IResult<OkType, ErrType>> {
