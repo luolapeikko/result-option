@@ -1,3 +1,4 @@
+export * from './interfaces/index.js';
 export * from './ResultBuilder.js';
 export * from './OptionBuilder.js';
 export * from './Ok.js';

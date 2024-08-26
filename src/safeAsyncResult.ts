@@ -1,7 +1,23 @@
+/* eslint-disable @typescript-eslint/return-await */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {type Result, type ResultOrOkType} from './Result.js';
 import {Err} from './Err.js';
 import {Ok} from './Ok.js';
+
+/**
+ * Promise.allSettled wrapper for Result
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
+ */
+async function promiseSettledAsResult<OkType = unknown, ErrType = unknown>(
+	callPromise: Promise<ResultOrOkType<OkType, ErrType>>,
+): Promise<Result<OkType, ErrType>> {
+	const result = (await Promise.allSettled([callPromise]))[0];
+	if (result.status === 'fulfilled') {
+		return Ok<OkType, ErrType>(result.value);
+	} else {
+		return Err<OkType, ErrType>(result.reason as ErrType);
+	}
+}
 
 /**
  * build safe wrapper for async callback function
@@ -32,7 +48,8 @@ export function safeAsyncResultBuilder<TArgs extends any[], OkType = unknown, Er
 ) {
 	return async (...args: TArgs): Promise<Result<OkType, ErrType>> => {
 		try {
-			return Ok<OkType, ErrType>(await func(...args));
+			return promiseSettledAsResult<OkType, ErrType>(func(...args));
+			/* c8 ignore next 3 */
 		} catch (err) {
 			return Err<OkType, ErrType>(err as ErrType);
 		}
@@ -52,7 +69,8 @@ export async function safeAsyncResult<OkType = unknown, ErrType = unknown>(
 	func: Promise<ResultOrOkType<OkType, ErrType>> | (() => Promise<ResultOrOkType<OkType, ErrType>>),
 ): Promise<Result<OkType, ErrType>> {
 	try {
-		return Ok<OkType, ErrType>(await (typeof func === 'function' ? func() : func));
+		return promiseSettledAsResult<OkType, ErrType>(typeof func === 'function' ? func() : func);
+		/* c8 ignore next 3 */
 	} catch (err) {
 		return Err<OkType, ErrType>(err as ErrType);
 	}
