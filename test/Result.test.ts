@@ -162,6 +162,7 @@ describe('FunctionResult', function () {
 			expect(result.err()).to.be.eql(stE);
 			expect(() => result.unwrap()).to.throw(stE);
 			expect(() => result.unwrap(() => demoError)).to.throw(demoError);
+			expect(() => result.unwrap(demoError)).to.throw(demoError);
 			expect(result.unwrapOr('world')).to.be.equal('world');
 			expect(result.unwrapOrElse(() => 'world')).to.be.equal('world');
 			expect(result.unwrapOrValueOf(String)).to.be.equal('');

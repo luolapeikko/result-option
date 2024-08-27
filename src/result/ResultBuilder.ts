@@ -1,8 +1,6 @@
 import type {IErr, IResultImplementation, Result} from './Result.js';
-import {type ConstructorWithValueOf} from './ValueOf.js';
-import {None} from './None.js';
-import {type Option} from './Option.js';
-import {Some} from './Some.js';
+import {None, type Option, Some} from '../option/index.js';
+import {type ConstructorWithValueOf} from '../interfaces/index.js';
 
 /**
  * ResultBuilder class for Result implementation
@@ -44,13 +42,17 @@ export class ResultBuilder<OkType, ErrType> implements IResultImplementation<OkT
 		return !this.isNotError;
 	}
 
-	public unwrap(err?: (err: ErrType) => Error): OkType {
+	public unwrap(err?: Error | ((err: ErrType) => Error)): OkType {
 		if (this.isNotError) {
 			return this.value as OkType;
 		}
 		if (this.error !== undefined) {
 			if (err !== undefined) {
-				throw err(this.error);
+				if (typeof err === 'function') {
+					throw err(this.error);
+				} else {
+					throw err;
+				}
 			}
 			throw this.error as Error;
 		}

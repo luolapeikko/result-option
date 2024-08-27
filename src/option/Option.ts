@@ -1,9 +1,5 @@
-import {type IAnd, type IAndThen} from './interfaces/IAnd.js';
-import {type IOr, type IOrElse} from './interfaces/IOr.js';
-import {type IClone} from './interfaces/IClone.js';
-import {type IEquals} from './interfaces/IEquals.js';
-import {type IUnWrap} from './interfaces/IUnWrap.js';
-import {type Result} from './Result.js';
+import {type IAnd, type IAndThen, type IClone, type IEquals, type IOr, type IOrElse, type IUnWrap} from '../interfaces/index.js';
+import {type Result} from '../result/index.js';
 
 export interface OptionImplementation<SomeType>
 	extends IUnWrap<SomeType, Error>,

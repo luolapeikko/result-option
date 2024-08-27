@@ -1,9 +1,9 @@
-import {type IAnd, type IAndThen} from './interfaces/IAnd.js';
-import {type IOr, type IOrElse} from './interfaces/IOr.js';
-import {type IClone} from './interfaces/IClone.js';
-import {type IEquals} from './interfaces/IEquals.js';
-import {type IUnWrap} from './interfaces/IUnWrap.js';
-import {type Option} from './Option.js';
+import {type IAnd, type IAndThen} from '../interfaces/IAnd.js';
+import {type IOr, type IOrElse} from '../interfaces/IOr.js';
+import {type IClone} from '../interfaces/IClone.js';
+import {type IEquals} from '../interfaces/IEquals.js';
+import {type IUnWrap} from '../interfaces/IUnWrap.js';
+import {type Option} from '../option/Option.js';
 
 export interface IResultImplementation<OkType, ErrType>
 	extends IUnWrap<OkType, ErrType>,
