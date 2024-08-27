@@ -1,12 +1,13 @@
-import {type ConstructorWithValueOf, type IErr, type IResult, type ResultMatchSolver} from '../interfaces/index.js';
+import {type ConstructorWithValueOf, type IErr, type IJsonErr, type IResult, type ResultMatchSolver} from '../interfaces/index.js';
 import {type INone, None} from '../option/index.js';
+import {isJsonErr} from './JsonResult.js';
 
 export class ErrInstance<OkType, ErrType> implements IErr<OkType, ErrType> {
 	private readonly error: ErrType;
 	public readonly isOk = false;
 	public readonly isErr = true;
-	public constructor(error: ErrType) {
-		this.error = error;
+	public constructor(error: ErrType | IJsonErr<ErrType>) {
+		this.error = isJsonErr(error) ? error.value : error;
 	}
 
 	public ok(): undefined {
@@ -73,6 +74,13 @@ export class ErrInstance<OkType, ErrType> implements IErr<OkType, ErrType> {
 
 	public toString(): `Err(${string})` {
 		return `Err(${this.getErrorInstanceName()}${this.getErrorInstanceMessage()})`;
+	}
+
+	public toJSON(): IJsonErr<ErrType> {
+		return {
+			$class: 'Result::Err',
+			value: this.error,
+		};
 	}
 
 	private getErrorInstanceName(): string {

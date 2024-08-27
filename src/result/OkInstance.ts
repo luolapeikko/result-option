@@ -1,12 +1,13 @@
-import {type ConstructorWithValueOf, type IOk, type IResult, type ResultMatchSolver} from '../interfaces/index.js';
+import {type ConstructorWithValueOf, type IJsonOk, type IOk, type IResult, type ResultMatchSolver} from '../interfaces/index.js';
 import {type ISome, Some} from '../option/index.js';
+import {isJsonOk} from './JsonResult.js';
 
 export class OkInstance<OkType, ErrType> implements IOk<OkType, ErrType> {
 	private readonly value: OkType;
 	readonly isOk = true;
 	readonly isErr = false;
-	public constructor(value: OkType) {
-		this.value = value;
+	public constructor(value: OkType | IJsonOk<OkType>) {
+		this.value = isJsonOk<OkType, ErrType>(value) ? value.value : value;
 	}
 
 	public ok(): OkType {
@@ -67,5 +68,12 @@ export class OkInstance<OkType, ErrType> implements IOk<OkType, ErrType> {
 
 	public toString(): `Ok(${string})` {
 		return `Ok(${String(this.value)})`;
+	}
+
+	public toJSON(): IJsonOk<OkType> {
+		return {
+			$class: 'Result::Ok',
+			value: this.value,
+		};
 	}
 }

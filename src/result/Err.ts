@@ -1,5 +1,5 @@
+import {type IErr, type IJsonErr, type IResult} from '../interfaces/index.js';
 import {ErrInstance} from './ErrInstance.js';
-import {type IResult} from '../interfaces/index.js';
 import {isResult} from './ResultInstance.js';
 
 /**
@@ -12,7 +12,9 @@ import {isResult} from './ResultInstance.js';
  * Err(2); // Result<unknown, number>
  * Err(new Error('Fatal')); // Result<unknown, Error>
  */
-export function Err<OkType = unknown, ErrType = unknown>(error: ErrType | IResult<OkType, ErrType>): IResult<OkType, ErrType> {
+export function Err<OkType = unknown, ErrType = unknown>(error: ErrType | IErr<OkType, ErrType> | IJsonErr<ErrType>): IErr<OkType, ErrType>;
+export function Err<OkType = unknown, ErrType = unknown>(error: ErrType | IResult<OkType, ErrType> | IJsonErr<ErrType>): IResult<OkType, ErrType>;
+export function Err<OkType = unknown, ErrType = unknown>(error: ErrType | IResult<OkType, ErrType> | IJsonErr<ErrType>): IResult<OkType, ErrType> {
 	if (isResult(error)) {
 		return error;
 	}

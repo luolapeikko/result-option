@@ -5,7 +5,19 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
-import {Err, ErrInstance, type IResult, None, Ok, safeAsyncResult, safeAsyncResultBuilder, safeResult, safeResultBuilder, Some} from '../src/index.js';
+import {
+	Err,
+	ErrInstance,
+	fromJsonResult,
+	type IResult,
+	None,
+	Ok,
+	safeAsyncResult,
+	safeAsyncResultBuilder,
+	safeResult,
+	safeResultBuilder,
+	Some,
+} from '../src/index.js';
 
 const expect = chai.expect;
 
@@ -29,7 +41,7 @@ describe('FunctionResult', function () {
 	describe('Ok', function () {
 		it('should resolve a value result from Ok Result', function () {
 			const value = 'hello';
-			const result: IResult<string, Error> = Ok<string, Error>(value);
+			const result = Ok<string, Error>(value) as IResult<string, Error>;
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -339,6 +351,26 @@ describe('FunctionResult', function () {
 		it('should convert to Option', function () {
 			expect(Ok<string, string>('ok').toOption().eq(Some('ok'))).to.be.true;
 			expect(Err<string, string>('err').toOption().eq(None())).to.be.true;
+		});
+	});
+	describe('jsonErr', function () {
+		it('should build error from JSON', function () {
+			const json = {$class: 'Result::Err', value: new Error('hello')} as const;
+			const result = Err<string, Error>(json);
+			expect(result.isErr).to.be.true;
+			expect(result.err().message).to.be.equal('hello');
+			expect(result.toJSON()).to.be.eql(json);
+			expect(fromJsonResult(json).toJSON()).to.be.eql(result.toJSON());
+		});
+	});
+	describe('jsonOk', function () {
+		it('should build Ok from JSON', function () {
+			const json = {$class: 'Result::Ok', value: 'hello'} as const;
+			const result = Ok<string, Error>(json);
+			expect(result.isOk).to.be.true;
+			expect(result.ok()).to.be.equal('hello');
+			expect(result.toJSON()).to.be.eql(json);
+			expect(fromJsonResult(json).toJSON()).to.be.eql(result.toJSON());
 		});
 	});
 	describe('toString', function () {

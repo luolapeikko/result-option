@@ -1,5 +1,6 @@
 export * from './Err.js';
 export * from './ErrInstance.js';
+export * from './JsonResult.js';
 export * from './Ok.js';
 export * from './OkInstance.js';
 export * from './ResultInstance.js';

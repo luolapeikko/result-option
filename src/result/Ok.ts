@@ -1,4 +1,4 @@
-import {type IResult} from '../interfaces/index.js';
+import {type IJsonOk, type IOk, type IResult} from '../interfaces/index.js';
 import {isResult} from './ResultInstance.js';
 import {OkInstance} from './OkInstance.js';
 
@@ -11,7 +11,9 @@ import {OkInstance} from './OkInstance.js';
  * @example
  * Ok<number>(2) // Result<number, unknown>
  */
-export function Ok<OkType = unknown, ErrType = unknown>(value: OkType | IResult<OkType, ErrType>): IResult<OkType, ErrType> {
+export function Ok<OkType = unknown, ErrType = unknown>(value: OkType | IOk<OkType, ErrType> | IJsonOk<OkType>): IOk<OkType, ErrType>;
+export function Ok<OkType = unknown, ErrType = unknown>(value: OkType | IResult<OkType, ErrType> | IJsonOk<OkType>): IResult<OkType, ErrType>;
+export function Ok<OkType = unknown, ErrType = unknown>(value: OkType | IResult<OkType, ErrType> | IJsonOk<OkType>): IResult<OkType, ErrType> {
 	if (isResult(value)) {
 		return value;
 	}

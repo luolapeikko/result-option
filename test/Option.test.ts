@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
@@ -5,7 +7,7 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
-import {Err, type IOption, nanOption, None, nullishOptionWrap, Ok, Some, undefinedOptionWrap} from '../src/index.js';
+import {Err, type IOption, nanOption, None, nullishOptionWrap, Ok, Option, Some, undefinedOptionWrap} from '../src/index.js';
 import {exactType} from './helper.js';
 
 const expect = chai.expect;
@@ -23,6 +25,7 @@ describe('Option', function () {
 			expect(Some(value).unwrapOrElse(() => 'demo')).to.be.equal(value);
 			expect(Some(value).unwrapOrValueOf(String)).to.be.equal(value);
 			expect(Some(value).expect('some error')).to.be.equal(value);
+			expect(Some<string>(Some<string>(value)).isSome).to.be.true;
 			const instace = Some(value);
 			expect(instace.take().isSome).to.be.true;
 			expect(instace.isNone).to.be.true;
@@ -76,6 +79,7 @@ describe('Option', function () {
 			const instace = None<string>();
 			expect(instace.take().isNone).to.be.true;
 			expect(instace.isNone).to.be.true;
+			expect(None<string>(None<string>()).isNone).to.be.true;
 			expect(
 				None<number>().match(
 					new Map([
@@ -251,6 +255,24 @@ describe('Option', function () {
 		it('should convert to Result', function () {
 			expect(None<string>().toString()).to.be.eq('None()');
 			expect(Some(2).toString()).to.be.eq('Some(2)');
+		});
+	});
+	describe('toJSON', function () {
+		it('should convert to Result', function () {
+			const noneValue = None<string>();
+			const someValue = Some(2);
+			const noneJson = noneValue.toJSON();
+			const someJson = someValue.toJSON();
+			expect(noneJson).to.be.eql({$class: 'Option::None'});
+			expect(someJson).to.be.eql({$class: 'Option::Some', value: 2});
+			expect(Option(noneValue).isNone).to.be.true;
+			expect(Option(someValue).isSome).to.be.true;
+			expect(Option(noneJson).isNone).to.be.true;
+			console.log('asd');
+			expect(Option(someJson).isSome).to.be.true;
+			expect(() => Option(null as any).isSome).to.throw('Invalid Option instance');
+			expect(None(noneJson).isNone).to.be.true;
+			expect(Some(someJson).isSome).to.be.true;
 		});
 	});
 });

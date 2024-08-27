@@ -1,4 +1,16 @@
-import {type IAnd, type IAndThen, type IClone, type IEquals, type IOr, type IOrElse, type IResultMatch, type IUnWrap} from './index.js';
+import {
+	type IAnd,
+	type IAndThen,
+	type IClone,
+	type IEquals,
+	type IJsonErr,
+	type IJsonOk,
+	type IJsonResult,
+	type IOr,
+	type IOrElse,
+	type IResultMatch,
+	type IUnWrap,
+} from './index.js';
 import {type INone, type IOption, type ISome} from '../option/index.js';
 
 export interface IResultImplementation<OkType, ErrType>
@@ -52,6 +64,12 @@ export interface IResultImplementation<OkType, ErrType>
 	 * Convert result to string
 	 */
 	toString(): `Ok(${string})` | `Err(${string})`;
+
+	/**
+	 * Convert result to JSON {$class: 'Result::Ok', value: OkType} or {$class: 'Result::Err', value: ErrType}
+	 * @returns {IJsonResult<OkType, ErrType>} JSON representation of the result
+	 */
+	toJSON(): IJsonResult<OkType, ErrType>;
 }
 
 export interface IOk<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err' | 'toOption' | 'toJSON'> {
@@ -88,6 +106,12 @@ export interface IOk<OkType, ErrType> extends Omit<IResultImplementation<OkType,
 	 * Convert result to option and discard the error type
 	 */
 	toOption(): ISome<OkType>;
+
+	/**
+	 * Convert result to JSON {$class: 'Result::Ok', value: OkType} or {$class: 'Result::Err', value: ErrType}
+	 * @returns {IJsonResult<OkType, ErrType>} JSON representation of the result
+	 */
+	toJSON(): IJsonOk<OkType>;
 }
 
 export interface IErr<OkType, ErrType> extends Omit<IResultImplementation<OkType, ErrType>, 'isOk' | 'isErr' | 'ok' | 'err' | 'toJSON'> {
@@ -124,6 +148,12 @@ export interface IErr<OkType, ErrType> extends Omit<IResultImplementation<OkType
 	 * Convert result to option and discard the error type
 	 */
 	toOption(): INone<OkType>;
+
+	/**
+	 * Convert result to JSON {$class: 'Result::Ok', value: OkType} or {$class: 'Result::Err', value: ErrType}
+	 * @returns {IJsonResult<OkType, ErrType>} JSON representation of the result
+	 */
+	toJSON(): IJsonErr<ErrType>;
 }
 
 /**

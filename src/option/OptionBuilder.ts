@@ -1,16 +1,17 @@
-import {type ConstructorWithValueOf, type IResult} from '../interfaces/index.js';
+import {type ConstructorWithValueOf, type IJsonNone, type IJsonOption, type IJsonSome, type IResult, type OptionMatchSolver} from '../interfaces/index.js';
 import {Err, Ok} from '../result/index.js';
+import {getJsonOptionValue, isJsonOption} from './JsonOption.js';
 import {type INone, type IOption, type ISome, type OptionImplementation} from './Option.js';
 
 export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 	private _isSome: boolean;
 	private value: SomeType | undefined;
 
-	constructor(isSome: false);
-	constructor(isSome: true, value: SomeType);
-	constructor(isSome: boolean, value?: SomeType) {
+	constructor(isSome: false, value?: IJsonNone);
+	constructor(isSome: true, value: SomeType | IJsonSome<SomeType>);
+	constructor(isSome: boolean, value?: SomeType | IJsonNone | IJsonSome<SomeType>) {
 		this._isSome = isSome;
-		this.value = value;
+		this.value = isJsonOption(value) ? getJsonOptionValue(value) : value;
 	}
 
 	public get isNone(): boolean {
@@ -132,9 +133,9 @@ export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 		return this.value as SomeType;
 	}
 
-	public match<Output>(solver: Map<SomeType, () => Output>, defaultValue?: Output | undefined): Output | undefined;
-	public match<Output>(solver: Map<SomeType, () => Output>, defaultValue: Output): Output;
-	public match<Output>(solver: Map<SomeType, () => Output>, defaultValue?: Output | undefined): Output | undefined {
+	public match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue?: Output | undefined): Output | undefined;
+	public match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue: Output): Output;
+	public match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue?: Output | undefined): Output | undefined {
 		for (const [key, value] of solver.entries()) {
 			if (this._isSome && this.value === key) {
 				return value();
@@ -155,6 +156,19 @@ export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 			return `${this.getName()}(${String(this.value)})` as `Some(${string})`;
 		}
 		return `${this.getName()}()`;
+	}
+
+	public toJSON(): IJsonOption<SomeType> {
+		if (this.thisIsSome()) {
+			return {
+				$class: 'Option::Some',
+				value: this.value as SomeType,
+			};
+		} else {
+			return {
+				$class: 'Option::None',
+			};
+		}
 	}
 
 	/**
@@ -186,4 +200,8 @@ export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 	private getName() {
 		return this.thisIsSome() ? 'Some' : 'None';
 	}
+}
+
+export function isOption<SomeType>(value: unknown): value is IOption<SomeType> {
+	return value instanceof OptionBuilder;
 }

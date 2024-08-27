@@ -3,6 +3,8 @@ export * from './IClone.js';
 export * from './IEquals.js';
 export * from './IExpect.js';
 export * from './IMatch.js';
+export * from './IJsonOption.js';
+export * from './IJsonResult.js';
 export * from './IOr.js';
 export * from './IResultImplementation.js';
 export * from './IToResult.js';

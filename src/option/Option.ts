@@ -4,6 +4,9 @@ import {
 	type IClone,
 	type IEquals,
 	type IExpect,
+	type IJsonNone,
+	type IJsonOption,
+	type IJsonSome,
 	type IOptionMatch,
 	type IOr,
 	type IOrElse,
@@ -82,9 +85,15 @@ export interface OptionImplementation<SomeType>
 	 * Convert Option to string
 	 */
 	toString(): `Some(${string})` | `None()`;
+
+	/**
+	 * Convert Option to JSON
+	 * @returns {IJsonOption<SomeType>} JSON representation
+	 */
+	toJSON(): IJsonOption<SomeType>;
 }
 
-export interface ISome<SomeType> extends Omit<OptionImplementation<SomeType>, 'isNone' | 'isSome'> {
+export interface ISome<SomeType> extends Omit<OptionImplementation<SomeType>, 'isNone' | 'isSome' | 'toJSON'> {
 	/**
 	 * Returns true if the option is a None value.
 	 * @example
@@ -97,9 +106,15 @@ export interface ISome<SomeType> extends Omit<OptionImplementation<SomeType>, 'i
 	 * Some(2).isSome // true
 	 */
 	isSome: true;
+
+	/**
+	 * Convert Option to JSON
+	 * @returns {IJsonOption<SomeType>} JSON representation
+	 */
+	toJSON(): IJsonSome<SomeType>;
 }
 
-export interface INone<SomeType> extends Omit<OptionImplementation<SomeType>, 'isNone' | 'isSome'> {
+export interface INone<SomeType> extends Omit<OptionImplementation<SomeType>, 'isNone' | 'isSome' | 'toJSON'> {
 	/**
 	 * Returns true if the option is a None value.
 	 * @example
@@ -112,6 +127,12 @@ export interface INone<SomeType> extends Omit<OptionImplementation<SomeType>, 'i
 	 * None<number>().isSome // false
 	 */
 	isSome: false;
+
+	/**
+	 * Convert Option to JSON
+	 * @returns {IJsonOption<SomeType>} JSON representation
+	 */
+	toJSON(): IJsonNone;
 }
 
 /**

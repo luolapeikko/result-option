@@ -1,4 +1,7 @@
-import {type IOption} from './Option.js';
+import {fromJsonOption, isJsonOption} from './JsonOption.js';
+import {type INone, type IOption, type ISome} from './Option.js';
+import {type IJsonOption} from '../interfaces/IJsonOption.js';
+import {isOption} from './OptionBuilder.js';
 import {None} from './None.js';
 import {Some} from './Some.js';
 
@@ -48,4 +51,18 @@ export function nanOption<ValueType extends number>(value: ValueType): IOption<V
 		return None();
 	}
 	return Some(value);
+}
+/**
+ * get Option from any instance types (Some, None, JsonOption)
+ * @param instance instance to convert
+ * @returns {IOption<SomeType>} Option instance
+ */
+export function Option<SomeType>(instance: ISome<SomeType> | INone<SomeType> | IJsonOption<SomeType>): ISome<SomeType> | INone<SomeType> {
+	if (isOption(instance)) {
+		return instance;
+	}
+	if (isJsonOption(instance)) {
+		return fromJsonOption(instance);
+	}
+	throw new Error('Invalid Option instance');
 }
