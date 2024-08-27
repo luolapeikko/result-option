@@ -1,7 +1,6 @@
+import {type ConstructorWithValueOf, type IResult} from '../interfaces/index.js';
 import {Err, Ok} from '../result/index.js';
 import {type INone, type IOption, type ISome, type OptionImplementation} from './Option.js';
-import {type ConstructorWithValueOf} from '../interfaces/ValueOf.js';
-import {type IResult} from '../result/Result.js';
 
 export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 	private _isSome: boolean;

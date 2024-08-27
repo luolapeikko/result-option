@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
-import {Err, type IResult, None, Ok, safeAsyncResult, safeAsyncResultBuilder, safeResult, safeResultBuilder, Some} from '../src/index.js';
+import {Err, ErrInstance, type IResult, None, Ok, safeAsyncResult, safeAsyncResultBuilder, safeResult, safeResultBuilder, Some} from '../src/index.js';
 
 const expect = chai.expect;
 
@@ -143,6 +143,18 @@ describe('FunctionResult', function () {
 		it('should resolve with dual safeAsyncResult chain', async function () {
 			const value = 'hello';
 			const callback = safeAsyncResultBuilder((v: string) => testAsyncFunction(v));
+			const result: IResult<string> = await callback(value);
+			expect(result.isOk).to.be.true;
+			expect(result.isErr).to.be.false;
+			expect(result.ok()).to.be.equal(value);
+			expect(result.err()).to.be.equal(undefined);
+			expect(result.unwrap()).to.be.equal(value);
+			expect(result.unwrapOr('world')).to.be.equal(value);
+		});
+
+		it('should resolve with dual safeAsyncResult chain', async function () {
+			const value = 'hello';
+			const callback = safeAsyncResultBuilder((v: string) => testFunction(v) as unknown as Promise<IResult<string>>);
 			const result: IResult<string> = await callback(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
@@ -324,7 +336,7 @@ describe('FunctionResult', function () {
 		});
 	});
 	describe('toOption', function () {
-		it('should convert to Optionn', function () {
+		it('should convert to Option', function () {
 			expect(Ok<string, string>('ok').toOption().eq(Some('ok'))).to.be.true;
 			expect(Err<string, string>('err').toOption().eq(None())).to.be.true;
 		});
@@ -338,6 +350,10 @@ describe('FunctionResult', function () {
 			expect(Err<string, Error>(null as unknown as Error).toString()).to.be.equal(`Err(UnknownErrorInstance: 'null')`);
 			expect(Err<string, Error>(undefined as unknown as Error).toString()).to.be.equal(`Err(UnknownErrorInstance: 'undefined')`);
 			expect(Err<string, Error>({} as unknown as Error).toString()).to.be.equal(`Err(Object: '{}')`);
+		});
+		it('should convert null error instance to string', function () {
+			const brokenErr = new ErrInstance(null);
+			expect(brokenErr.toString()).to.be.equal(`Err(UnknownErrorInstance: 'null')`);
 		});
 	});
 });

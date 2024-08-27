@@ -1,4 +1,4 @@
-import {type IResult} from '../result/index.js';
+import {type IResult} from './IResultImplementation.js';
 
 export interface IToResult<ValueType> {
 	/**

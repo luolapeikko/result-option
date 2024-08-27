@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/return-await */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {type IResult, type IResultOrOkType} from './Result.js';
+import {type IResult, type IResultOrOkType} from '../interfaces/IResultImplementation.js';
 import {Err} from './Err.js';
 import {Ok} from './Ok.js';
 

@@ -1,5 +1,6 @@
-import {isResult, ResultBuilder} from './ResultBuilder.js';
-import {type IResult} from './Result.js';
+import {ErrInstance} from './ErrInstance.js';
+import {type IResult} from '../interfaces/index.js';
+import {isResult} from './ResultInstance.js';
 
 /**
  * Build Err result or return if already a Result
@@ -15,5 +16,5 @@ export function Err<OkType = unknown, ErrType = unknown>(error: ErrType | IResul
 	if (isResult(error)) {
 		return error;
 	}
-	return new ResultBuilder<OkType, ErrType>(false, error) as IResult<OkType, ErrType>;
+	return new ErrInstance<OkType, ErrType>(error);
 }

@@ -1,5 +1,6 @@
-import {isResult, ResultBuilder} from './ResultBuilder.js';
-import {type IResult} from './Result.js';
+import {type IResult} from '../interfaces/index.js';
+import {isResult} from './ResultInstance.js';
+import {OkInstance} from './OkInstance.js';
 
 /**
  * Build Ok result or return if already a Result
@@ -14,5 +15,5 @@ export function Ok<OkType = unknown, ErrType = unknown>(value: OkType | IResult<
 	if (isResult(value)) {
 		return value;
 	}
-	return new ResultBuilder<OkType, ErrType>(true, value) as IResult<OkType, ErrType>;
+	return new OkInstance<OkType, ErrType>(value);
 }
