@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/return-await */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {type Result, type ResultOrOkType} from './Result.js';
+import {type IResult, type IResultOrOkType} from './Result.js';
 import {Err} from './Err.js';
 import {Ok} from './Ok.js';
 
@@ -9,8 +9,8 @@ import {Ok} from './Ok.js';
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
  */
 async function promiseSettledAsResult<OkType = unknown, ErrType = unknown>(
-	callPromise: Promise<ResultOrOkType<OkType, ErrType>>,
-): Promise<Result<OkType, ErrType>> {
+	callPromise: Promise<IResultOrOkType<OkType, ErrType>>,
+): Promise<IResult<OkType, ErrType>> {
 	const result = (await Promise.allSettled([callPromise]))[0];
 	if (result.status === 'fulfilled') {
 		return Ok<OkType, ErrType>(result.value);
@@ -44,9 +44,9 @@ async function promiseSettledAsResult<OkType = unknown, ErrType = unknown>(
  * }
  */
 export function safeAsyncResultBuilder<TArgs extends any[], OkType = unknown, ErrType = unknown>(
-	func: (...args: TArgs) => Promise<ResultOrOkType<OkType, ErrType>>,
+	func: (...args: TArgs) => Promise<IResultOrOkType<OkType, ErrType>>,
 ) {
-	return async (...args: TArgs): Promise<Result<OkType, ErrType>> => {
+	return async (...args: TArgs): Promise<IResult<OkType, ErrType>> => {
 		try {
 			return promiseSettledAsResult<OkType, ErrType>(func(...args));
 			/* c8 ignore next 3 */
@@ -66,8 +66,8 @@ export function safeAsyncResultBuilder<TArgs extends any[], OkType = unknown, Er
  * const data = await safeAsyncResult<unknown, SyntaxError>(res.json());
  */
 export async function safeAsyncResult<OkType = unknown, ErrType = unknown>(
-	func: Promise<ResultOrOkType<OkType, ErrType>> | (() => Promise<ResultOrOkType<OkType, ErrType>>),
-): Promise<Result<OkType, ErrType>> {
+	func: Promise<IResultOrOkType<OkType, ErrType>> | (() => Promise<IResultOrOkType<OkType, ErrType>>),
+): Promise<IResult<OkType, ErrType>> {
 	try {
 		return promiseSettledAsResult<OkType, ErrType>(typeof func === 'function' ? func() : func);
 		/* c8 ignore next 3 */

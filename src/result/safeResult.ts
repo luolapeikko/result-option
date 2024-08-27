@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {type Result, type ResultOrOkType} from './Result.js';
+import {type IResult, type IResultOrOkType} from './Result.js';
 import {Err} from './Err.js';
 import {Ok} from './Ok.js';
 
@@ -14,8 +14,8 @@ import {Ok} from './Ok.js';
  * const existsSync = safeResultBuilder(fs.existsSync);
  * const result: Result<boolean> = existsSync('test.txt');
  */
-export function safeResultBuilder<TArgs extends any[], OkType = unknown, ErrType = unknown>(func: (...args: TArgs) => ResultOrOkType<OkType, ErrType>) {
-	return (...args: TArgs): Result<OkType, ErrType> => {
+export function safeResultBuilder<TArgs extends any[], OkType = unknown, ErrType = unknown>(func: (...args: TArgs) => IResultOrOkType<OkType, ErrType>) {
+	return (...args: TArgs): IResult<OkType, ErrType> => {
 		try {
 			return Ok<OkType, ErrType>(func(...args));
 		} catch (err) {
@@ -36,7 +36,7 @@ export function safeResultBuilder<TArgs extends any[], OkType = unknown, ErrType
  * }
  * const value: Result<number> = safeResult(test);
  */
-export function safeResult<OkType = unknown, ErrType = unknown>(func: () => ResultOrOkType<OkType, ErrType>): Result<OkType, ErrType> {
+export function safeResult<OkType = unknown, ErrType = unknown>(func: () => IResultOrOkType<OkType, ErrType>): IResult<OkType, ErrType> {
 	try {
 		return Ok<OkType, ErrType>(func());
 	} catch (err) {

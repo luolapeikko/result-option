@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
-import {Err, None, Ok, type Result, safeAsyncResult, safeAsyncResultBuilder, safeResult, safeResultBuilder, Some} from '../src/index.js';
+import {Err, type IResult, None, Ok, safeAsyncResult, safeAsyncResultBuilder, safeResult, safeResultBuilder, Some} from '../src/index.js';
 
 const expect = chai.expect;
 
@@ -29,7 +29,7 @@ describe('FunctionResult', function () {
 	describe('Ok', function () {
 		it('should resolve a value result from Ok Result', function () {
 			const value = 'hello';
-			const result: Result<string, Error> = Ok<string, Error>(value);
+			const result: IResult<string, Error> = Ok<string, Error>(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -48,7 +48,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve a value result from safeResult', function () {
 			const value = 'hello';
-			const result: Result<string, Error> = safeResult<string, Error>(() => value);
+			const result: IResult<string, Error> = safeResult<string, Error>(() => value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -65,7 +65,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve a value result from safeResult with Ok', function () {
 			const value = 'hello';
-			const result: Result<string> = safeResult<string>(() => Ok(value));
+			const result: IResult<string> = safeResult<string>(() => Ok(value));
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -78,7 +78,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with safeResultBuilder function', function () {
 			const value = 'hello';
-			const result: Result<string> = testFunction(value);
+			const result: IResult<string> = testFunction(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -88,7 +88,7 @@ describe('FunctionResult', function () {
 		});
 		it('should resolve with safeAsyncResult Promise', async function () {
 			const value = 'hello';
-			const result: Result<string> = await safeAsyncResult(Promise.resolve(value));
+			const result: IResult<string> = await safeAsyncResult(Promise.resolve(value));
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -98,7 +98,7 @@ describe('FunctionResult', function () {
 		});
 		it('should resolve with safeAsyncResult callback Promise', async function () {
 			const value = 'hello';
-			const result: Result<string> = await safeAsyncResult(() => Promise.resolve(value));
+			const result: IResult<string> = await safeAsyncResult(() => Promise.resolve(value));
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -109,7 +109,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with safeAsyncResult callback Promise with Ok', async function () {
 			const value = 'hello';
-			const result: Result<string> = await safeAsyncResult(() => Promise.resolve(Ok(value)));
+			const result: IResult<string> = await safeAsyncResult(() => Promise.resolve(Ok(value)));
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -119,7 +119,7 @@ describe('FunctionResult', function () {
 		});
 		it('should resolve with safeAsyncResultBuilder function', async function () {
 			const value = 'hello';
-			const result: Result<string> = await testAsyncFunction(value);
+			const result: IResult<string> = await testAsyncFunction(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -131,7 +131,7 @@ describe('FunctionResult', function () {
 		it('should resolve with dual safeResult chain', function () {
 			const value = 'hello';
 			const callback = safeResultBuilder((v: string) => testFunction(v));
-			const result: Result<string> = callback(value);
+			const result: IResult<string> = callback(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);
@@ -143,7 +143,7 @@ describe('FunctionResult', function () {
 		it('should resolve with dual safeAsyncResult chain', async function () {
 			const value = 'hello';
 			const callback = safeAsyncResultBuilder((v: string) => testAsyncFunction(v));
-			const result: Result<string> = await callback(value);
+			const result: IResult<string> = await callback(value);
 			expect(result.isOk).to.be.true;
 			expect(result.isErr).to.be.false;
 			expect(result.ok()).to.be.equal(value);

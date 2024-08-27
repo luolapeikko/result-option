@@ -1,14 +1,27 @@
-import {type IAnd, type IAndThen, type IClone, type IEquals, type IOr, type IOrElse, type IUnWrap} from '../interfaces/index.js';
-import {type Result} from '../result/index.js';
+import {
+	type IAnd,
+	type IAndThen,
+	type IClone,
+	type IEquals,
+	type IExpect,
+	type IOptionMatch,
+	type IOr,
+	type IOrElse,
+	type IToResult,
+	type IUnWrap,
+} from '../interfaces/index.js';
 
 export interface OptionImplementation<SomeType>
 	extends IUnWrap<SomeType, Error>,
-		IEquals<Option>,
-		IClone<Option<SomeType>>,
-		IOr<Option, Option<SomeType>>,
-		IOrElse<Option, Option<SomeType>>,
-		IAnd<Option, Option<SomeType>>,
-		IAndThen<SomeType, Option, INone<SomeType>> {
+		IEquals<IOption>,
+		IClone<IOption<SomeType>>,
+		IOr<IOption, IOption<SomeType>>,
+		IOrElse<IOption, IOption<SomeType>>,
+		IAnd<IOption, IOption<SomeType>>,
+		IAndThen<SomeType, IOption, INone<SomeType>>,
+		IExpect<SomeType>,
+		IOptionMatch<SomeType>,
+		IToResult<SomeType> {
 	/**
 	 * Returns true if the option is a Some value.
 	 * @example
@@ -23,50 +36,31 @@ export interface OptionImplementation<SomeType>
 	 * None<number>().isNone // true
 	 */
 	isNone: boolean;
-	/**
-	 * expect unwraps an option and if not a Some value throws an error with the given message.
-	 * @param msgOrError message or error to throw
-	 * @example
-	 * Some(2).expect('the world is ending') // 2
-	 * None<number>().expect('the world is ending') // throws Error('the world is ending')
-	 */
-	expect(msgOrError: string | Error): SomeType;
 
 	/**
 	 * Returns the contained Some value, consuming the self value.
+	 *
+	 * Warning: currently TS can't change type of "this" (with asserts) and return value at the same time.
+	 * https://github.com/microsoft/TypeScript/issues/41339
+	 * @returns {IOption<SomeType>} copy of original Option
 	 * @example
 	 * const x = Some(2);
 	 * const y = x.take();
 	 * console.log(x.isNone); // true
 	 * console.log(y.isSome); // true
 	 */
-	take(): Option<SomeType>;
-
-	/**
-	 * match executes the given function if the option is a Some value, otherwise returns the default value.
-	 * @template Output type of the result
-	 * @param solver map of functions to execute
-	 * @param defaultValue optional default value
-	 * @returns {Output | undefined} the result of the executed function or the default value
-	 * @example
-	 * const output: string = Some(1).match(
-	 *   new Map([
-	 *     [1, () => 'one'],
-	 *     [2, () => 'two'],
-	 *   ]),
-	 *   'other',
-	 * );
-	 */
-	match<Output>(solver: Map<SomeType, () => Output>, defaultValue: Output): Output;
-	match<Output>(solver: Map<SomeType, () => Output>): Output | undefined;
+	take(): IOption<SomeType>;
 
 	/**
 	 * Replace the actual value with the given one and returns the old Option.
+	 *
+	 * Warning: currently TS can't change type of "this" (with asserts) and return value at the same time.
+	 * https://github.com/microsoft/TypeScript/issues/41339
 	 * @param value new value
-	 * @returns {Option<SomeType>} old Option
+	 * @returns {IOption<SomeType>} old Option
 	 * @see https://doc.rust-lang.org/std/option/enum.Option.html#method.replace
 	 */
-	replace(value: SomeType): Option<SomeType>;
+	replace(value: SomeType): IOption<SomeType>;
 
 	/**
 	 * Inserts value into Option.
@@ -85,11 +79,9 @@ export interface OptionImplementation<SomeType>
 	getOrInsert(value: SomeType): SomeType;
 
 	/**
-	 * Converts Option to Result with the given error value if the option is None.
-	 * @param err Error value if the option is None
-	 * @returns {Result<SomeType, ErrType>} Result
+	 * Convert Option to string
 	 */
-	toResult<ErrType>(err: ErrType): Result<SomeType, ErrType>;
+	toString(): `Some(${string})` | `None()`;
 }
 
 export interface ISome<SomeType> extends Omit<OptionImplementation<SomeType>, 'isNone' | 'isSome'> {
@@ -123,7 +115,7 @@ export interface INone<SomeType> extends Omit<OptionImplementation<SomeType>, 'i
 }
 
 /**
- * Option represents an optional value: every Option is either Some and contains a value and type, or None which does not any type.
+ * IOption represents an optional value: every Option is either Some and contains a value and type, or None which does not any type.
  * @template SomeType type of the value
  * @example
  * function divide(numerator: number, denominator: number): Option<number> {
@@ -139,4 +131,4 @@ export interface INone<SomeType> extends Omit<OptionImplementation<SomeType>, 'i
  *   console.log('Cannot divide by 0');
  * }
  */
-export type Option<SomeType = unknown> = ISome<SomeType> | INone<SomeType>;
+export type IOption<SomeType = unknown> = ISome<SomeType> | INone<SomeType>;

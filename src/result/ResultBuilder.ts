@@ -1,6 +1,6 @@
-import type {IErr, IResultImplementation, Result} from './Result.js';
-import {None, type Option, Some} from '../option/index.js';
-import {type ConstructorWithValueOf} from '../interfaces/index.js';
+import {type ConstructorWithValueOf, type ResultMatchSolver} from '../interfaces/index.js';
+import type {IErr, IResult, IResultImplementation} from './Result.js';
+import {type IOption, None, Some} from '../option/index.js';
 
 /**
  * ResultBuilder class for Result implementation
@@ -81,7 +81,7 @@ export class ResultBuilder<OkType, ErrType> implements IResultImplementation<OkT
 		return new BaseConstructor().valueOf();
 	}
 
-	public match<Output>(solver: {Ok: (value: OkType) => Output; Err: (err: ErrType) => Output}): Output {
+	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<OkType, ErrType, OkOutput, ErrOutput>): OkOutput | ErrOutput {
 		if (this.isNotError) {
 			return solver.Ok(this.value as OkType);
 		} else {
@@ -89,49 +89,49 @@ export class ResultBuilder<OkType, ErrType> implements IResultImplementation<OkT
 		}
 	}
 
-	public eq<OtherType extends Result>(other: OtherType): boolean {
+	public eq<OtherType extends IResult>(other: OtherType): boolean {
 		if (this.isNotError) {
 			return other.isOk && this.value === other.ok();
 		}
 		return other.isErr && this.error === other.err();
 	}
 
-	public and<CompareType extends Result>(value: CompareType): Result<OkType, ErrType> | CompareType {
+	public and<CompareType extends IResult>(value: CompareType): IResult<OkType, ErrType> | CompareType {
 		if (!this.isNotError) {
-			return this as Result<OkType, ErrType>;
+			return this as IResult<OkType, ErrType>;
 		}
 		return value;
 	}
 
-	public andThen<OutType extends Result>(value: (val: OkType) => OutType): IErr<OkType, ErrType> | OutType {
+	public andThen<OutType extends IResult>(value: (val: OkType) => OutType): IErr<OkType, ErrType> | OutType {
 		if (!this.isNotError) {
 			return this as IErr<OkType, ErrType>;
 		}
 		return value(this.value as OkType);
 	}
 
-	public or<CompareType extends Result>(value: CompareType): Result<OkType, ErrType> | CompareType {
+	public or<CompareType extends IResult>(value: CompareType): IResult<OkType, ErrType> | CompareType {
 		if (this.isNotError) {
-			return this as Result<OkType, ErrType>;
+			return this as IResult<OkType, ErrType>;
 		}
 		return value;
 	}
 
-	public orElse<ElseResult extends Result>(callbackFunc: (value: ErrType) => ElseResult): Result<OkType, ErrType> | ElseResult {
+	public orElse<ElseResult extends IResult>(callbackFunc: (value: ErrType) => ElseResult): IResult<OkType, ErrType> | ElseResult {
 		if (this.isNotError) {
-			return this as Result<OkType, ErrType>;
+			return this as IResult<OkType, ErrType>;
 		}
 		return callbackFunc(this.error as ErrType);
 	}
 
-	public cloned(): Result<OkType, ErrType> {
+	public cloned(): IResult<OkType, ErrType> {
 		if (this.isNotError) {
-			return new ResultBuilder<OkType, ErrType>(true, this.value as OkType) as Result<OkType, ErrType>;
+			return new ResultBuilder<OkType, ErrType>(true, this.value as OkType) as IResult<OkType, ErrType>;
 		}
-		return new ResultBuilder<OkType, ErrType>(false, this.error as ErrType) as Result<OkType, ErrType>;
+		return new ResultBuilder<OkType, ErrType>(false, this.error as ErrType) as IResult<OkType, ErrType>;
 	}
 
-	public toOption(): Option<OkType> {
+	public toOption(): IOption<OkType> {
 		if (this.isNotError) {
 			return Some(this.value as OkType);
 		}
@@ -167,6 +167,6 @@ export class ResultBuilder<OkType, ErrType> implements IResultImplementation<OkT
  * @param {unknown} value unknown value
  * @returns {boolean} true if value is Result
  */
-export function isResult<OkType = unknown, ErrType = unknown>(value: unknown): value is Result<OkType, ErrType> {
+export function isResult<OkType = unknown, ErrType = unknown>(value: unknown): value is IResult<OkType, ErrType> {
 	return value instanceof ResultBuilder;
 }

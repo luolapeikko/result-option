@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-expressions */
 import 'mocha';
 import * as chai from 'chai';
-import {Err, None, nullishOptionWrap, Ok, type Option, Some, undefinedOptionWrap} from '../src/index.js';
+import {Err, type IOption, nanOption, None, nullishOptionWrap, Ok, Some, undefinedOptionWrap} from '../src/index.js';
 import {exactType} from './helper.js';
 
 const expect = chai.expect;
@@ -45,7 +45,7 @@ describe('Option', function () {
 				),
 			).to.be.equal('other');
 			// Some and None type validation
-			const option = Some(1) as Option<number>;
+			const option = Some(1) as IOption<number>;
 			if (option.isSome) {
 				exactType(option, Some<number>(1));
 			} else {
@@ -60,12 +60,14 @@ describe('Option', function () {
 	});
 	describe('None', function () {
 		it('should verify None option', function () {
+			const demoError = new Error('demo');
 			expect(None<string>().isSome).to.be.false;
 			expect(None<string>().isNone).to.be.true;
 			expect(None<string>().eq(Some('hello'))).to.be.false;
 			expect(None<string>().eq(None<string>())).to.be.true;
-			expect(() => None<string>().unwrap()).to.throw('Option: No value was set');
-			expect(() => None<string>().unwrap((err) => new Error(err.message + '!'))).to.throw('Option: No value was set!');
+			expect(() => None<string>().unwrap()).to.throw('None: No value was set');
+			expect(() => None<string>().unwrap(demoError)).to.throw(demoError);
+			expect(() => None<string>().unwrap((_err) => demoError)).to.throw(demoError);
 			expect(None<string>().unwrapOr('demo')).to.be.equal('demo');
 			expect(None<string>().unwrapOrElse(() => 'demo')).to.be.equal('demo');
 			expect(None<string>().unwrapOrValueOf(String)).to.be.equal(''); // string default value is empty string
@@ -102,7 +104,7 @@ describe('Option', function () {
 		it('should build option with undefinedOptionWrap', function () {
 			const values = ['one', 'two', 'three', undefined] as const;
 			type Values = (typeof values)[number];
-			const check = (value: string): Option<Values> => {
+			const check = (value: string): IOption<Values> => {
 				return undefinedOptionWrap(values.find((v) => v === value));
 			};
 			expect(check('one').isSome).to.be.true;
@@ -115,13 +117,22 @@ describe('Option', function () {
 		it('should build option with nullishOptionWrap', function () {
 			const values = ['one', 'two', 'three', null, undefined] as const;
 			type Values = (typeof values)[number];
-			const check = (value: string): Option<Values> => {
+			const check = (value: string): IOption<Values> => {
 				return nullishOptionWrap(values.find((v) => v === value));
 			};
 			expect(check('one').isSome).to.be.true;
 			expect(check('two').isSome).to.be.true;
 			expect(check('three').isSome).to.be.true;
 			expect(check('four').isSome).to.be.false;
+			expect(nullishOptionWrap<number>(NaN).isSome).to.be.false;
+		});
+	});
+	describe('nanOptionWrap', function () {
+		it('should build option with nanOptionWrap', function () {
+			expect(nanOption(1).isSome).to.be.true;
+			expect(nanOption(2).isSome).to.be.true;
+			expect(nanOption(3).isSome).to.be.true;
+			expect(nanOption(parseInt('hello', 10)).isSome).to.be.false;
 		});
 	});
 	describe('eq', function () {
@@ -234,6 +245,12 @@ describe('Option', function () {
 		it('should convert to Result', function () {
 			expect(None<string>().toResult('error').eq(Err<string, string>('error'))).to.be.true;
 			expect(Some(2).toResult('error').eq(Ok<number, string>(2))).to.be.true;
+		});
+	});
+	describe('toString', function () {
+		it('should convert to Result', function () {
+			expect(None<string>().toString()).to.be.eq('None()');
+			expect(Some(2).toString()).to.be.eq('Some(2)');
 		});
 	});
 });

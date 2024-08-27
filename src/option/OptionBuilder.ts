@@ -1,7 +1,7 @@
 import {Err, Ok} from '../result/index.js';
-import {type INone, type ISome, type Option, type OptionImplementation} from './Option.js';
+import {type INone, type IOption, type ISome, type OptionImplementation} from './Option.js';
 import {type ConstructorWithValueOf} from '../interfaces/ValueOf.js';
-import {type Result} from '../result/Result.js';
+import {type IResult} from '../result/Result.js';
 
 export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 	private _isSome: boolean;
@@ -23,55 +23,61 @@ export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 	}
 
 	public expect(msgOrError: string | Error): SomeType {
-		if (this._isSome) {
+		if (this.thisIsSome()) {
 			return this.value as SomeType;
 		}
 		throw typeof msgOrError === 'string' ? new Error(msgOrError) : msgOrError;
 	}
 
-	public unwrap(err?: ((err: Error) => Error) | undefined): SomeType {
-		if (this._isSome) {
+	public unwrap(err?: Error | ((err: Error) => Error) | undefined): SomeType {
+		if (this.thisIsSome()) {
 			return this.value as SomeType;
 		}
-		const error = new Error('Option: No value was set');
-		throw err !== undefined ? err(error) : error;
+		const error = new Error(`${this.getName()}: No value was set`);
+		if (err) {
+			if (typeof err === 'function') {
+				throw err(error);
+			}
+			throw err;
+		}
+		throw error;
 	}
 
 	public unwrapOr<DefType>(def: DefType): DefType | SomeType {
-		if (this._isSome) {
+		if (this.thisIsSome()) {
 			return this.value as SomeType;
 		}
 		return def;
 	}
 
 	public unwrapOrElse<DefType>(fn: () => DefType): DefType | SomeType {
-		if (this._isSome) {
+		if (this.thisIsSome()) {
 			return this.value as SomeType;
 		}
 		return fn();
 	}
 
 	public unwrapOrValueOf(BaseConstructor: ConstructorWithValueOf<SomeType>): SomeType {
-		if (this._isSome) {
+		if (this.thisIsSome()) {
 			return this.value as SomeType;
 		}
 		return new BaseConstructor().valueOf();
 	}
 
-	public take(): Option<SomeType> {
+	public take(): IOption<SomeType> {
 		const result = this.cloned();
-		this.toNone();
+		this.removeValue();
 		return result;
 	}
 
-	public cloned(): Option<SomeType> {
-		if (this._isSome) {
+	public cloned(): IOption<SomeType> {
+		if (this.thisIsSome()) {
 			return new OptionBuilder<SomeType>(true, this.value as SomeType) as ISome<SomeType>;
 		}
 		return new OptionBuilder<SomeType>(false) as INone<SomeType>;
 	}
 
-	public eq<OtherType extends Option>(other: OtherType): boolean {
+	public eq<OtherType extends IOption>(other: OtherType): boolean {
 		if (this._isSome !== other.isSome) {
 			return false;
 		}
@@ -81,36 +87,36 @@ export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 		return true;
 	}
 
-	public or<CompareType extends Option>(value: CompareType): Option<SomeType> | CompareType {
-		if (this._isSome) {
-			return this as Option<SomeType>;
+	public or<CompareType extends IOption>(value: CompareType): IOption<SomeType> | CompareType {
+		if (this.thisIsSome()) {
+			return this as IOption<SomeType>;
 		}
 		return value;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-	public orElse<ElseResult extends Option>(callbackFunc: (value: void) => ElseResult): Option<SomeType> | ElseResult {
-		if (this._isSome) {
-			return this as Option<SomeType>;
+	public orElse<ElseResult extends IOption>(callbackFunc: (value: void) => ElseResult): IOption<SomeType> | ElseResult {
+		if (this.thisIsSome()) {
+			return this as IOption<SomeType>;
 		}
 		return callbackFunc();
 	}
 
-	public and<CompareType extends Option>(value: CompareType): Option<SomeType> | CompareType {
-		if (!this._isSome) {
-			return this as Option<SomeType>;
+	public and<CompareType extends IOption>(value: CompareType): IOption<SomeType> | CompareType {
+		if (this.thisIsNone()) {
+			return this as IOption<SomeType>;
 		}
 		return value;
 	}
 
-	public andThen<OutType extends Option>(callbackFunc: (val: SomeType) => OutType): OutType | INone<SomeType> {
-		if (this._isSome) {
+	public andThen<OutType extends IOption>(callbackFunc: (val: SomeType) => OutType): OutType | INone<SomeType> {
+		if (this.thisIsSome()) {
 			return callbackFunc(this.value as SomeType);
 		}
 		return this as INone<SomeType>;
 	}
 
-	public replace(value: SomeType): Option<SomeType> {
+	public replace(value: SomeType): IOption<SomeType> {
 		const old = this.cloned();
 		this.setValue(value);
 		return old;
@@ -121,7 +127,7 @@ export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 	}
 
 	public getOrInsert(value: SomeType): SomeType {
-		if (!this._isSome) {
+		if (!this.thisIsSome()) {
 			return this.setValue(value);
 		}
 		return this.value as SomeType;
@@ -138,16 +144,18 @@ export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 		return defaultValue;
 	}
 
-	public toResult<ErrType>(err: ErrType): Result<SomeType, ErrType> {
-		if (this._isSome) {
+	public toResult<ErrType>(err: ErrType): IResult<SomeType, ErrType> {
+		if (this.thisIsSome()) {
 			return Ok(this.value as SomeType);
 		}
 		return Err(err);
 	}
 
-	private toNone(): void {
-		this._isSome = false;
-		this.value = undefined;
+	public toString(): `Some(${string})` | `None()` {
+		if (this.thisIsSome()) {
+			return `${this.getName()}(${String(this.value)})` as `Some(${string})`;
+		}
+		return `${this.getName()}()`;
 	}
 
 	/**
@@ -159,5 +167,24 @@ export class OptionBuilder<SomeType> implements OptionImplementation<SomeType> {
 		this._isSome = true;
 		this.value = value;
 		return value;
+	}
+
+	private removeValue(): SomeType | undefined {
+		const value = this.value;
+		this._isSome = false;
+		this.value = undefined as SomeType; // change the type to undefined
+		return value;
+	}
+
+	private thisIsSome(): this is ISome<SomeType> {
+		return this._isSome;
+	}
+
+	private thisIsNone(): this is INone<SomeType> {
+		return !this._isSome;
+	}
+
+	private getName() {
+		return this.thisIsSome() ? 'Some' : 'None';
 	}
 }
