@@ -1,10 +1,14 @@
-import {isOption, OptionBuilder} from './OptionBuilder.js';
+import {type INone, OptionBuilder} from './OptionInstance.js';
 import {type IJsonNone} from '../interfaces/IJsonOption.js';
-import {type INone} from './Option.js';
+import {isJsonNone} from './JsonOption.js';
+import {isNone} from './OptionInstance.js';
 
-export function None<SomeType>(noneInstance?: IJsonNone | INone<SomeType>): INone<SomeType> {
-	if (isOption(noneInstance)) {
+export function None<SomeType = unknown>(noneInstance?: IJsonNone | INone): OptionBuilder<false, SomeType> {
+	if (isNone<SomeType>(noneInstance)) {
 		return noneInstance;
 	}
-	return new OptionBuilder<SomeType>(false, noneInstance) as INone<SomeType>;
+	if (isJsonNone(noneInstance)) {
+		return new OptionBuilder<false, SomeType>(false, undefined as SomeType);
+	}
+	return new OptionBuilder<false, SomeType>(false, noneInstance as SomeType);
 }

@@ -1,7 +1,7 @@
 import {fromJsonOption, isJsonOption} from './JsonOption.js';
-import {type INone, type IOption, type ISome} from './Option.js';
+import {type INone, type IOption, type ISome} from './OptionInstance.js';
 import {type IJsonOption} from '../interfaces/IJsonOption.js';
-import {isOption} from './OptionBuilder.js';
+import {isOption} from './OptionInstance.js';
 import {None} from './None.js';
 import {Some} from './Some.js';
 
@@ -57,7 +57,7 @@ export function nanOption<ValueType extends number>(value: ValueType): IOption<V
  * @param instance instance to convert
  * @returns {IOption<SomeType>} Option instance
  */
-export function Option<SomeType>(instance: ISome<SomeType> | INone<SomeType> | IJsonOption<SomeType>): ISome<SomeType> | INone<SomeType> {
+export function Option<SomeType>(instance: ISome<SomeType> | INone | IJsonOption<SomeType>): ISome<SomeType> | INone {
 	if (isOption(instance)) {
 		return instance;
 	}

@@ -267,19 +267,19 @@ describe('FunctionResult', function () {
 		});
 
 		it('should have correct number type if default number value is provided', function () {
-			const result = Err<number>(stE);
+			const result = Err(stE);
 			const value: number = result.unwrapOr(1);
 			expect(value).to.be.equal(1);
 		});
 
 		it('should have correct undefined or number type if default undefined value is provided', function () {
-			const result = Err<number>(stE);
+			const result = Err(stE);
 			const value: undefined | number = result.unwrapOr(undefined);
 			expect(value).to.be.equal(undefined);
 		});
 
 		it('should have correct undefined type if default undefined value is provided', function () {
-			const result = Err<undefined>(stE);
+			const result = Err(stE);
 			const value: undefined = result.unwrapOr(undefined);
 			expect(value).to.be.equal(undefined);
 		});
@@ -290,9 +290,9 @@ describe('FunctionResult', function () {
 	});
 	describe('eq', function () {
 		it('should eq results', function () {
-			expect(Ok<string, Error>('hello').eq(Ok<string, Error>('hello'))).to.be.true;
-			expect(Err<string, Error>(stE).eq(Err<string, Error>(stE))).to.be.true;
-			expect(Err<string, string>('hello').eq(Ok<string, Error>('hello'))).to.be.false;
+			expect(Ok('hello').eq(Ok('hello'))).to.be.true;
+			expect(Err(stE).eq(Err(stE))).to.be.true;
+			expect(Err('hello').eq(Ok('hello'))).to.be.false;
 		});
 	});
 	describe('and', function () {
@@ -316,13 +316,13 @@ describe('FunctionResult', function () {
 	describe('orElse', function () {
 		it('should handle or else function', function () {
 			expect(
-				Ok<number, number>(2)
-					.orElse((errValue) => Ok(errValue + 2))
+				Ok(2)
+					.orElse<number, number>((errValue) => Ok(errValue + 2))
 					.eq(Ok(2)),
 			).to.be.true;
 		});
 		expect(
-			Err<number, number>(2)
+			Err(2)
 				.orElse((errValue) => Ok(errValue + 2))
 				.eq(Ok(4)),
 		).to.be.true;
@@ -330,21 +330,21 @@ describe('FunctionResult', function () {
 	describe('andThen', function () {
 		it('should handle or else function', function () {
 			expect(
-				Ok<number, number>(2)
+				Ok(2)
 					.andThen((okValue) => Ok(okValue + 2))
 					.eq(Ok(4)),
 			).to.be.true;
 		});
 		expect(
-			Err<number, number>(2)
-				.andThen((okValue) => Ok(okValue + 2))
+			Err(2)
+				.andThen<number, number>((okValue) => Ok(okValue + 2))
 				.eq(Err(2)),
 		).to.be.true;
 	});
 	describe('clone', function () {
 		it('should eq a Ok result', function () {
-			expect(Ok<string, Error>('hello').cloned().eq(Ok<string, Error>('hello'))).to.be.true;
-			expect(Err<string, Error>(stE).cloned().eq(Err<string, Error>(stE))).to.be.true;
+			expect(Ok('hello').clone().eq(Ok('hello'))).to.be.true;
+			expect(Err(stE).clone().eq(Err(stE))).to.be.true;
 		});
 	});
 	describe('toOption', function () {
@@ -356,7 +356,7 @@ describe('FunctionResult', function () {
 	describe('jsonErr', function () {
 		it('should build error from JSON', function () {
 			const json = {$class: 'Result::Err', value: new Error('hello')} as const;
-			const result = Err<string, Error>(json);
+			const result = Err(json);
 			expect(result.isErr).to.be.true;
 			expect(result.err().message).to.be.equal('hello');
 			expect(result.toJSON()).to.be.eql(json);
@@ -378,10 +378,10 @@ describe('FunctionResult', function () {
 			expect(Ok<string, Error>('hello').toString()).to.be.equal(`Ok(hello)`);
 			expect(String(Ok<string, Error>('hello'))).to.be.equal(`Ok(hello)`);
 			expect(Ok<number, Error>(1).toString()).to.be.equal(`Ok(1)`);
-			expect(Err<string, Error>(stE).toString()).to.be.equal(`Err(Error: 'oops')`);
-			expect(Err<string, Error>(null as unknown as Error).toString()).to.be.equal(`Err(UnknownErrorInstance: 'null')`);
-			expect(Err<string, Error>(undefined as unknown as Error).toString()).to.be.equal(`Err(UnknownErrorInstance: 'undefined')`);
-			expect(Err<string, Error>({} as unknown as Error).toString()).to.be.equal(`Err(Object: '{}')`);
+			expect(Err(stE).toString()).to.be.equal(`Err(Error: 'oops')`);
+			expect(Err(null as unknown as Error).toString()).to.be.equal(`Err(UnknownErrorInstance: 'null')`);
+			expect(Err(undefined as unknown as Error).toString()).to.be.equal(`Err(UnknownErrorInstance: 'undefined')`);
+			expect(Err({} as unknown as Error).toString()).to.be.equal(`Err(Object: '{}')`);
 		});
 		it('should convert null error instance to string', function () {
 			const brokenErr = new ErrInstance(null);

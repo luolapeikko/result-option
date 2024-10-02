@@ -2,73 +2,84 @@ import {type ConstructorWithValueOf, type IErr, type IJsonErr, type IResult, typ
 import {type INone, None} from '../option/index.js';
 import {isJsonErr} from './JsonResult.js';
 
-export class ErrInstance<OkType, ErrType> implements IErr<OkType, ErrType> {
+/**
+ * Err Result instance
+ * @template ErrType error type
+ */
+export class ErrInstance<ErrType> implements IErr<ErrType> {
 	private readonly error: ErrType;
-	public readonly isOk = false;
-	public readonly isErr = true;
 	public constructor(error: ErrType | IJsonErr<ErrType>) {
 		this.error = isJsonErr(error) ? error.value : error;
 	}
 
-	public ok(): undefined {
+	public get isOk(): false {
+		return false;
+	}
+
+	public ok() {
 		return undefined;
 	}
 
-	public err(): ErrType {
+	public get isErr(): true {
+		return true;
+	}
+
+	public err() {
 		return this.error;
 	}
 
-	public toOption(): INone<OkType> {
-		return None<OkType>();
+	public toOption(): INone<never> {
+		return None<never>();
 	}
 
-	public unwrap(err?: Error | ((err: ErrType) => Error) | undefined): OkType {
+	public unwrap(err?: Error | ((err: ErrType) => Error) | undefined): never {
 		if (err) {
 			if (typeof err === 'function') {
 				throw err(this.error);
 			}
 			throw err;
 		}
-		throw this.error as Error;
+		// eslint-disable-next-line @typescript-eslint/only-throw-error
+		throw this.error;
 	}
 
-	public unwrapOr<DefaultType>(defaultValue: DefaultType): DefaultType {
+	public unwrapOr<DefaultType>(defaultValue: DefaultType) {
 		return defaultValue;
 	}
 
-	public unwrapOrElse<DefaultType>(callbackFunc: () => DefaultType): DefaultType {
+	public unwrapOrElse<DefaultType>(callbackFunc: () => DefaultType) {
 		return callbackFunc();
 	}
 
-	public unwrapOrValueOf(BaseConstructor: ConstructorWithValueOf<OkType>): OkType {
+	public unwrapOrValueOf<ValueType>(BaseConstructor: ConstructorWithValueOf<ValueType>) {
 		return new BaseConstructor().valueOf();
 	}
 
-	public eq<EqualsType extends IResult>(other: EqualsType): boolean {
+	public eq(other: IResult) {
 		return this.error === other.err();
 	}
 
-	public or<CompareType extends IResult>(value: CompareType): CompareType {
+	public or<CompareResult extends IResult>(value: CompareResult) {
 		return value;
 	}
 
-	public orElse<ElseType extends IResult>(callbackFunc: (value: ErrType) => ElseType): ElseType {
+	public orElse<CompareResult extends IResult>(callbackFunc: (value: ErrType) => CompareResult) {
 		return callbackFunc(this.error);
 	}
 
-	public and<CompareType extends IResult>(_value: CompareType): IResult<OkType, ErrType> {
+	public and<CompareResult extends IResult>(_value: CompareResult) {
 		return this;
 	}
 
-	public cloned(): IResult<OkType, ErrType> {
-		return new ErrInstance<OkType, ErrType>(this.error);
+	public clone() {
+		return new ErrInstance(this.error);
 	}
 
-	public andThen<OutType extends IResult>(_value: (val: OkType) => OutType): IErr<OkType, ErrType> {
+	public andThen<OutType>(_callbackFunc: (val: never) => IResult<OutType>) {
 		return this;
 	}
 
-	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<OkType, ErrType, OkOutput, ErrOutput>): ErrOutput {
+	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<unknown, ErrType, OkOutput, ErrOutput>) {
 		return solver.Err(this.error);
 	}
 

@@ -13,9 +13,9 @@ async function promiseSettledAsResult<OkType = unknown, ErrType = unknown>(
 ): Promise<IResult<OkType, ErrType>> {
 	const result = (await Promise.allSettled([callPromise]))[0];
 	if (result.status === 'fulfilled') {
-		return Ok<OkType, ErrType>(result.value);
+		return Ok(result.value);
 	} else {
-		return Err<OkType, ErrType>(result.reason as ErrType);
+		return Err(result.reason as ErrType);
 	}
 }
 
@@ -48,10 +48,10 @@ export function safeAsyncResultBuilder<TArgs extends any[], OkType = unknown, Er
 ) {
 	return async (...args: TArgs): Promise<IResult<OkType, ErrType>> => {
 		try {
-			return promiseSettledAsResult<OkType, ErrType>(func(...args));
+			return promiseSettledAsResult(func(...args));
 			/* c8 ignore next 3 */
 		} catch (err) {
-			return Err<OkType, ErrType>(err as ErrType);
+			return Err(err as ErrType);
 		}
 	};
 }
@@ -69,9 +69,9 @@ export async function safeAsyncResult<OkType = unknown, ErrType = unknown>(
 	func: Promise<IResultOrOkType<OkType, ErrType>> | (() => Promise<IResultOrOkType<OkType, ErrType>>),
 ): Promise<IResult<OkType, ErrType>> {
 	try {
-		return promiseSettledAsResult<OkType, ErrType>(typeof func === 'function' ? func() : func);
+		return promiseSettledAsResult(typeof func === 'function' ? func() : func);
 		/* c8 ignore next 3 */
 	} catch (err) {
-		return Err<OkType, ErrType>(err as ErrType);
+		return Err(err as ErrType);
 	}
 }

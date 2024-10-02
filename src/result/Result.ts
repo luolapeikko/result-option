@@ -7,10 +7,10 @@ import {isResult} from './ResultInstance.js';
  * @param value - any IResult or JsonResult to wrap as IResult
  * @returns
  */
-export function Result<OkType = unknown, ErrType = unknown>(value: IErr<OkType, ErrType> | IJsonErr<ErrType>): IErr<OkType, ErrType>;
-export function Result<OkType = unknown, ErrType = unknown>(value: IOk<OkType, ErrType> | IJsonOk<OkType>): IOk<OkType, ErrType>;
+export function Result<_OkType = unknown, ErrType = unknown>(value: IErr<ErrType> | IJsonErr<ErrType>): IErr<ErrType>;
+export function Result<OkType = unknown, _ErrType = unknown>(value: IOk<OkType> | IJsonOk<OkType>): IOk<OkType>;
 export function Result<OkType = unknown, ErrType = unknown>(
-	value: IOk<OkType, ErrType> | IErr<OkType, ErrType> | IJsonOk<OkType> | IJsonErr<ErrType>,
+	value: IOk<OkType> | IErr<ErrType> | IJsonOk<OkType> | IJsonErr<ErrType>,
 ): IResult<OkType, ErrType> {
 	if (isResult(value)) {
 		return value;

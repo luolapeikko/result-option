@@ -1,69 +1,79 @@
 import {type ConstructorWithValueOf, type IJsonOk, type IOk, type IResult, type ResultMatchSolver} from '../interfaces/index.js';
-import {type ISome, Some} from '../option/index.js';
 import {isJsonOk} from './JsonResult.js';
+import {Some} from '../option/index.js';
 
-export class OkInstance<OkType, ErrType> implements IOk<OkType, ErrType> {
+/**
+ * Ok Result instance
+ * @template OkType - Ok type
+ */
+export class OkInstance<OkType> implements IOk<OkType> {
 	private readonly value: OkType;
-	readonly isOk = true;
-	readonly isErr = false;
 	public constructor(value: OkType | IJsonOk<OkType>) {
-		this.value = isJsonOk<OkType, ErrType>(value) ? value.value : value;
+		this.value = isJsonOk<OkType, unknown>(value) ? value.value : value;
 	}
 
-	public ok(): OkType {
+	public get isOk(): true {
+		return true;
+	}
+
+	public ok() {
 		return this.value;
+	}
+
+	public get isErr(): false {
+		return false;
 	}
 
 	public err(): undefined {
 		return undefined;
 	}
 
-	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<OkType, ErrType, OkOutput, ErrOutput>): OkOutput {
+	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<OkType, unknown, OkOutput, ErrOutput>) {
 		return solver.Ok(this.value);
 	}
 
-	public toOption(): ISome<OkType> {
+	public toOption() {
 		return Some(this.value);
 	}
 
-	public unwrap(_err?: ((err: ErrType) => Error) | undefined): OkType {
+	public unwrap(_err?: Error | ((err: never) => Error) | undefined) {
 		return this.value;
 	}
 
-	public unwrapOr<DefaultType>(_defaultValue: DefaultType): OkType {
+	public unwrapOr<DefaultType>(_defaultValue: DefaultType) {
 		return this.value;
 	}
 
-	public unwrapOrElse<DefaultType>(_callbackFunc: () => DefaultType): OkType {
+	public unwrapOrElse<DefaultType>(_callbackFunc: () => DefaultType) {
 		return this.value;
 	}
 
-	public unwrapOrValueOf(_constructorValueOf: ConstructorWithValueOf<OkType>): OkType {
+	public unwrapOrValueOf<ValueType>(_constructorValueOf: ConstructorWithValueOf<ValueType>) {
 		return this.value;
 	}
 
-	public eq<EqualsType extends IResult>(other: EqualsType): boolean {
+	public eq(other: IResult) {
 		return this.value === other.ok();
 	}
 
-	public or<CompareType extends IResult>(_value: CompareType): IResult<OkType, ErrType> {
+	public or<CompareType>(_value: IResult<CompareType>) {
 		return this;
 	}
 
-	public orElse<ElseType extends IResult>(_callbackFunc: (value: ErrType) => ElseType): IResult<OkType, ErrType> {
+	public orElse<CompareType, Override>(_callbackFunc: (value: Override) => IResult<CompareType>) {
 		return this;
 	}
 
-	public and<CompareType extends IResult>(value: CompareType): CompareType {
+	public and<CompareType>(value: IResult<CompareType>) {
 		return value;
 	}
 
-	public cloned(): IResult<OkType, ErrType> {
-		return new OkInstance<OkType, ErrType>(this.value);
+	public clone() {
+		return new OkInstance(this.value);
 	}
 
-	public andThen<OutType extends IResult>(value: (val: OkType) => OutType): OutType {
-		return value(this.value);
+	public andThen<OutType>(callbackFunc: (val: OkType) => IResult<OutType>) {
+		return callbackFunc(this.value);
 	}
 
 	public toString(): `Ok(${string})` {

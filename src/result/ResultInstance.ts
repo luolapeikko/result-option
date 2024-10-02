@@ -1,5 +1,5 @@
 import {ErrInstance} from './ErrInstance.js';
-import {type IResult} from '../interfaces/IResultImplementation.js';
+import {type IResult} from '../interfaces/index.js';
 import {OkInstance} from './OkInstance.js';
 
 /**

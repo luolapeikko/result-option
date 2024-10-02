@@ -146,6 +146,13 @@ describe('Option', function () {
 		it('should eq a None result', function () {
 			expect(None<string>().eq(None<string>())).to.be.true;
 		});
+		it('should eq a mixed result', function () {
+			expect(Some('hello').eq(None<string>())).to.be.false;
+			expect(None<string>().eq(Some('hello'))).to.be.false;
+		});
+		it('should eq a Some result but different values', function () {
+			expect(Some('hello').eq(Some('hello2'))).to.be.false;
+		});
 	});
 	describe('clone', function () {
 		it('should clone a Some result', function () {
@@ -193,7 +200,7 @@ describe('Option', function () {
 		it('should validate or conditions', function () {
 			expect(
 				None<number>()
-					.andThen((v) => Some(v * 2))
+					.andThen<number, number>((v) => Some(v * 2))
 					.eq(None()),
 			).to.be.true;
 			expect(
@@ -252,9 +259,13 @@ describe('Option', function () {
 		});
 	});
 	describe('toString', function () {
-		it('should convert to Result', function () {
-			expect(None<string>().toString()).to.be.eq('None()');
-			expect(Some(2).toString()).to.be.eq('Some(2)');
+		it('should give string value', function () {
+			expect(None<string>().toOptionString()).to.be.eq('None()');
+			expect(Some(2).toOptionString()).to.be.eq('Some(2)');
+		});
+		it('should give string value', function () {
+			expect(None<string>().toString()).to.be.eq('None');
+			expect(Some(2).toString()).to.be.eq('2');
 		});
 	});
 	describe('toJSON', function () {

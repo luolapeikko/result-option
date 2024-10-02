@@ -15,8 +15,8 @@ export function isJsonErr<OkType, ErrType>(json: unknown): json is IJsonErr<ErrT
 	return isJsonResult<OkType, ErrType>(json) && json.$class === 'Result::Err';
 }
 
-export function fromJsonResult<OkType, ErrType>(json: IJsonErr<ErrType>): IErr<OkType, ErrType>;
-export function fromJsonResult<OkType, ErrType>(json: IJsonOk<OkType>): IOk<OkType, ErrType>;
+export function fromJsonResult<_OkType, ErrType>(json: IJsonErr<ErrType>): IErr<ErrType>;
+export function fromJsonResult<OkType, _ErrType>(json: IJsonOk<OkType>): IOk<OkType>;
 export function fromJsonResult<OkType, ErrType>(json: IJsonResult<OkType, ErrType>): IResult<OkType, ErrType>;
 export function fromJsonResult<OkType, ErrType>(json: IJsonResult<OkType, ErrType>): IResult<OkType, ErrType> {
 	if (json.$class === 'Result::Ok') {

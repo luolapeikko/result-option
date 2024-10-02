@@ -14,12 +14,12 @@ import {Ok} from './Ok.js';
  * const existsSync = safeResultBuilder(fs.existsSync);
  * const result: Result<boolean> = existsSync('test.txt');
  */
-export function safeResultBuilder<TArgs extends any[], OkType = unknown, ErrType = unknown>(func: (...args: TArgs) => IResultOrOkType<OkType, ErrType>) {
+export function safeResultBuilder<TArgs extends any[], OkType, ErrType>(func: (...args: TArgs) => IResultOrOkType<OkType, ErrType>) {
 	return (...args: TArgs): IResult<OkType, ErrType> => {
 		try {
-			return Ok<OkType, ErrType>(func(...args));
+			return Ok(func(...args));
 		} catch (err) {
-			return Err<OkType, ErrType>(err as ErrType);
+			return Err(err as ErrType);
 		}
 	};
 }
@@ -38,8 +38,8 @@ export function safeResultBuilder<TArgs extends any[], OkType = unknown, ErrType
  */
 export function safeResult<OkType = unknown, ErrType = unknown>(func: () => IResultOrOkType<OkType, ErrType>): IResult<OkType, ErrType> {
 	try {
-		return Ok<OkType, ErrType>(func());
+		return Ok(func());
 	} catch (err) {
-		return Err<OkType, ErrType>(err as ErrType);
+		return Err(err as ErrType);
 	}
 }
