@@ -32,7 +32,7 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return None<never>();
 	}
 
-	public unwrap(err?: Error | ((err: ErrType) => Error) | undefined): never {
+	public unwrap(err?: Error | ((err: ErrType) => Error)): never {
 		if (err) {
 			if (typeof err === 'function') {
 				throw err(this.error);

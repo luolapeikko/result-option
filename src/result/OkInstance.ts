@@ -36,7 +36,7 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return Some(this.value);
 	}
 
-	public unwrap(_err?: Error | ((err: never) => Error) | undefined) {
+	public unwrap(_err?: Error | ((err: never) => Error)) {
 		return this.value;
 	}
 

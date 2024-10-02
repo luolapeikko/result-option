@@ -42,7 +42,7 @@ export class OptionBuilder<IsSome extends boolean, SomeType = unknown> implement
 		return clone;
 	}
 
-	public unwrap(err?: Error | ((err: Error) => Error) | undefined): MappedType<IsSome, SomeType, never> {
+	public unwrap(err?: Error | ((err: Error) => Error)): MappedType<IsSome, SomeType, never> {
 		if (!this._isSome) {
 			const error = new Error(`None: No value was set`);
 			if (err) {
@@ -98,9 +98,9 @@ export class OptionBuilder<IsSome extends boolean, SomeType = unknown> implement
 		return this._isSome ? this.value : this.setValue(value);
 	}
 
-	public match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue?: Output | undefined): Output | undefined;
+	public match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue?: Output): Output | undefined;
 	public match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue: Output): Output;
-	public match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue?: Output | undefined): Output | undefined {
+	public match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue?: Output): Output | undefined {
 		for (const [key, value] of solver.entries()) {
 			if (this._isSome && this.value === key) {
 				return value();

@@ -77,7 +77,7 @@ export interface IOptionImplementation<IsTrue extends boolean, SomeType> {
 	 * Some(2).unwrap() // 2
 	 * None<number>().unwrap() // throws Error
 	 */
-	unwrap(err?: Error | ((err: Error) => Error) | undefined): MappedType<IsTrue, SomeType, never>;
+	unwrap(err?: Error | ((err: Error) => Error)): MappedType<IsTrue, SomeType, never>;
 	/**
 	 * Method to unwrap the value or if None then return the default value.
 	 * @param defaultValue - default value to return
@@ -179,7 +179,7 @@ export interface IOptionImplementation<IsTrue extends boolean, SomeType> {
 	 *   'other', // default value
 	 * ); // 'other'
 	 */
-	match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue?: Output | undefined): Output | undefined;
+	match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue?: Output): Output | undefined;
 	match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue: Output): Output;
 	/**
 	 * expect the Option to be Some or throw an error

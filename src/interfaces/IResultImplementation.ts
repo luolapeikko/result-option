@@ -41,7 +41,7 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * Ok<number>(2).unwrap() // 2
 	 * Err<Error>(new Error('broken')).unwrap() // throws Error('broken')
 	 */
-	unwrap(err?: Error | ((err: ErrType) => Error) | undefined): IsOk extends true ? OkType : never;
+	unwrap(err?: Error | ((err: ErrType) => Error)): IsOk extends true ? OkType : never;
 	/**
 	 * Method to unwrap the value or if error return the default value
 	 * @param defaultValue - default value to return if error
