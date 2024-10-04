@@ -22,7 +22,8 @@
 		"importHelpers": false,
 		"strictNullChecks": true,
 		"noUnusedLocals": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"skipLibCheck": true
 	},
 	"typedocOptions": {
 		"entryPoints": ["src/index.mts"],
