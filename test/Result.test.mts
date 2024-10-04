@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable no-unused-expressions */
-import 'mocha';
-import * as chai from 'chai';
+import {describe, expect, it} from 'vitest';
 import {
 	Err,
 	ErrInstance,
@@ -12,14 +13,13 @@ import {
 	type IResult,
 	None,
 	Ok,
+	Result,
 	safeAsyncResult,
 	safeAsyncResultBuilder,
 	safeResult,
 	safeResultBuilder,
 	Some,
-} from '../src/index.js';
-
-const expect = chai.expect;
+} from '../src/index.mjs';
 
 const stE = new Error('oops');
 
@@ -386,6 +386,15 @@ describe('FunctionResult', function () {
 		it('should convert null error instance to string', function () {
 			const brokenErr = new ErrInstance(null);
 			expect(brokenErr.toString()).to.be.equal(`Err(UnknownErrorInstance: 'null')`);
+		});
+	});
+	describe('Result', function () {
+		it('should convert Result to JSON', function () {
+			expect(Result(Ok<string>('hello')).toJSON()).to.be.eql({$class: 'Result::Ok', value: 'hello'});
+			expect(Result(Err('error')).toJSON()).to.be.eql({$class: 'Result::Err', value: 'error'});
+			expect(Result({$class: 'Result::Ok', value: 'hello'}).toJSON()).to.be.eql({$class: 'Result::Ok', value: 'hello'});
+			expect(Result({$class: 'Result::Err', value: 'error'}).toJSON()).to.be.eql({$class: 'Result::Err', value: 'error'});
+			expect(() => Result(null as any)).to.throw(TypeError, 'Invalid Result type');
 		});
 	});
 });

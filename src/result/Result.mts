@@ -1,6 +1,6 @@
-import {fromJsonResult, isJsonResult} from './JsonResult.js';
-import {type IErr, type IJsonErr, type IJsonOk, type IOk, type IResult} from '../interfaces/index.js';
-import {isResult} from './ResultInstance.js';
+import {fromJsonResult, isJsonResult} from './JsonResult.mjs';
+import {type IErr, type IJsonErr, type IJsonOk, type IOk, type IResult} from '../interfaces/index.mjs';
+import {isResult} from './ResultInstance.mjs';
 
 /**
  * wrap Result from JsonResult, IOk or IErr

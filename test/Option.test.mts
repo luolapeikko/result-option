@@ -5,12 +5,9 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable no-unused-expressions */
-import 'mocha';
-import * as chai from 'chai';
-import {Err, type IOption, nanOption, None, nullishOptionWrap, Ok, Option, Some, undefinedOptionWrap} from '../src/index.js';
-import {exactType} from './helper.js';
-
-const expect = chai.expect;
+import {describe, expect, it} from 'vitest';
+import {Err, type IOption, nanOption, None, nullishOptionWrap, Ok, Option, Some, undefinedOptionWrap} from '../src/index.mjs';
+import {exactType} from './helper.mjs';
 
 describe('Option', function () {
 	describe('Some', function () {

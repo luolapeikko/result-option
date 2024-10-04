@@ -1,9 +1,9 @@
-import {fromJsonOption, isJsonOption} from './JsonOption.js';
-import {type INone, type IOption, type ISome} from './OptionInstance.js';
-import {type IJsonOption} from '../interfaces/IJsonOption.js';
-import {isOption} from './OptionInstance.js';
-import {None} from './None.js';
-import {Some} from './Some.js';
+import {fromJsonOption, isJsonOption} from './JsonOption.mjs';
+import {type INone, type IOption, type ISome} from './OptionInstance.mjs';
+import {type IJsonOption} from '../interfaces/IJsonOption.mjs';
+import {isOption} from './OptionInstance.mjs';
+import {None} from './None.mjs';
+import {Some} from './Some.mjs';
 
 /**
  * Simple function to wrap a possible undefined value as None

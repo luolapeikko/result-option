@@ -1,6 +1,6 @@
-import {ErrInstance} from './ErrInstance.js';
-import {type IResult} from '../interfaces/index.js';
-import {OkInstance} from './OkInstance.js';
+import {ErrInstance} from './ErrInstance.mjs';
+import {type IResult} from '../interfaces/index.mjs';
+import {OkInstance} from './OkInstance.mjs';
 
 /**
  * Type guard for Result interface

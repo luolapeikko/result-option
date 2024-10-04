@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-base-to-string */
-import {type IErr, type IOk} from './IResultImplementation.js';
-import {type IJsonNone, type IJsonSome} from './IJsonOption.js';
-import {type ConstructorWithValueOf} from './ValueOf.js';
-import {type IOption} from '../option/OptionInstance.js';
-import {type OptionMatchSolver} from './IMatch.js';
+import {type IErr, type IOk} from './IResultImplementation.mjs';
+import {type IJsonNone, type IJsonSome} from './IJsonOption.mjs';
+import {type ConstructorWithValueOf} from './ValueOf.mjs';
+import {type IOption} from '../option/OptionInstance.mjs';
+import {type OptionMatchSolver} from './IMatch.mjs';
 
 export type MappedType<IsTrue extends boolean, TrueType, FalseType> = {true: TrueType; false: FalseType}[`${IsTrue}`];
 

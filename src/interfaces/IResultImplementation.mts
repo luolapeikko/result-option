@@ -1,5 +1,5 @@
-import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk, type ResultMatchSolver} from './index.js';
-import {type INone, type ISome} from '../option/index.js';
+import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk, type ResultMatchSolver} from './index.mjs';
+import {type INone, type ISome} from '../option/index.mjs';
 
 export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> {
 	/**

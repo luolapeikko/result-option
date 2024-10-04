@@ -1,6 +1,6 @@
-import {type ConstructorWithValueOf, type IJsonOk, type IOk, type IResult, type ResultMatchSolver} from '../interfaces/index.js';
-import {isJsonOk} from './JsonResult.js';
-import {Some} from '../option/index.js';
+import {type ConstructorWithValueOf, type IJsonOk, type IOk, type IResult, type ResultMatchSolver} from '../interfaces/index.mjs';
+import {isJsonOk} from './JsonResult.mjs';
+import {Some} from '../option/index.mjs';
 
 /**
  * Ok Result instance

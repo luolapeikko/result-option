@@ -2,10 +2,10 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 
-import {asMapped, type IOptionImplementation, type MappedType} from '../interfaces/IOptionImplementation.js';
-import {buildJsonNone, buildJsonSome} from './JsonOption.js';
-import {type ConstructorWithValueOf, type IErr, type IJsonNone, type IJsonSome, type IOk, type OptionMatchSolver} from '../interfaces/index.js';
-import {Err, Ok} from '../result/index.js';
+import {asMapped, type IOptionImplementation, type MappedType} from '../interfaces/IOptionImplementation.mjs';
+import {buildJsonNone, buildJsonSome} from './JsonOption.mjs';
+import {type ConstructorWithValueOf, type IErr, type IJsonNone, type IJsonSome, type IOk, type OptionMatchSolver} from '../interfaces/index.mjs';
+import {Err, Ok} from '../result/index.mjs';
 
 export class OptionBuilder<IsSome extends boolean, SomeType = unknown> implements IOptionImplementation<IsSome, SomeType> {
 	private _isSome: IsSome;

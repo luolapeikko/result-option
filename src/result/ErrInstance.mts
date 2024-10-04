@@ -1,6 +1,6 @@
-import {type ConstructorWithValueOf, type IErr, type IJsonErr, type IResult, type ResultMatchSolver} from '../interfaces/index.js';
-import {type INone, None} from '../option/index.js';
-import {isJsonErr} from './JsonResult.js';
+import {type ConstructorWithValueOf, type IErr, type IJsonErr, type IResult, type ResultMatchSolver} from '../interfaces/index.mjs';
+import {type INone, None} from '../option/index.mjs';
+import {isJsonErr} from './JsonResult.mjs';
 
 /**
  * Err Result instance

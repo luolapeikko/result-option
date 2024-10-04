@@ -2,24 +2,23 @@
 	"name": "@luolapeikko/result-option",
 	"version": "1.0.0",
 	"description": "Rust style Result for TypeScript/Javascript",
-	"type": "module",
-	"main": "./dist/index.cjs",
-	"module": "./dist/index.js",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"require": "./dist/index.cjs",
-			"import": "./dist/index.js"
+			"require": "./dist/index.js",
+			"import": "./dist/index.mjs"
 		}
 	},
 	"scripts": {
 		"doc": "typedoc",
-		"build": "tsup src/index.ts --minify --sourcemap --format cjs,esm --dts --clean",
+		"build": "tsup src/index.mts --minify --sourcemap --format cjs,esm --dts --clean",
 		"prepublishOnly": "npm run build",
-		"test": "c8 mocha",
-		"coverage": "c8 report --reporter=lcovonly",
-		"lint": "eslint . --ext .ts",
+		"test": "vitest test --run --no-isolate --coverage",
+		"coverage": "vitest test --run --no-isolate --reporter=dot --coverage --coverage.reporter=lcov",
+		"lint": "eslint . --ext .mts",
 		"validate": "tsc --noEmit --project tsconfig.test.json"
 	},
 	"files": [
@@ -34,7 +33,7 @@
 	"mocha": {
 		"exit": true,
 		"extension": [
-			"ts",
+			"mts",
 			"js"
 		],
 		"recursive": true,
@@ -60,15 +59,12 @@
 	"devDependencies": {
 		"@stylistic/eslint-plugin": "^2.8.0",
 		"@stylistic/eslint-plugin-ts": "^2.8.0",
-		"@types/chai": "^5.0.0",
-		"@types/chai-as-promised": "^8.0.1",
-		"@types/mocha": "^10.0.8",
 		"@types/node": "^18.19.54",
 		"@typescript-eslint/eslint-plugin": "^8.8.0",
 		"@typescript-eslint/parser": "^8.8.0",
+		"@vitest/coverage-v8": "^2.1.1",
+		"@vitest/ui": "^2.1.1",
 		"c8": "^10.1.2",
-		"chai": "^5.1.1",
-		"chai-as-promised": "^8.0.0",
 		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-config-standard": "^17.1.0",
@@ -76,13 +72,14 @@
 		"eslint-plugin-jsdoc": "^50.3.1",
 		"eslint-plugin-prettier": "^5.2.1",
 		"eslint-plugin-sonarjs": "^0.23.0",
-		"mocha": "^10.7.3",
 		"prettier": "^3.3.3",
 		"source-map-support": "^0.5.21",
 		"ts-node": "^10.9.2",
 		"tsup": "^8.3.0",
 		"typedoc": "^0.26.7",
-		"typescript": "^5.6.2"
+		"typescript": "^5.6.2",
+		"vite": "^5.4.8",
+		"vitest": "^2.1.1"
 	},
 	"packageManager": "pnpm@9.6.0+sha256.dae0f7e822c56b20979bb5965e3b73b8bdabb6b8b8ef121da6d857508599ca35"
 }

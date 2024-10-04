@@ -1,6 +1,6 @@
-import {type IErr, type IJsonErr, type IResult} from '../interfaces/index.js';
-import {ErrInstance} from './ErrInstance.js';
-import {isResult} from './ResultInstance.js';
+import {type IErr, type IJsonErr, type IResult} from '../interfaces/index.mjs';
+import {ErrInstance} from './ErrInstance.mjs';
+import {isResult} from './ResultInstance.mjs';
 
 /**
  * Build Err result or return if already a Result

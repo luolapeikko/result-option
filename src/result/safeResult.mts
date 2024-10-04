@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {type IResult, type IResultOrOkType} from '../interfaces/IResultImplementation.js';
-import {Err} from './Err.js';
-import {Ok} from './Ok.js';
+import {type IResult, type IResultOrOkType} from '../interfaces/IResultImplementation.mjs';
+import {Err} from './Err.mjs';
+import {Ok} from './Ok.mjs';
 
 /**
  * build safe wrapper for callback function

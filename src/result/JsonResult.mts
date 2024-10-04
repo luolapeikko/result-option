@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import {type IErr, type IJsonErr, type IJsonOk, type IJsonResult, type IOk, type IResult} from '../interfaces/index.js';
-import {Err} from './Err.js';
-import {Ok} from './Ok.js';
+import {type IErr, type IJsonErr, type IJsonOk, type IJsonResult, type IOk, type IResult} from '../interfaces/index.mjs';
+import {Err} from './Err.mjs';
+import {Ok} from './Ok.mjs';
 
 export function isJsonResult<OkType, ErrType>(json: unknown): json is IJsonResult<OkType, ErrType> {
 	return typeof json === 'object' && json !== null && '$class' in json && (json.$class === 'Result::Ok' || json.$class === 'Result::Err');

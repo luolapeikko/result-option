@@ -1,6 +1,6 @@
-import {type ISome, isSome, OptionBuilder} from './OptionInstance.js';
-import {type IJsonSome} from '../interfaces/IJsonOption.js';
-import {isJsonSome} from './JsonOption.js';
+import {type ISome, isSome, OptionBuilder} from './OptionInstance.mjs';
+import {type IJsonSome} from '../interfaces/IJsonOption.mjs';
+import {isJsonSome} from './JsonOption.mjs';
 
 export function Some<SomeType = unknown>(value: SomeType | IJsonSome<SomeType> | ISome<SomeType>): ISome<SomeType> {
 	if (isSome<SomeType>(value)) {
