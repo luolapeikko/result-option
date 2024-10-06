@@ -171,7 +171,16 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	toJSON(): IsOk extends true ? IJsonOk<OkType> : IJsonErr<ErrType>;
 }
 
+/**
+ * Error result type
+ * @since v1.0.0
+ */
 export type IErr<ErrType = unknown, OkType = never> = IResultBuild<false, OkType, ErrType>;
+
+/**
+ * Ok result type
+ * @since v1.0.0
+ */
 export type IOk<OkType = unknown, ErrType = never> = IResultBuild<true, OkType, ErrType>;
 
 /**
@@ -191,6 +200,7 @@ export type IOk<OkType = unknown, ErrType = never> = IResultBuild<true, OkType, 
  * } else {
  *   console.log('Error: ', result.err());
  * }
+ * @since v1.0.0
  */
 export type IResult<OkType = unknown, ErrType = unknown> = IResultBuild<true, OkType, ErrType> | IResultBuild<false, OkType, ErrType>;
 
@@ -198,5 +208,6 @@ export type IResult<OkType = unknown, ErrType = unknown> = IResultBuild<true, Ok
  * Utility type for OkType or Result
  * @template OkType Type of the return value
  * @template ErrType Type of the error, default is unknown
+ * @since v1.0.0
  */
 export type IResultOrOkType<OkType, ErrType> = OkType | IResult<OkType, ErrType>;
