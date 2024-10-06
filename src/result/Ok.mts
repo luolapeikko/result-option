@@ -10,6 +10,7 @@ import {OkInstance} from './OkInstance.mjs';
  * @returns {IResult<OkType, ErrType>} - Result
  * @example
  * Ok<number>(2) // Result<number, unknown>
+ * @since v1.0.0
  */
 export function Ok<OkType, _ErrType = unknown>(value: OkType | IOk<OkType> | IJsonOk<OkType>): IOk<OkType>;
 export function Ok<OkType, ErrType = unknown>(value: OkType | IResult<OkType, ErrType> | IJsonOk<OkType>): IResult<OkType, ErrType>;

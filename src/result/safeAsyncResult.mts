@@ -42,6 +42,7 @@ async function promiseSettledAsResult<OkType = unknown, ErrType = unknown>(
  * } else {
  *   console.log('error writing file', result.err());
  * }
+ * @since v1.0.0
  */
 export function safeAsyncResultBuilder<TArgs extends any[], OkType = unknown, ErrType = unknown>(
 	func: (...args: TArgs) => Promise<IResultOrOkType<OkType, ErrType>>,
@@ -64,6 +65,7 @@ export function safeAsyncResultBuilder<TArgs extends any[], OkType = unknown, Er
  * @returns Result Promise
  * @example
  * const data = await safeAsyncResult<unknown, SyntaxError>(res.json());
+ * @since v1.0.0
  */
 export async function safeAsyncResult<OkType = unknown, ErrType = unknown>(
 	func: Promise<IResultOrOkType<OkType, ErrType>> | (() => Promise<IResultOrOkType<OkType, ErrType>>),

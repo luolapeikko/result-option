@@ -12,6 +12,7 @@ import {Some} from './Some.mjs';
  * @returns {IOption<ValueType>} - returns Some(value) or None()
  * @example
  * const valueOption: Option<number> = undefinedOptionWrap<number>(getNumValueOrUndefined());
+ * @since v0.4.4
  */
 export function undefinedOptionWrap<ValueType>(value: ValueType | undefined): IOption<ValueType> {
 	if (value === undefined) {
@@ -27,6 +28,7 @@ export function undefinedOptionWrap<ValueType>(value: ValueType | undefined): IO
  * @returns {IOption<ValueType>} - returns Some(value) or None()
  * @example
  * const valueOption: Option<number> = nullishOptionWrap<number>(getNumValueOrNull());
+ * @since v0.6.4
  */
 export function nullishOptionWrap<ValueType>(value: ValueType | null | undefined): IOption<ValueType> {
 	if (value === undefined || value === null) {
@@ -45,6 +47,7 @@ export function nullishOptionWrap<ValueType>(value: ValueType | null | undefined
  * @returns {IOption<ValueType>} - returns Some(value) or None()
  * @example
  * nanOption(parseInt(stringNumber, 10)) // returns Some(value) or None()
+ * @since v0.6.4
  */
 export function nanOption<ValueType extends number>(value: ValueType): IOption<ValueType> {
 	if (isNaN(value)) {
@@ -56,6 +59,7 @@ export function nanOption<ValueType extends number>(value: ValueType): IOption<V
  * get Option from any instance types (Some, None, JsonOption)
  * @param instance instance to convert
  * @returns {IOption<SomeType>} Option instance
+ * @since v1.0.0
  */
 export function Option<SomeType>(instance: ISome<SomeType> | INone | IJsonOption<SomeType>): ISome<SomeType> | INone {
 	if (isOption(instance)) {

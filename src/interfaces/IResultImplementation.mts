@@ -1,6 +1,10 @@
 import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk, type ResultMatchSolver} from './index.mjs';
 import {type INone, type ISome} from '../option/index.mjs';
 
+/**
+ * Result builder interface
+ * @since v1.0.0
+ */
 export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> {
 	/**
 	 * Check that result is not an error

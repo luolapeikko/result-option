@@ -2,6 +2,10 @@ import {type ISome, isSome, OptionBuilder} from './OptionInstance.mjs';
 import {type IJsonSome} from '../interfaces/IJsonOption.mjs';
 import {isJsonSome} from './JsonOption.mjs';
 
+/**
+ * Build Some option or return if already a Option
+ * @since v1.0.0
+ */
 export function Some<SomeType = unknown>(value: SomeType | IJsonSome<SomeType> | ISome<SomeType>): ISome<SomeType> {
 	if (isSome<SomeType>(value)) {
 		return value;

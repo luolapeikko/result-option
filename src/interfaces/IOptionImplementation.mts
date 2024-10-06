@@ -6,8 +6,16 @@ import {type ConstructorWithValueOf} from './ValueOf.mjs';
 import {type IOption} from '../option/OptionInstance.mjs';
 import {type OptionMatchSolver} from './IMatch.mjs';
 
+/**
+ * MappedType is a type that maps a boolean to a type.
+ * @since v1.0.0
+ */
 export type MappedType<IsTrue extends boolean, TrueType, FalseType> = {true: TrueType; false: FalseType}[`${IsTrue}`];
 
+/**
+ * function to resolve the mapped type
+ * @since v1.0.0
+ */
 export function asMapped<IsTrue extends boolean, TrueType, FalseType>(
 	isTrue: IsTrue,
 	trueValue: TrueType,
@@ -16,6 +24,10 @@ export function asMapped<IsTrue extends boolean, TrueType, FalseType>(
 	return {true: trueValue, false: falseValue}[`${isTrue}`];
 }
 
+/**
+ * Option implementation
+ * @since v1.0.0
+ */
 export interface IOptionImplementation<IsTrue extends boolean, SomeType> {
 	/**
 	 * Returns true if the option is a Some value.

@@ -13,6 +13,7 @@ import {Ok} from './Ok.mjs';
  * @example
  * const existsSync = safeResultBuilder(fs.existsSync);
  * const result: Result<boolean> = existsSync('test.txt');
+ * @since v1.0.0
  */
 export function safeResultBuilder<TArgs extends any[], OkType, ErrType>(func: (...args: TArgs) => IResultOrOkType<OkType, ErrType>) {
 	return (...args: TArgs): IResult<OkType, ErrType> => {
@@ -35,6 +36,7 @@ export function safeResultBuilder<TArgs extends any[], OkType, ErrType>(func: (.
  * 	 throw new Error('asd');
  * }
  * const value: Result<number> = safeResult(test);
+ * @since v1.0.0
  */
 export function safeResult<OkType = unknown, ErrType = unknown>(func: () => IResultOrOkType<OkType, ErrType>): IResult<OkType, ErrType> {
 	try {

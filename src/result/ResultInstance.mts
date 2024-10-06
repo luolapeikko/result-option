@@ -8,6 +8,7 @@ import {OkInstance} from './OkInstance.mjs';
  * @template ErrType Type of the error, default is unknown
  * @param {unknown} value unknown value
  * @returns {boolean} true if value is Result
+ * @since v0.6.5
  */
 export function isResult<OkType = unknown, ErrType = unknown>(value: unknown): value is IResult<OkType, ErrType> {
 	return value instanceof OkInstance || value instanceof ErrInstance;

@@ -11,6 +11,7 @@ import {isResult} from './ResultInstance.mjs';
  * @example
  * Err(2); // Result<unknown, number>
  * Err(new Error('Fatal')); // Result<unknown, Error>
+ * @since v1.0.0
  */
 export function Err<ErrType, _OkType = unknown>(error: ErrType | IErr<ErrType> | IJsonErr<ErrType>): IErr<ErrType>;
 export function Err<ErrType, OkType = unknown>(error: ErrType | IResult<OkType, ErrType> | IJsonErr<ErrType>): IResult<OkType, ErrType>;

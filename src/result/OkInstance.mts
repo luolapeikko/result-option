@@ -5,6 +5,7 @@ import {Some} from '../option/index.mjs';
 /**
  * Ok Result instance
  * @template OkType - Ok type
+ * @since v1.0.0
  */
 export class OkInstance<OkType> implements IOk<OkType> {
 	private readonly value: OkType;

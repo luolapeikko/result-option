@@ -7,6 +7,10 @@ import {buildJsonNone, buildJsonSome} from './JsonOption.mjs';
 import {type ConstructorWithValueOf, type IErr, type IJsonNone, type IJsonSome, type IOk, type OptionMatchSolver} from '../interfaces/index.mjs';
 import {Err, Ok} from '../result/index.mjs';
 
+/**
+ * OptionBuilder is a class that represents an optional value: every Option is either Some and contains a value and type, or None which does not any type.
+ * @since v1.0.0
+ */
 export class OptionBuilder<IsSome extends boolean, SomeType = unknown> implements IOptionImplementation<IsSome, SomeType> {
 	private _isSome: IsSome;
 	private value: SomeType;

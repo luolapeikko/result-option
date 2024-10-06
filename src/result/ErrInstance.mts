@@ -5,6 +5,7 @@ import {isJsonErr} from './JsonResult.mjs';
 /**
  * Err Result instance
  * @template ErrType error type
+ * @since v1.0.0
  */
 export class ErrInstance<ErrType> implements IErr<ErrType> {
 	private readonly error: ErrType;
