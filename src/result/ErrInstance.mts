@@ -84,6 +84,10 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return solver.Err(this.error);
 	}
 
+	public map<OutType, NewErrType = ErrType>(_callbackFunc: (val: never) => OutType) {
+		return this as unknown as IErr<NewErrType>;
+	}
+
 	public toString(): `Err(${string})` {
 		return `Err(${this.getErrorInstanceName()}${this.getErrorInstanceMessage()})`;
 	}

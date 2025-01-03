@@ -33,6 +33,10 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return solver.Ok(this.value);
 	}
 
+	public map<OutType>(callbackFunc: (val: OkType) => OutType) {
+		return new OkInstance(callbackFunc(this.value));
+	}
+
 	public toOption() {
 		return Some(this.value);
 	}

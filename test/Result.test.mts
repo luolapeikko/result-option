@@ -10,6 +10,8 @@ import {
 	Err,
 	ErrInstance,
 	fromJsonResult,
+	type IErr,
+	type IOk,
 	type IResult,
 	None,
 	Ok,
@@ -345,6 +347,14 @@ describe('FunctionResult', function () {
 		it('should eq a Ok result', function () {
 			expect(Ok('hello').clone().eq(Ok('hello'))).to.be.true;
 			expect(Err(stE).clone().eq(Err(stE))).to.be.true;
+		});
+	});
+	describe('map', function () {
+		it('should map a Result', function () {
+			const okResult: IOk<Buffer, Error> = Ok<string, Error>('test').map((v) => Buffer.from(v));
+			expect(okResult.isOk).to.be.true;
+			const errResult: IErr<Error, Buffer> = Err<Error, string>(new Error('test')).map((v) => Buffer.from(v));
+			expect(errResult.isErr).to.be.true;
 		});
 	});
 	describe('toOption', function () {

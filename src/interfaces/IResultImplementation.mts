@@ -145,6 +145,16 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * }) // 0
 	 */
 	match<OkOutput, ErrOutput>(solver: ResultMatchSolver<OkType, ErrType, OkOutput, ErrOutput>): IsOk extends true ? OkOutput : ErrOutput;
+
+	/**
+	 * Map the result value to a new value if Ok
+	 * @param fn
+	 * @example
+	 * Ok<string, Error>('hello').map((v)=> Buffer.from(v)) // Ok<Buffer, Error>
+	 * Err<Error, string>(new Error('broken')).map((v)=> Buffer.from(v)) // Err<Error, Buffer>
+	 * @since v1.0.4
+	 */
+	map<NewType, NewErrType = ErrType>(fn: (value: OkType) => NewType): IsOk extends true ? IOk<NewType, NewErrType> : IErr<NewErrType, NewType>;
 	/**
 	 * Convert result to option and discard the error type
 	 * @returns {ISome<OkType> | INone<never>} option

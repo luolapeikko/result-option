@@ -113,6 +113,12 @@ export class OptionBuilder<IsSome extends boolean, SomeType = unknown> implement
 		return defaultValue;
 	}
 
+	public map<NewType>(fn: (value: SomeType) => NewType): MappedType<IsSome, ISome<NewType>, INone<NewType>> {
+		const isSome = this._isSome;
+		const value = this._isSome ? fn(this.removeValue() as SomeType) : undefined;
+		return asMapped<IsSome, ISome<NewType>, INone<NewType>>(isSome, new OptionBuilder(true, value as NewType), new OptionBuilder(false, undefined as never));
+	}
+
 	public expect(error: string | Error): MappedType<IsSome, SomeType, never> {
 		if (!this._isSome) {
 			throw error instanceof Error ? error : new Error(error);

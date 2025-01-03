@@ -193,6 +193,16 @@ export interface IOptionImplementation<IsTrue extends boolean, SomeType> {
 	 */
 	match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue?: Output): Output | undefined;
 	match<Output>(solver: OptionMatchSolver<SomeType, Output>, defaultValue: Output): Output;
+
+	/**
+	 * Map the Option value to a new value if Some
+	 * @param fn
+	 * @example
+	 * Some("text").map((v)=> Buffer.from(v)) // Some<Buffer>
+	 * None<string>().map((v)=> Buffer.from(v)) // None<Buffer>
+	 * @since v1.0.4
+	 */
+	map<NewType>(fn: (value: SomeType) => NewType): MappedType<IsTrue, IOptionImplementation<true, NewType>, IOptionImplementation<false, NewType>>;
 	/**
 	 * expect the Option to be Some or throw an error
 	 * @param error

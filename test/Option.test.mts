@@ -6,7 +6,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable no-unused-expressions */
 import {describe, expect, it} from 'vitest';
-import {Err, type IOption, nanOption, None, nullishOptionWrap, Ok, Option, Some, undefinedOptionWrap} from '../src/index.mjs';
+import {Err, type INone, type IOption, type ISome, nanOption, None, nullishOptionWrap, Ok, Option, Some, undefinedOptionWrap} from '../src/index.mjs';
 import {exactType} from './helper.mjs';
 
 describe('Option', function () {
@@ -149,6 +149,14 @@ describe('Option', function () {
 		});
 		it('should eq a Some result but different values', function () {
 			expect(Some('hello').eq(Some('hello2'))).to.be.false;
+		});
+	});
+	describe('map', function () {
+		it('should map a Some result', function () {
+			const someOption: ISome<Buffer> = Some<string>('test').map((v) => Buffer.from(v));
+			expect(someOption.isSome).to.be.true;
+			const noneOption: INone<Buffer> = None<string>().map((v) => Buffer.from(v));
+			expect(noneOption.isNone).to.be.true;
 		});
 	});
 	describe('clone', function () {
