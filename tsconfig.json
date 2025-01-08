@@ -30,8 +30,5 @@
 		"out": "docs"
 	},
 	"include": ["src/**/*", "src/**/**/*"],
-	"exclude": ["node_modules", "**/*.spec.ts", "test"],
-	"ts-node": {
-		"esm": true
-	}
+	"exclude": ["node_modules", "**/*.spec.ts", "test"]
 }
