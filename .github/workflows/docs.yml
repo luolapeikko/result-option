@@ -48,13 +48,10 @@ jobs:
       - name: Install dependencies
         run: ${{ env.NPM }} install
 
-      - name: Create output directory
-        run: mkdir ./docs
-
       - name: TSDoc Action
         uses: erikyo/tsdoc-action@v1
         with:
-          source_dir: ./src/*
+          source_dir: ./src/*.mts
           output_dir: ./docs
           front_page: README.md
 
