@@ -6,7 +6,21 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable no-unused-expressions */
 import {describe, expect, it} from 'vitest';
-import {Err, type INone, type IOption, type ISome, nanOption, None, nullishOptionWrap, Ok, Option, Some, undefinedOptionWrap} from '../src/index.mjs';
+import {
+	Err,
+	type INone,
+	type IOption,
+	type ISome,
+	nanOption,
+	None,
+	nullishOptionWrap,
+	Ok,
+	Option,
+	Some,
+	undefinedOptionWrap,
+	wrapFnOption,
+	wrapPromiseFnOption,
+} from '../src/index.mjs';
 import {exactType} from './helper.mjs';
 
 describe('Option', function () {
@@ -289,6 +303,22 @@ describe('Option', function () {
 			expect(() => Option(null as any).isSome).to.throw('Invalid Option instance');
 			expect(None(noneJson).isNone).to.be.true;
 			expect(Some(someJson).isSome).to.be.true;
+		});
+	});
+	describe('wrap', function () {
+		it('should handle wrapped option', function () {
+			const test = wrapFnOption(() => 'hello world')();
+			expect(test.isSome).to.be.true;
+			const errTest = wrapFnOption(() => {
+				throw new Error('broken');
+			})();
+			expect(errTest.isNone).to.be.true;
+		});
+		it('should handle wrapped Promise option', async function () {
+			const test = await wrapPromiseFnOption(() => Promise.resolve('hello world'))();
+			expect(test.isSome).to.be.true;
+			const errTest = await wrapPromiseFnOption(() => Promise.reject(new Error('broken')))();
+			expect(errTest.isNone).to.be.true;
 		});
 	});
 });
