@@ -1,10 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable sonarjs/no-duplicate-string */
-/* eslint-disable no-unused-expressions */
 import {describe, expect, it} from 'vitest';
 import {
 	Err,

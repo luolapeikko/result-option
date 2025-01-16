@@ -1,8 +1,8 @@
-import {fromJsonOption, isJsonOption} from './JsonOption.mjs';
-import {type INone, type IOption, type ISome} from './OptionInstance.mjs';
 import {type IJsonOption} from '../interfaces/IJsonOption.mjs';
-import {isOption} from './OptionInstance.mjs';
+import {fromJsonOption, isJsonOption} from './JsonOption.mjs';
 import {None} from './None.mjs';
+import {type INone, type IOption, type ISome} from './OptionInstance.mjs';
+import {isOption} from './OptionInstance.mjs';
 import {Some} from './Some.mjs';
 
 /**

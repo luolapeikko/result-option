@@ -1,5 +1,5 @@
-import {fromJsonResult, isJsonResult} from './JsonResult.mjs';
 import {type IErr, type IJsonErr, type IJsonOk, type IOk, type IResult} from '../interfaces/index.mjs';
+import {fromJsonResult, isJsonResult} from './JsonResult.mjs';
 import {isResult} from './ResultInstance.mjs';
 
 /**

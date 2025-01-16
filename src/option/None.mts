@@ -1,6 +1,6 @@
-import {type INone, OptionBuilder} from './OptionInstance.mjs';
 import {type IJsonNone} from '../interfaces/IJsonOption.mjs';
 import {isJsonNone} from './JsonOption.mjs';
+import {type INone, OptionBuilder} from './OptionInstance.mjs';
 import {isNone} from './OptionInstance.mjs';
 
 /**

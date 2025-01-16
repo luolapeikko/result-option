@@ -1,6 +1,6 @@
 import {type IJsonOk, type IOk, type IResult} from '../interfaces/index.mjs';
-import {isResult} from './ResultInstance.mjs';
 import {OkInstance} from './OkInstance.mjs';
+import {isResult} from './ResultInstance.mjs';
 
 /**
  * Build Ok result or return if already a Result

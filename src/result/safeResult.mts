@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {type IResult, type IResultOrOkType} from '../interfaces/IResultImplementation.mjs';
 import {Err} from './Err.mjs';
 import {Ok} from './Ok.mjs';

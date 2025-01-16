@@ -1,10 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-/* eslint-disable sonarjs/no-duplicate-string */
-/* eslint-disable no-unused-expressions */
 import {describe, expect, it} from 'vitest';
 import {
 	Err,
@@ -298,7 +291,6 @@ describe('Option', function () {
 			expect(Option(noneValue).isNone).to.be.true;
 			expect(Option(someValue).isSome).to.be.true;
 			expect(Option(noneJson).isNone).to.be.true;
-			console.log('asd');
 			expect(Option(someJson).isSome).to.be.true;
 			expect(() => Option(null as any).isSome).to.throw('Invalid Option instance');
 			expect(None(noneJson).isNone).to.be.true;

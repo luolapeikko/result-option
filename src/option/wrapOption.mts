@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {type IOption} from './OptionInstance.mjs';
 import {None} from './None.mjs';
+import {type IOption} from './OptionInstance.mjs';
 import {Some} from './Some.mjs';
 
 /**

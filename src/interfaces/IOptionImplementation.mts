@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-base-to-string */
-import {type IErr, type IOk} from './IResultImplementation.mjs';
-import {type IJsonNone, type IJsonSome} from './IJsonOption.mjs';
-import {type ConstructorWithValueOf} from './ValueOf.mjs';
 import {type IOption} from '../option/OptionInstance.mjs';
+import {type IJsonNone, type IJsonSome} from './IJsonOption.mjs';
 import {type OptionMatchSolver} from './IMatch.mjs';
+import {type IErr, type IOk} from './IResultImplementation.mjs';
+import {type ConstructorWithValueOf} from './ValueOf.mjs';
 
 /**
  * MappedType is a type that maps a boolean to a type.

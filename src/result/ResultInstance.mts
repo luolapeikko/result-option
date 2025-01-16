@@ -1,5 +1,5 @@
-import {ErrInstance} from './ErrInstance.mjs';
 import {type IResult} from '../interfaces/index.mjs';
+import {ErrInstance} from './ErrInstance.mjs';
 import {OkInstance} from './OkInstance.mjs';
 
 /**

@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-this-alias */
-/* eslint-disable @typescript-eslint/no-base-to-string */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-
-import {asMapped, type IOptionImplementation, type MappedType} from '../interfaces/IOptionImplementation.mjs';
-import {buildJsonNone, buildJsonSome} from './JsonOption.mjs';
 import {type ConstructorWithValueOf, type IErr, type IJsonNone, type IJsonSome, type IOk, type OptionMatchSolver} from '../interfaces/index.mjs';
+import {asMapped, type IOptionImplementation, type MappedType} from '../interfaces/IOptionImplementation.mjs';
 import {Err, Ok} from '../result/index.mjs';
+import {buildJsonNone, buildJsonSome} from './JsonOption.mjs';
 
 /**
  * OptionBuilder is a class that represents an optional value: every Option is either Some and contains a value and type, or None which does not any type.

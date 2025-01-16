@@ -1,5 +1,5 @@
-import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk, type ResultMatchSolver} from './index.mjs';
 import {type INone, type ISome} from '../option/index.mjs';
+import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk, type ResultMatchSolver} from './index.mjs';
 
 /**
  * Result builder interface
@@ -14,14 +14,7 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * Err<Error>(new Error('broken')).isOk // false
 	 */
 	isOk: IsOk;
-	/**
-	 * Try to get value, otherwise return undefined
-	 * @returns {OkType | undefined} value or undefined
-	 * @example
-	 * Ok<number>(2).ok() // 2
-	 * Err<Error>(new Error('broken')).ok() // undefined
-	 */
-	ok(): IsOk extends true ? OkType : undefined;
+
 	/**
 	 * Check that result is an error
 	 * @returns {boolean} true if result is an error
@@ -30,6 +23,16 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * Err<Error>(new Error('broken')).isErr // true
 	 */
 	isErr: IsOk extends false ? true : false;
+
+	/**
+	 * Try to get value, otherwise return undefined
+	 * @returns {OkType | undefined} value or undefined
+	 * @example
+	 * Ok<number>(2).ok() // 2
+	 * Err<Error>(new Error('broken')).ok() // undefined
+	 */
+	ok(): IsOk extends true ? OkType : undefined;
+
 	/**
 	 * Try to get the error, otherwise return undefined
 	 * @returns {ErrType | undefined} error or undefined

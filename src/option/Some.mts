@@ -1,6 +1,6 @@
-import {type ISome, isSome, OptionBuilder} from './OptionInstance.mjs';
 import {type IJsonSome} from '../interfaces/IJsonOption.mjs';
 import {isJsonSome} from './JsonOption.mjs';
+import {type ISome, isSome, OptionBuilder} from './OptionInstance.mjs';
 
 /**
  * Build Some option or return if already a Option
