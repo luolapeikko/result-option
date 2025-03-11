@@ -6,6 +6,5 @@ export const exactType: <Actual, Expected>(actual: Actual & Exact<Actual, Expect
 	_actual,
 	_expected,
 ) => {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	return null as any;
 };
