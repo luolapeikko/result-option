@@ -179,7 +179,7 @@ describe('FunctionResult', function () {
 			expect(result.isErr).to.be.eq(true);
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(Error, 'oops');
+			expect(() => result.unwrap()).to.throw(stE);
 			expect(() => result.unwrap(() => demoError)).to.throw(demoError);
 			expect(() => result.unwrap(demoError)).to.throw(demoError);
 			expect(result.unwrapOr('world')).to.be.equal('world');
@@ -191,6 +191,14 @@ describe('FunctionResult', function () {
 					Err: (err) => `${err.message} world`,
 				}),
 			).to.be.equal('oops world');
+			let exception: unknown;
+			try {
+				result.unwrap();
+			} catch (e) {
+				exception = e;
+			}
+			expect(exception).to.be.equal(stE);
+			expect((exception as Error).stack, 'check stack original cause').to.include('Caused by: Error: oops');
 		});
 
 		it('should create a error result from safeResult', function () {
@@ -201,7 +209,7 @@ describe('FunctionResult', function () {
 			expect(result.isErr).to.be.eq(true);
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(Error, 'oops');
+			expect(() => result.unwrap()).to.throw(stE);
 			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
@@ -213,7 +221,7 @@ describe('FunctionResult', function () {
 			expect(result.isErr).to.be.eq(true);
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(Error, 'oops');
+			expect(() => result.unwrap()).to.throw(stE);
 			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
@@ -223,7 +231,7 @@ describe('FunctionResult', function () {
 			expect(result.isErr).to.be.eq(true);
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(Error, 'oops');
+			expect(() => result.unwrap()).to.throw(stE);
 			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
@@ -233,7 +241,7 @@ describe('FunctionResult', function () {
 			expect(result.isErr).to.be.eq(true);
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(Error, 'oops');
+			expect(() => result.unwrap()).to.throw(stE);
 			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
@@ -245,7 +253,7 @@ describe('FunctionResult', function () {
 			expect(result.isErr).to.be.eq(true);
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(Error, 'oops');
+			expect(() => result.unwrap()).to.throw(stE);
 			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 
@@ -257,7 +265,7 @@ describe('FunctionResult', function () {
 			expect(result.isErr).to.be.eq(true);
 			expect(result.ok()).to.be.equal(undefined);
 			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(Error, 'oops');
+			expect(() => result.unwrap()).to.throw(stE);
 			expect(result.unwrapOr('world')).to.be.equal('world');
 		});
 

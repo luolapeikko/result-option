@@ -1,6 +1,5 @@
 import {type ConstructorWithValueOf, type IErr, type IJsonErr, type IResult, type ResultMatchSolver} from '../interfaces/index.mjs';
 import {type INone, None} from '../option/index.mjs';
-import {isErrorCauseSupported} from './errorUtil.js';
 import {isJsonErr} from './JsonResult.mjs';
 
 /**
@@ -10,6 +9,7 @@ import {isJsonErr} from './JsonResult.mjs';
  */
 export class ErrInstance<ErrType> implements IErr<ErrType> {
 	private readonly error: ErrType;
+	private originalStack: string | undefined;
 	public constructor(error: ErrType | IJsonErr<ErrType>) {
 		this.error = isJsonErr(error) ? error.value : error;
 	}
@@ -41,11 +41,17 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 			}
 			throw err;
 		}
-		// Try to create a new Error with the original error as the cause if supported
-		if (this.error instanceof Error && isErrorCauseSupported()) {
-			const err = new Error(this.error.message, {cause: this.error});
-			err.name = this.error.name; // Preserve the original error name
-			throw err;
+		if (this.error instanceof Error && 'captureStackTrace' in Error) {
+			// Preserve the original stack trace if available
+			this.originalStack ??= (this.error.stack ?? '')
+				.split('\n')
+				.map((line, idx) => (idx === 0 ? line : `    ${line}`))
+				.join('\n');
+			Error.captureStackTrace(this.error); // Capture the current stack trace
+			// Append the original stack trace to the error
+			if (this.originalStack) {
+				this.error.stack = this.error.stack + '\n    Caused by: ' + this.originalStack;
+			}
 		}
 		// eslint-disable-next-line @typescript-eslint/only-throw-error
 		throw this.error;
