@@ -1,5 +1,6 @@
 import {type ConstructorWithValueOf, type IErr, type IJsonErr, type IResult, type ResultMatchSolver} from '../interfaces/index.mjs';
 import {type INone, None} from '../option/index.mjs';
+import {isErrorCauseSupported} from './errorUtil.js';
 import {isJsonErr} from './JsonResult.mjs';
 
 /**
@@ -38,6 +39,12 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 			if (typeof err === 'function') {
 				throw err(this.error);
 			}
+			throw err;
+		}
+		// Try to create a new Error with the original error as the cause if supported
+		if (this.error instanceof Error && isErrorCauseSupported()) {
+			const err = new Error(this.error.message, {cause: this.error});
+			err.name = this.error.name; // Preserve the original error name
 			throw err;
 		}
 		// eslint-disable-next-line @typescript-eslint/only-throw-error
