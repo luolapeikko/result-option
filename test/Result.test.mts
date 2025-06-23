@@ -35,8 +35,14 @@ const testAsyncFunction = safeAsyncResultBuilder((value: string) => {
 describe('FunctionResult', function () {
 	describe('Ok', function () {
 		it('should resolve a value result from Ok Result', function () {
-			const value = 'hello';
-			const result = Ok<string, Error>(value) as IResult<string, Error>;
+			const value = 'hello' as string;
+			let inspectValue: string | undefined;
+			let inspectErrValue: Error | undefined;
+			const result = Ok<string, Error>(value)
+				.inspect((value) => (inspectValue = value))
+				.inspectErr((value) => (inspectErrValue = value)) as IResult<string, Error>;
+			expect(inspectValue).to.be.equal(value);
+			expect(inspectErrValue).to.be.equal(undefined);
 			expect(result.isOk).to.be.eq(true);
 			expect(result.isErr).to.be.eq(false);
 			expect(result.ok()).to.be.equal(value);
@@ -174,7 +180,13 @@ describe('FunctionResult', function () {
 	describe('Err', function () {
 		it('should create a error result from Err', function () {
 			const demoError = new Error('demo');
-			const result = Err(Err(stE)); // chaining Err
+			let inspectValue: string | undefined;
+			let inspectErrValue: Error | undefined;
+			const result = Err(Err(stE)) // chaining Err
+				.inspect((value) => (inspectValue = value))
+				.inspectErr((value) => (inspectErrValue = value));
+			expect(inspectValue).to.be.equal(undefined);
+			expect(inspectErrValue).to.be.equal(stE);
 			expect(result.isOk).to.be.eq(false);
 			expect(result.isErr).to.be.eq(true);
 			expect(result.ok()).to.be.equal(undefined);

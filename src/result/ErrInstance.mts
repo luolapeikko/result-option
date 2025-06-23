@@ -101,6 +101,15 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return this as unknown as IErr<NewErrType>;
 	}
 
+	public inspect(_fn: (value: never) => void): this {
+		return this;
+	}
+
+	public inspectErr(fn: (value: ErrType) => void): this {
+		fn(this.error);
+		return this;
+	}
+
 	public toString(): `Err(${string})` {
 		return `Err(${this.getErrorInstanceName()}${this.getErrorInstanceMessage()})`;
 	}

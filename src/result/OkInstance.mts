@@ -81,6 +81,15 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return callbackFunc(this.value);
 	}
 
+	public inspect(fn: (value: OkType) => void): this {
+		fn(this.value);
+		return this;
+	}
+
+	public inspectErr(_fn: (value: never) => void): this {
+		return this;
+	}
+
 	public toString(): `Ok(${string})` {
 		return `Ok(${String(this.value)})`;
 	}

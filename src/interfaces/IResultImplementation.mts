@@ -158,6 +158,27 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * @since v1.0.4
 	 */
 	map<NewType, NewErrType = ErrType>(fn: (value: OkType) => NewType): IsOk extends true ? IOk<NewType, NewErrType> : IErr<NewErrType, NewType>;
+
+	/**
+	 * Inspect the result value if Ok
+	 * @param fn - function to inspect the value
+	 * @returns {this} this result instance
+	 * @example
+	 * Ok<number>(2).inspect((value) => console.log('Value:', value)).unwrap() // logs 'Value: 2' and returns 2
+	 * @since v1.0.8
+	 */
+	inspect(fn: (value: OkType) => void): this;
+
+	/**
+	 * Inspect the result value if Err
+	 * @param fn - function to inspect the error
+	 * @returns {this} this result instance
+	 * @example
+	 * Err<Error>(new Error('broken')).inspectErr((err) => console.error('Error:', err)).unwrap() // logs 'Error: Error('broken')' and throws
+	 * @since v1.0.8
+	 */
+	inspectErr(fn: (value: ErrType) => void): this;
+
 	/**
 	 * Convert result to option and discard the error type
 	 * @returns {ISome<OkType> | INone<never>} option
