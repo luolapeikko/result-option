@@ -1,6 +1,6 @@
 {
 	"name": "@luolapeikko/result-option",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"description": "Rust style Result for TypeScript/Javascript",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
