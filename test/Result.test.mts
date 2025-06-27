@@ -79,6 +79,7 @@ describe('FunctionResult', function () {
 		it('should resolve a value result from safeResult with Ok', function () {
 			const value = 'hello';
 			const result: IResult<string> = safeResult<string>(() => Ok(value));
+			const iter = result.iter();
 			expect(result.isOk).to.be.eq(true);
 			expect(result.isErr).to.be.eq(false);
 			expect(result.ok()).to.be.equal(value);
@@ -87,6 +88,8 @@ describe('FunctionResult', function () {
 			expect(result.unwrapOr('world')).to.be.equal(value);
 			expect(result.unwrapOrElse(() => 'world')).to.be.equal(value);
 			expect(result.unwrapOrValueOf(String)).to.be.equal(value);
+			expect(iter.next().value).to.be.equal(result);
+			expect(iter.next().done).to.be.equal(true);
 		});
 
 		it('should resolve with safeResultBuilder function', function () {
@@ -176,6 +179,12 @@ describe('FunctionResult', function () {
 			expect(result.unwrap()).to.be.equal(value);
 			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
+		it('should test isOkAnd and isErrAnd', function () {
+			expect(Ok(1).isOkAnd((v) => v === 1)).to.be.eq(true);
+			expect(Ok(1).isErrAnd((v) => v === 1)).to.be.eq(false);
+			expect(Err(1).isErrAnd((v) => v === 1)).to.be.eq(true);
+			expect(Err(1).isOkAnd((v) => v === 1)).to.be.eq(false);
+		});
 	});
 	describe('Err', function () {
 		it('should create a error result from Err', function () {
@@ -185,6 +194,7 @@ describe('FunctionResult', function () {
 			const result = Err(Err(stE)) // chaining Err
 				.inspect((value) => (inspectValue = value))
 				.inspectErr((value) => (inspectErrValue = value));
+			const iter = result.iter();
 			expect(inspectValue).to.be.equal(undefined);
 			expect(inspectErrValue).to.be.equal(stE);
 			expect(result.isOk).to.be.eq(false);
@@ -211,6 +221,8 @@ describe('FunctionResult', function () {
 			}
 			expect(exception).to.be.equal(stE);
 			expect((exception as Error).stack, 'check stack original cause').to.include('Caused by: Error: oops');
+			expect(iter.next().value).to.be.eql(None());
+			expect(iter.next().done).to.be.equal(true);
 		});
 
 		it('should create a error result from safeResult', function () {
@@ -368,6 +380,20 @@ describe('FunctionResult', function () {
 			expect(okResult.isOk).to.be.eq(true);
 			const errResult: IErr<Error, Buffer> = Err<Error, string>(new Error('test')).map((v) => Buffer.from(v));
 			expect(errResult.isErr).to.be.eq(true);
+		});
+	});
+	describe('mapErr', function () {
+		it('should skip mapErr mapping', function () {
+			const okResult = Ok<string, Error>('test') as IResult<string, Error>;
+			const mappedOkResult: IResult<string, TypeError> = okResult.mapErr((v) => new TypeError(v.message));
+			expect(mappedOkResult.isOk).to.be.eq(true);
+			expect(mappedOkResult.ok()).to.be.eq('test');
+		});
+		it('should do mapErr mapping', function () {
+			const errResult = Err<Error, string>(new Error('test')) as IResult<string, Error>;
+			const mappedErrResult: IResult<string, TypeError> = errResult.mapErr((v) => new TypeError(v.message));
+			expect(mappedErrResult.isErr).to.be.eq(true);
+			expect(mappedErrResult.err()?.name).to.be.eq('TypeError');
 		});
 	});
 	describe('toOption', function () {

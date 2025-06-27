@@ -123,6 +123,7 @@ export default tseslint.config(
 			'@typescript-eslint/class-literal-property-style': 'off',
 			'sonarjs/different-types-comparison': 'off',
 			'sonarjs/no-try-promise': 'off',
+			'sonarjs/deprecation': 'off',
 		},
 	},
 	{

@@ -18,6 +18,14 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return false;
 	}
 
+	public isOkAnd(_callbackFunc: (value: never) => boolean): false {
+		return false;
+	}
+
+	public isErrAnd(callbackFunc: (value: ErrType) => boolean): boolean {
+		return callbackFunc(this.error);
+	}
+
 	public ok() {
 		return undefined;
 	}
@@ -97,8 +105,12 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return solver.Err(this.error);
 	}
 
-	public map<OutType, NewErrType = ErrType>(_callbackFunc: (val: never) => OutType) {
-		return this as unknown as IErr<NewErrType>;
+	public map<NewOkType>(_callbackFunc: (val: never) => NewOkType): ErrInstance<ErrType> {
+		return this;
+	}
+
+	public mapErr<NewErrType>(fn: (value: ErrType) => NewErrType): ErrInstance<NewErrType> {
+		return new ErrInstance(fn(this.error));
 	}
 
 	public inspect(_fn: (value: never) => void): this {
@@ -108,6 +120,14 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 	public inspectErr(fn: (value: ErrType) => void): this {
 		fn(this.error);
 		return this;
+	}
+
+	public *iter(): IterableIterator<INone> {
+		let isDone = false;
+		while (!isDone) {
+			yield None();
+			isDone = true;
+		}
 	}
 
 	public toString(): `Err(${string})` {

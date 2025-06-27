@@ -17,6 +17,14 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return true;
 	}
 
+	public isOkAnd(callbackFunc: (value: OkType) => boolean): boolean {
+		return callbackFunc(this.value);
+	}
+
+	public isErrAnd(_callbackFunc: (value: never) => boolean): false {
+		return false;
+	}
+
 	public ok() {
 		return this.value;
 	}
@@ -33,8 +41,12 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return solver.Ok(this.value);
 	}
 
-	public map<OutType>(callbackFunc: (val: OkType) => OutType) {
+	public map<NewOkType>(callbackFunc: (val: OkType) => NewOkType): OkInstance<NewOkType> {
 		return new OkInstance(callbackFunc(this.value));
+	}
+
+	public mapErr<NewErrType>(_callbackFunc: (val: never) => NewErrType): OkInstance<OkType> {
+		return this;
 	}
 
 	public toOption() {
@@ -88,6 +100,14 @@ export class OkInstance<OkType> implements IOk<OkType> {
 
 	public inspectErr(_fn: (value: never) => void): this {
 		return this;
+	}
+
+	public *iter(): IterableIterator<this> {
+		let isDone = false;
+		while (!isDone) {
+			yield this;
+			isDone = true;
+		}
 	}
 
 	public toString(): `Ok(${string})` {

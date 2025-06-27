@@ -25,6 +25,30 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	isErr: IsOk extends false ? true : false;
 
 	/**
+	 * Returns true if the result is Ok and callback function returns true for the value inside of Ok.
+	 * @param {(value: OkType) => boolean} callbackFunc - function to check the value inside of Ok
+	 * @returns {boolean} true if the result is Ok and the callback function returns true for the value inside of Ok
+	 * @example
+	 * Ok<number>(2).isOkAnd((value) => value === 2) // true
+	 * Ok<number>(2).isOkAnd((value) => value === 3) // false
+	 * Err<Error>(new Error('broken')).isOkAnd((value) => value === 2) // false
+	 * @since v1.0.8
+	 */
+	isOkAnd(callbackFunc: (value: OkType) => boolean): IsOk extends true ? boolean : false;
+
+	/**
+	 * Returns true if the result is Err and callback function returns true for the value inside of Err.
+	 * @param {(value: ErrType) => boolean} callback - function to check the value inside of Err
+	 * @returns {boolean} true if the result is Err and the callback function returns true for the value inside of Err
+	 * @example
+	 * Err<Error>(new Error('broken')).isErrAnd((err) => err.message === 'broken') // true
+	 * Err<Error>(new Error('broken')).isErrAnd((err) => err.message === 'not broken') // false
+	 * Ok<number>(2).isErrAnd((err) => err.message === 'broken') // false
+	 * @since v1.0.8
+	 */
+	isErrAnd(callbackFunc: (value: ErrType) => boolean): IsOk extends false ? boolean : false;
+
+	/**
 	 * Try to get value, otherwise return undefined
 	 * @returns {OkType | undefined} value or undefined
 	 * @example
@@ -48,7 +72,11 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * Ok<number>(2).unwrap() // 2
 	 * Err<Error>(new Error('broken')).unwrap() // throws Error('broken')
 	 */
-	unwrap(err?: Error | ((err: ErrType) => Error)): IsOk extends true ? OkType : never;
+	unwrap(): IsOk extends true ? OkType : never;
+	/**
+	 * @deprecated error argument or callback is deprecated in 1.0.9, to transform the error use `.mapErr((e)=> new Error(e.message)).unwrap()` instead.
+	 */
+	unwrap(err: Error | ((err: ErrType) => Error)): IsOk extends true ? OkType : never;
 	/**
 	 * Method to unwrap the value or if error return the default value
 	 * @param defaultValue - default value to return if error
@@ -157,7 +185,10 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * Err<Error, string>(new Error('broken')).map((v)=> Buffer.from(v)) // Err<Error, Buffer>
 	 * @since v1.0.4
 	 */
-	map<NewType, NewErrType = ErrType>(fn: (value: OkType) => NewType): IsOk extends true ? IOk<NewType, NewErrType> : IErr<NewErrType, NewType>;
+	// map<NewType, NewErrType = ErrType>(fn: (value: OkType) => NewType): IsOk extends true ? IOk<NewType, NewErrType> : IErr<NewErrType, NewType>;
+	map<NewOkType>(fn: (value: OkType) => NewOkType): IsOk extends true ? IOk<NewOkType, ErrType> : IErr<ErrType, NewOkType>;
+
+	mapErr<NewErrType>(fn: (value: ErrType) => NewErrType): IsOk extends true ? IOk<OkType, NewErrType> : IErr<NewErrType, OkType>;
 
 	/**
 	 * Inspect the result value if Ok
@@ -168,6 +199,16 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * @since v1.0.8
 	 */
 	inspect(fn: (value: OkType) => void): this;
+
+	/**
+	 * Iterate over the result value
+	 * @returns {IterableIterator<this>} iterable iterator of the result value
+	 * @example
+	 * Ok<number>(2).iter().next().value; // Ok<number>(2)
+	 * Err<Error>(new Error('broken')).iter().next().done; // true (no values to iterate)
+	 * @since v1.0.9
+	 */
+	iter(): IterableIterator<IsOk extends true ? this : INone, IsOk extends true ? this : INone>;
 
 	/**
 	 * Inspect the result value if Err
