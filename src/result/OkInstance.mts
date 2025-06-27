@@ -1,5 +1,5 @@
 import {type ConstructorWithValueOf, type IJsonOk, type IOk, type IResult, type ResultMatchSolver} from '../interfaces/index.mjs';
-import {Some} from '../option/index.mjs';
+import {type ISome, Some} from '../option/index.mjs';
 import {isJsonOk} from './JsonResult.mjs';
 
 /**
@@ -25,7 +25,7 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return false;
 	}
 
-	public ok() {
+	public ok(): OkType {
 		return this.value;
 	}
 
@@ -37,7 +37,7 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return undefined;
 	}
 
-	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<OkType, unknown, OkOutput, ErrOutput>) {
+	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<OkType, unknown, OkOutput, ErrOutput>): OkOutput {
 		return solver.Ok(this.value);
 	}
 
@@ -49,47 +49,47 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return this;
 	}
 
-	public toOption() {
+	public toOption(): ISome<OkType> {
 		return Some(this.value);
 	}
 
-	public unwrap(_err?: Error | ((err: never) => Error)) {
+	public unwrap(): OkType {
 		return this.value;
 	}
 
-	public unwrapOr<DefaultType>(_defaultValue: DefaultType) {
+	public unwrapOr<DefaultType>(_defaultValue: DefaultType): OkType {
 		return this.value;
 	}
 
-	public unwrapOrElse<DefaultType>(_callbackFunc: () => DefaultType) {
+	public unwrapOrElse<DefaultType>(_callbackFunc: () => DefaultType): OkType {
 		return this.value;
 	}
 
-	public unwrapOrValueOf<ValueType>(_constructorValueOf: ConstructorWithValueOf<ValueType>) {
+	public unwrapOrValueOf<ValueType>(_constructorValueOf: ConstructorWithValueOf<ValueType>): OkType {
 		return this.value;
 	}
 
-	public eq(other: IResult) {
+	public eq(other: IResult): boolean {
 		return this.value === other.ok();
 	}
 
-	public or<CompareType>(_value: IResult<CompareType>) {
+	public or<CompareType>(_value: IResult<CompareType>): this {
 		return this;
 	}
 
-	public orElse<CompareType, Override>(_callbackFunc: (value: Override) => IResult<CompareType>) {
+	public orElse<CompareType, Override>(_callbackFunc: (value: Override) => IResult<CompareType>): this {
 		return this;
 	}
 
-	public and<CompareType>(value: IResult<CompareType>) {
+	public and<CompareType>(value: IResult<CompareType>): IResult<CompareType> {
 		return value;
 	}
 
-	public clone() {
+	public clone(): OkInstance<OkType> {
 		return new OkInstance(this.value);
 	}
 
-	public andThen<OutType>(callbackFunc: (val: OkType) => IResult<OutType>) {
+	public andThen<OutType>(callbackFunc: (val: OkType) => IResult<OutType>): IResult<OutType> {
 		return callbackFunc(this.value);
 	}
 

@@ -66,17 +66,14 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 */
 	err(): IsOk extends false ? ErrType : undefined;
 	/**
-	 * Method to unwrap the value or throw an error
-	 * @param {Error | ((err: ErrorType) => Error)} err - optional error or function to transform the error
+	 * Method to unwrap the value or throw an error.
+	 *
+	 * Note: Error argument/callback was removed in favor of the `.errMap((e) => new Error(e.message)).unwrap()` method.
 	 * @example
 	 * Ok<number>(2).unwrap() // 2
 	 * Err<Error>(new Error('broken')).unwrap() // throws Error('broken')
 	 */
 	unwrap(): IsOk extends true ? OkType : never;
-	/**
-	 * @deprecated error argument or callback is deprecated in 1.0.9, to transform the error use `.mapErr((e)=> new Error(e.message)).unwrap()` instead.
-	 */
-	unwrap(err: Error | ((err: ErrType) => Error)): IsOk extends true ? OkType : never;
 	/**
 	 * Method to unwrap the value or if error return the default value
 	 * @param defaultValue - default value to return if error

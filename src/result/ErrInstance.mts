@@ -26,7 +26,7 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return callbackFunc(this.error);
 	}
 
-	public ok() {
+	public ok(): undefined {
 		return undefined;
 	}
 
@@ -34,7 +34,7 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return true;
 	}
 
-	public err() {
+	public err(): ErrType {
 		return this.error;
 	}
 
@@ -42,13 +42,7 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return None<never>();
 	}
 
-	public unwrap(err?: Error | ((err: ErrType) => Error)): never {
-		if (err) {
-			if (typeof err === 'function') {
-				throw err(this.error);
-			}
-			throw err;
-		}
+	public unwrap(): never {
 		if (this.error instanceof Error && 'captureStackTrace' in Error) {
 			// Preserve the original stack trace if available
 			this.originalStack ??= (this.error.stack ?? '')
@@ -65,43 +59,43 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		throw this.error;
 	}
 
-	public unwrapOr<DefaultType>(defaultValue: DefaultType) {
+	public unwrapOr<DefaultType>(defaultValue: DefaultType): DefaultType {
 		return defaultValue;
 	}
 
-	public unwrapOrElse<DefaultType>(callbackFunc: () => DefaultType) {
+	public unwrapOrElse<DefaultType>(callbackFunc: () => DefaultType): DefaultType {
 		return callbackFunc();
 	}
 
-	public unwrapOrValueOf<ValueType>(BaseConstructor: ConstructorWithValueOf<ValueType>) {
+	public unwrapOrValueOf<ValueType>(BaseConstructor: ConstructorWithValueOf<ValueType>): ValueType {
 		return new BaseConstructor().valueOf();
 	}
 
-	public eq(other: IResult) {
+	public eq(other: IResult): boolean {
 		return this.error === other.err();
 	}
 
-	public or<CompareResult extends IResult>(value: CompareResult) {
+	public or<CompareResult extends IResult>(value: CompareResult): CompareResult {
 		return value;
 	}
 
-	public orElse<CompareResult extends IResult>(callbackFunc: (value: ErrType) => CompareResult) {
+	public orElse<CompareResult extends IResult>(callbackFunc: (value: ErrType) => CompareResult): CompareResult {
 		return callbackFunc(this.error);
 	}
 
-	public and<CompareResult extends IResult>(_value: CompareResult) {
+	public and<CompareResult extends IResult>(_value: CompareResult): this {
 		return this;
 	}
 
-	public clone() {
+	public clone(): ErrInstance<ErrType> {
 		return new ErrInstance(this.error);
 	}
 
-	public andThen<OutType>(_callbackFunc: (val: never) => IResult<OutType>) {
+	public andThen<OutType>(_callbackFunc: (val: never) => IResult<OutType>): this {
 		return this;
 	}
 
-	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<unknown, ErrType, OkOutput, ErrOutput>) {
+	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<unknown, ErrType, OkOutput, ErrOutput>): ErrOutput {
 		return solver.Err(this.error);
 	}
 

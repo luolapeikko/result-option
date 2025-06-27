@@ -24,7 +24,7 @@ export class OptionBuilder<IsSome extends boolean, SomeType = unknown> implement
 		return asMapped(this._isSome, false, true);
 	}
 
-	public cloned() {
+	public cloned(): OptionBuilder<IsSome, SomeType> {
 		return new OptionBuilder(this._isSome, this.value);
 	}
 
@@ -134,7 +134,7 @@ export class OptionBuilder<IsSome extends boolean, SomeType = unknown> implement
 		return asMapped<IsSome, `Some(${string})`, 'None()'>(this._isSome, `Some(${String(this.value)})`, 'None()');
 	}
 
-	public toString() {
+	public toString(): string {
 		if (!this._isSome) {
 			return 'None';
 		}
