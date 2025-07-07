@@ -10,22 +10,22 @@ import {
 	Ok,
 	Result,
 	safeAsyncResult,
-	safeAsyncResultBuilder,
 	safeResult,
-	safeResultBuilder,
 	Some,
+	wrapFnPromiseResult,
+	wrapFnResult,
 } from '../src/index.mjs';
 
 const stE = new Error('oops');
 
-const testFunction = safeResultBuilder((value: string) => {
+const testFunction = wrapFnResult((value: string) => {
 	if (value === 'error') {
 		throw stE;
 	}
 	return value;
 });
 
-const testAsyncFunction = safeAsyncResultBuilder((value: string) => {
+const testAsyncFunction = wrapFnPromiseResult((value: string) => {
 	if (value === 'error') {
 		return Promise.reject(stE);
 	}
@@ -146,7 +146,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with dual safeResult chain', function () {
 			const value = 'hello';
-			const callback = safeResultBuilder((v: string) => testFunction(v));
+			const callback = wrapFnResult((v: string) => testFunction(v));
 			const result: IResult<string> = callback(value);
 			expect(result.isOk).to.be.eq(true);
 			expect(result.isErr).to.be.eq(false);
@@ -158,7 +158,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with dual safeAsyncResult chain', async function () {
 			const value = 'hello';
-			const callback = safeAsyncResultBuilder((v: string) => testAsyncFunction(v));
+			const callback = wrapFnPromiseResult((v: string) => testAsyncFunction(v));
 			const result: IResult<string> = await callback(value);
 			expect(result.isOk).to.be.eq(true);
 			expect(result.isErr).to.be.eq(false);
@@ -170,7 +170,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with dual safeAsyncResult chain', async function () {
 			const value = 'hello';
-			const callback = safeAsyncResultBuilder((v: string) => testFunction(v) as unknown as Promise<IResult<string>>);
+			const callback = wrapFnPromiseResult((v: string) => testFunction(v) as unknown as Promise<IResult<string>>);
 			const result: IResult<string> = await callback(value);
 			expect(result.isOk).to.be.eq(true);
 			expect(result.isErr).to.be.eq(false);

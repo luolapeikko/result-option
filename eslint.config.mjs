@@ -1,6 +1,6 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import stylisticTs from '@stylistic/eslint-plugin-ts';
+import stylistic from '@stylistic/eslint-plugin';
 import importPlugin from 'eslint-plugin-import';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import sonarjs from 'eslint-plugin-sonarjs';
@@ -27,7 +27,7 @@ export default tseslint.config(
 	},
 	{
 		plugins: {
-			'@stylistic/ts': stylisticTs,
+			'@stylistic/ts': stylistic,
 		},
 		languageOptions: {
 			parser: tsParser,

@@ -25,6 +25,37 @@ async function promiseSettledAsResult<OkType = unknown, ErrType = unknown>(
  * @param func async Promise or callback function
  * @returns PromiseResult
  * @example
+ * const writeFile = wrapFnPromiseResult(fs.promises.writeFile);
+ * const result = await writeFile('test.txt', 'hello world');
+ * if (result.isOk) {
+ *   console.log('file written');
+ * } else {
+ *   console.log('error writing file', result.err());
+ * }
+ * @since v1.1.1
+ */
+export function wrapFnPromiseResult<TArgs extends any[], OkType, ErrType>(
+	func: (...args: TArgs) => Promise<IResultOrOkType<OkType, ErrType>>,
+): (...args: TArgs) => Promise<IResult<OkType, ErrType>> {
+	return async (...args: TArgs): Promise<IResult<OkType, ErrType>> => {
+		try {
+			return promiseSettledAsResult(func(...args));
+			/* c8 ignore next 3 */
+		} catch (err) {
+			return Err(err as ErrType);
+		}
+	};
+}
+
+/**
+ * build safe wrapper for async callback function
+ * @template TArgs function arguments
+ * @template OkType return type
+ * @template ErrType error type
+ * @param func async Promise or callback function
+ * @returns PromiseResult
+ * @deprecated Use `wrapFnPromiseResult` instead.
+ * @example
  * const safeAsyncFunc = safeAsyncResultBuilder(async (arg1: string, arg2: number) => {
  * 	if (arg1 === 'error') {
  * 		throw new Error('oops');
@@ -44,15 +75,8 @@ async function promiseSettledAsResult<OkType = unknown, ErrType = unknown>(
  */
 export function safeAsyncResultBuilder<TArgs extends any[], OkType = unknown, ErrType = unknown>(
 	func: (...args: TArgs) => Promise<IResultOrOkType<OkType, ErrType>>,
-) {
-	return async (...args: TArgs): Promise<IResult<OkType, ErrType>> => {
-		try {
-			return promiseSettledAsResult(func(...args));
-			/* c8 ignore next 3 */
-		} catch (err) {
-			return Err(err as ErrType);
-		}
-	};
+): (...args: TArgs) => Promise<IResult<OkType, ErrType>> {
+	return wrapFnPromiseResult(func);
 }
 
 /**

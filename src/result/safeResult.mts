@@ -10,11 +10,13 @@ import {Ok} from './Ok.mjs';
  * @param func callback function
  * @returns Result
  * @example
- * const existsSync = safeResultBuilder(fs.existsSync);
+ * const existsSync = wrapFnResult(fs.existsSync);
  * const result: Result<boolean> = existsSync('test.txt');
- * @since v1.0.0
+ * @since v1.1.1
  */
-export function safeResultBuilder<TArgs extends any[], OkType, ErrType>(func: (...args: TArgs) => IResultOrOkType<OkType, ErrType>) {
+export function wrapFnResult<TArgs extends any[], OkType, ErrType>(
+	func: (...args: TArgs) => IResultOrOkType<OkType, ErrType>,
+): (...args: TArgs) => IResult<OkType, ErrType> {
 	return (...args: TArgs): IResult<OkType, ErrType> => {
 		try {
 			return Ok(func(...args));
@@ -22,6 +24,25 @@ export function safeResultBuilder<TArgs extends any[], OkType, ErrType>(func: (.
 			return Err(err as ErrType);
 		}
 	};
+}
+
+/**
+ * build safe wrapper for callback function
+ * @template TArgs function arguments
+ * @template OkType return type
+ * @template ErrType error type
+ * @param func callback function
+ * @returns Result
+ * @deprecated Use `wrapFnResult` instead.
+ * @example
+ * const existsSync = safeResultBuilder(fs.existsSync);
+ * const result: Result<boolean> = existsSync('test.txt');
+ * @since v1.0.0
+ */
+export function safeResultBuilder<TArgs extends any[], OkType, ErrType>(
+	func: (...args: TArgs) => IResultOrOkType<OkType, ErrType>,
+): (...args: TArgs) => IResult<OkType, ErrType> {
+	return wrapFnResult(func);
 }
 
 /**
