@@ -1,4 +1,4 @@
-import {type ConstructorWithValueOf, type IErr, type IJsonErr, type IResult, type ResultMatchSolver} from '../interfaces/index.mjs';
+import {type ConstructorWithValueOf, type IJsonErr, type IResult, type IResultBuild, type ResultMatchSolver} from '../interfaces/index.mjs';
 import {type INone, None} from '../option/index.mjs';
 import {isJsonErr} from './JsonResult.mjs';
 
@@ -7,7 +7,7 @@ import {isJsonErr} from './JsonResult.mjs';
  * @template ErrType error type
  * @since v1.0.0
  */
-export class ErrInstance<ErrType> implements IErr<ErrType> {
+export class ErrInstance<ErrType> implements IResultBuild<false, never, ErrType> {
 	private readonly error: ErrType;
 	private originalStack: string | undefined;
 	public constructor(error: ErrType | IJsonErr<ErrType>) {

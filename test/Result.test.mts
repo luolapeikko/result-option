@@ -32,6 +32,22 @@ const testAsyncFunction = wrapFnPromiseResult((value: string) => {
 	return Promise.resolve(value);
 });
 
+type Output = string | number | boolean;
+type IStoreProcessor<T> = (input: Output) => T;
+
+const processorResult: IResult<IStoreProcessor<Output> | undefined, Error> = Ok<IStoreProcessor<Output> | undefined, Error>(undefined);
+
+export function typeTesting(data: Output): IResult<Output | undefined, Error> {
+	if (processorResult.isErr) {
+		return processorResult;
+	}
+	const privateProcessor = processorResult.ok();
+	if (!privateProcessor) {
+		return Err(new Error('Processor not found'));
+	}
+	return Ok(privateProcessor(data));
+}
+
 describe('FunctionResult', function () {
 	describe('Ok', function () {
 		it('should resolve a value result from Ok Result', function () {
@@ -367,9 +383,9 @@ describe('FunctionResult', function () {
 	});
 	describe('map', function () {
 		it('should map a Result', function () {
-			const okResult: IOk<Buffer, Error> = Ok<string, Error>('test').map((v) => Buffer.from(v));
+			const okResult: IOk<Buffer> = Ok<string, Error>('test').map((v) => Buffer.from(v));
 			expect(okResult.isOk).to.be.eq(true);
-			const errResult: IErr<Error, Buffer> = Err<Error, string>(new Error('test')).map((v) => Buffer.from(v));
+			const errResult: IErr<Error> = Err<Error, string>(new Error('test')).map((v) => Buffer.from(v));
 			expect(errResult.isErr).to.be.eq(true);
 		});
 	});

@@ -1,4 +1,4 @@
-import {type ConstructorWithValueOf, type IJsonOk, type IOk, type IResult, type ResultMatchSolver} from '../interfaces/index.mjs';
+import {type ConstructorWithValueOf, type IJsonOk, type IResult, type IResultBuild, type ResultMatchSolver} from '../interfaces/index.mjs';
 import {type ISome, Some} from '../option/index.mjs';
 import {isJsonOk} from './JsonResult.mjs';
 
@@ -7,7 +7,7 @@ import {isJsonOk} from './JsonResult.mjs';
  * @template OkType - Ok type
  * @since v1.0.0
  */
-export class OkInstance<OkType> implements IOk<OkType> {
+export class OkInstance<OkType> implements IResultBuild<true, OkType, never> {
 	private readonly value: OkType;
 	public constructor(value: OkType | IJsonOk<OkType>) {
 		this.value = isJsonOk<OkType, unknown>(value) ? value.value : value;

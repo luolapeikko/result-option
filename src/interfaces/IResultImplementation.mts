@@ -1,3 +1,4 @@
+import {type ErrInstance, type OkInstance} from '../index.mjs';
 import {type INone, type ISome} from '../option/index.mjs';
 import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk, type ResultMatchSolver} from './index.mjs';
 
@@ -205,10 +206,9 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * Err<Error, string>(new Error('broken')).map((v)=> Buffer.from(v)) // Err<Error, Buffer>
 	 * @since v1.0.4
 	 */
-	// map<NewType, NewErrType = ErrType>(fn: (value: OkType) => NewType): IsOk extends true ? IOk<NewType, NewErrType> : IErr<NewErrType, NewType>;
-	map<NewOkType>(fn: (value: OkType) => NewOkType): IsOk extends true ? IOk<NewOkType, ErrType> : IErr<ErrType, NewOkType>;
+	map<NewOkType>(fn: (value: OkType) => NewOkType): IsOk extends true ? IOk<NewOkType> : IErr<ErrType>;
 
-	mapErr<NewErrType>(fn: (value: ErrType) => NewErrType): IsOk extends true ? IOk<OkType, NewErrType> : IErr<NewErrType, OkType>;
+	mapErr<NewErrType>(fn: (value: ErrType) => NewErrType): IsOk extends true ? IOk<OkType> : IErr<NewErrType>;
 
 	/**
 	 * Inspect the result value if Ok
@@ -270,13 +270,13 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
  * Error result type
  * @since v1.0.0
  */
-export type IErr<ErrType = unknown, OkType = never> = IResultBuild<false, OkType, ErrType>;
+export type IErr<ErrType = unknown> = ErrInstance<ErrType>;
 
 /**
  * Ok result type
  * @since v1.0.0
  */
-export type IOk<OkType = unknown, ErrType = never> = IResultBuild<true, OkType, ErrType>;
+export type IOk<OkType = unknown> = OkInstance<OkType>;
 
 /**
  * Result type, this type contains types for both Ok and Err
@@ -297,7 +297,7 @@ export type IOk<OkType = unknown, ErrType = never> = IResultBuild<true, OkType, 
  * }
  * @since v1.0.0
  */
-export type IResult<OkType = unknown, ErrType = unknown> = IResultBuild<true, OkType, ErrType> | IResultBuild<false, OkType, ErrType>;
+export type IResult<OkType = unknown, ErrType = unknown> = ErrInstance<ErrType> | OkInstance<OkType>;
 
 /**
  * Utility type for OkType or Result
