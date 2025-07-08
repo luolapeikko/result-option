@@ -129,6 +129,18 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	andThen<OutResult extends IResult<unknown, unknown>>(
 		callbackFunc: (val: IsOk extends true ? OkType : never) => OutResult,
 	): IsOk extends true ? OutResult : this;
+
+	/**
+	 * Method to combine two results, if the first result is true use the value to build a new result from Promise, otherwise return the error
+	 * @param callbackFunc - callback to build a new result
+	 * @returns {Result} - Result based on the self value and the value parameter
+	 * @example
+	 * await Ok<number>(2).andThen<IResult<number>>((val) => Promise.resolve(Ok(val + 1))) // Ok<number>(3)
+	 * await Err<'broken'>('broken').andThen<IResult<number>>((val) => Promise.resolve(Ok(val + 1))) // Err<'broken'>('broken')
+	 */
+	andThenPromise<OutResult extends IResult<unknown, unknown>>(
+		callbackFunc: (val: IsOk extends true ? OkType : never) => Promise<OutResult>,
+	): IsOk extends true ? Promise<OutResult> : this;
 	/**
 	 * Method to combine two results, if the first result is false return the second result, otherwise return the first result
 	 * @param value - compare value
@@ -150,6 +162,17 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	orElse<OutResult extends IResult<unknown, unknown>>(
 		callbackFunc: (value: IsOk extends true ? never : ErrType) => OutResult,
 	): IsOk extends true ? this : OutResult;
+	/**
+	 * Method to combine two results, if the first result is false use the error to build a new result from Promise, otherwise return the first result
+	 * @param callbackFunc - callback to build a new result
+	 * @returns {Result} - Result based on the self value and the value parameter
+	 * @example
+	 * await Ok<number>(2).orElsePromise<IResult<number>>((errValue) => Promise.resolve(Ok(errValue * 2))) // Ok<number>(2)
+	 * await Err<number>(2).orElsePromise<IResult<number>>((errValue) => Promise.resolve(Ok(errValue * 2))) // Ok<number>(4)
+	 */
+	orElsePromise<OutResult extends IResult<unknown, unknown>>(
+		callbackFunc: (value: IsOk extends true ? never : ErrType) => Promise<OutResult>,
+	): IsOk extends true ? this : Promise<OutResult>;
 	/**
 	 * Method to clone an result
 	 * @returns {CloneType} - cloned result instance

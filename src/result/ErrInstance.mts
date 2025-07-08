@@ -83,6 +83,10 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return callbackFunc(this.error);
 	}
 
+	public orElsePromise<OutResult extends IResult<unknown, unknown>>(callbackFunc: (value: ErrType) => Promise<OutResult>): Promise<OutResult> {
+		return callbackFunc(this.error);
+	}
+
 	public and<CompareResult extends IResult>(_value: CompareResult): this {
 		return this;
 	}
@@ -92,6 +96,10 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 	}
 
 	public andThen<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (val: never) => OutResult): this {
+		return this;
+	}
+
+	public andThenPromise<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (val: never) => Promise<OutResult>): this {
 		return this;
 	}
 
