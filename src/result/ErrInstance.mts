@@ -79,7 +79,7 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return value;
 	}
 
-	public orElse<CompareResult extends IResult>(callbackFunc: (value: ErrType) => CompareResult): CompareResult {
+	public orElse<OutResult extends IResult<unknown, unknown>>(callbackFunc: (value: ErrType) => OutResult): OutResult {
 		return callbackFunc(this.error);
 	}
 
@@ -91,7 +91,7 @@ export class ErrInstance<ErrType> implements IErr<ErrType> {
 		return new ErrInstance(this.error);
 	}
 
-	public andThen<OutType>(_callbackFunc: (val: never) => IResult<OutType>): this {
+	public andThen<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (val: never) => OutResult): this {
 		return this;
 	}
 

@@ -341,31 +341,19 @@ describe('FunctionResult', function () {
 	});
 	describe('orElse', function () {
 		it('should handle or else function', function () {
-			expect(
-				Ok(2)
-					.orElse<number, number>((errValue) => Ok(errValue + 2))
-					.eq(Ok(2)),
-			).to.be.eq(true);
+			const orResult = Ok(2) as IResult<number, number>;
+			const errResult = Err(2) as IResult<number, number>;
+			expect(orResult.orElse<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Ok(2))).to.be.eq(true);
+			expect(errResult.orElse<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Ok(4))).to.be.eq(true);
 		});
-		expect(
-			Err(2)
-				.orElse((errValue) => Ok(errValue + 2))
-				.eq(Ok(4)),
-		).to.be.eq(true);
 	});
 	describe('andThen', function () {
 		it('should handle or else function', function () {
-			expect(
-				Ok(2)
-					.andThen((okValue) => Ok(okValue + 2))
-					.eq(Ok(4)),
-			).to.be.eq(true);
+			const orResult = Ok(2) as IResult<number, number>;
+			const errResult = Err(2) as IResult<number, number>;
+			expect(orResult.andThen<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Ok(4))).to.be.eq(true);
+			expect(errResult.andThen<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Err(2))).to.be.eq(true);
 		});
-		expect(
-			Err(2)
-				.andThen<number, number>((okValue) => Ok(okValue + 2))
-				.eq(Err(2)),
-		).to.be.eq(true);
 	});
 	describe('clone', function () {
 		it('should eq a Ok result', function () {

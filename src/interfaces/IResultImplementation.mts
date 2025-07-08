@@ -123,12 +123,12 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * @param callbackFunc - callback to build a new result
 	 * @returns {Result} - Result based on the self value and the value parameter
 	 * @example
-	 * Ok<number>(2).andThen((val) => Ok<number>(val + 1)) // Ok<number>(3)
-	 * Err<'broken'>('broken').andThen<number>((val) => Ok<number>(val + 1)) // Err<'broken'>('broken')
+	 * Ok<number>(2).andThen<IResult<number>>((val) => Ok(val + 1)) // Ok<number>(3)
+	 * Err<'broken'>('broken').andThen<IResult<number>>((val) => Ok(val + 1)) // Err<'broken'>('broken')
 	 */
-	andThen<OutType, Override = unknown>(
-		callbackFunc: (val: IsOk extends true ? OkType : Override) => IResult<OutType>,
-	): IsOk extends true ? IResult<OutType> : this;
+	andThen<OutResult extends IResult<unknown, unknown>>(
+		callbackFunc: (val: IsOk extends true ? OkType : never) => OutResult,
+	): IsOk extends true ? OutResult : this;
 	/**
 	 * Method to combine two results, if the first result is false return the second result, otherwise return the first result
 	 * @param value - compare value
@@ -144,12 +144,12 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * @param callbackFunc - callback to build a new result
 	 * @returns {Result} - Result based on the self value and the value parameter
 	 * @example
-	 * Ok<number>(2).orElse<number, number>((errValue) => Ok(errValue * 2)) // Ok<number>(2)
-	 * Err<number>(2).orElse<number>((errValue) => Ok(errValue * 2)) // Ok<number>(4)
+	 * Ok<number>(2).orElse<IResult<number>>((errValue) => Ok(errValue * 2)) // Ok<number>(2)
+	 * Err<number>(2).orElse<IResult<number>>((errValue) => Ok(errValue * 2)) // Ok<number>(4)
 	 */
-	orElse<CompareType, Override = unknown>(
-		callbackFunc: (value: IsOk extends true ? Override : ErrType) => IResult<CompareType>,
-	): IsOk extends true ? this : IResult<CompareType>;
+	orElse<OutResult extends IResult<unknown, unknown>>(
+		callbackFunc: (value: IsOk extends true ? never : ErrType) => OutResult,
+	): IsOk extends true ? this : OutResult;
 	/**
 	 * Method to clone an result
 	 * @returns {CloneType} - cloned result instance

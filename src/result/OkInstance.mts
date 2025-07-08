@@ -77,7 +77,7 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return this;
 	}
 
-	public orElse<CompareType, Override>(_callbackFunc: (value: Override) => IResult<CompareType>): this {
+	public orElse<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (value: never) => OutResult): this {
 		return this;
 	}
 
@@ -89,7 +89,7 @@ export class OkInstance<OkType> implements IOk<OkType> {
 		return new OkInstance(this.value);
 	}
 
-	public andThen<OutType>(callbackFunc: (val: OkType) => IResult<OutType>): IResult<OutType> {
+	public andThen<OutResult extends IResult<unknown, unknown>>(callbackFunc: (val: OkType) => OutResult): OutResult {
 		return callbackFunc(this.value);
 	}
 
