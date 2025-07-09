@@ -1,4 +1,4 @@
-import {type ConstructorWithValueOf, type IJsonOk, type IResult, type IResultBuild, type ResultMatchSolver} from '../interfaces/index.mjs';
+import {type ConstructorWithValueOf, type IJsonOk, type IResult, type IResultBuild} from '../interfaces/index.mjs';
 import {type ISome, Some} from '../option/index.mjs';
 import {isJsonOk} from './JsonResult.mjs';
 
@@ -37,15 +37,11 @@ export class OkInstance<OkType> implements IResultBuild<true, OkType, never> {
 		return undefined;
 	}
 
-	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<OkType, unknown, OkOutput, ErrOutput>): OkOutput {
-		return solver.Ok(this.value);
-	}
-
 	public map<NewOkType>(callbackFunc: (val: OkType) => NewOkType): OkInstance<NewOkType> {
 		return new OkInstance(callbackFunc(this.value));
 	}
 
-	public mapErr<NewErrType>(_callbackFunc: (val: never) => NewErrType): OkInstance<OkType> {
+	public mapErr<NewErrType>(_callbackFunc: (val: never) => NewErrType): this {
 		return this;
 	}
 

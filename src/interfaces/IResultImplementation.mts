@@ -1,6 +1,6 @@
 import {type ErrInstance, type OkInstance} from '../index.mjs';
 import {type INone, type ISome} from '../option/index.mjs';
-import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk, type ResultMatchSolver} from './index.mjs';
+import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk} from './index.mjs';
 
 /**
  * Result builder interface
@@ -182,21 +182,6 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * const y = x.clone(); // Ok(2)
 	 */
 	clone(): IResultBuild<IsOk, OkType, ErrType>;
-	/**
-	 * Method to match the value or error
-	 * @param solver - solver callback
-	 * @returns {OkOutput | ErrOutput} output
-	 * @example
-	 * Ok<number>(2).match({
-	 * 	Ok: (value) => value * 2,
-	 * 	Err: (err) => 0
-	 * }) // 4
-	 * Err<number>(2).match({
-	 * 	Ok: (value) => value * 2,
-	 * 	Err: (err) => 0
-	 * }) // 0
-	 */
-	match<OkOutput, ErrOutput>(solver: ResultMatchSolver<OkType, ErrType, OkOutput, ErrOutput>): IsOk extends true ? OkOutput : ErrOutput;
 
 	/**
 	 * Map the result value to a new value if Ok
@@ -206,9 +191,22 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * Err<Error, string>(new Error('broken')).map((v)=> Buffer.from(v)) // Err<Error, Buffer>
 	 * @since v1.0.4
 	 */
-	map<NewOkType>(fn: (value: OkType) => NewOkType): IsOk extends true ? IOk<NewOkType> : IErr<ErrType>;
+	map<NewOkType>(fn: (value: OkType) => NewOkType): IsOk extends true ? IOk<NewOkType> : this;
 
-	mapErr<NewErrType>(fn: (value: ErrType) => NewErrType): IsOk extends true ? IOk<OkType> : IErr<NewErrType>;
+	/**
+	 * Map the error value to a new value if Err
+	 * @param fn - function to map the error value
+	 * @returns {IErr<NewErrType>} new error result instance with mapped error
+	 * @example
+	 * const mapAsTypeErr = (err: Error): TypeError => new TypeError(`Mapped: ${err.message}`);
+	 * Err<Error>(new Error('broken')).mapErr(mapAsTypeErr) // Err<TypeError>(new TypeError('Mapped: broken'))
+	 * Ok<number>(2).mapErr(mapAsTypeErr); // Ok<number>(2)
+	 * // error mapping and logging example
+	 * const logErr = (err: Error) => console.error('Error:', err);
+	 * Err<Error>(new Error('broken')).mapErr(mapAsTypeErr).inspectErr(logErr);
+	 * @since v1.0.4
+	 */
+	mapErr<NewErrType>(fn: (value: ErrType) => NewErrType): IsOk extends true ? this : IErr<NewErrType>;
 
 	/**
 	 * Inspect the result value if Ok
@@ -221,16 +219,6 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	inspect(fn: (value: OkType) => void): this;
 
 	/**
-	 * Iterate over the result value
-	 * @returns {IterableIterator<this>} iterable iterator of the result value
-	 * @example
-	 * Ok<number>(2).iter().next().value; // Ok<number>(2)
-	 * Err<Error>(new Error('broken')).iter().next().done; // true (no values to iterate)
-	 * @since v1.0.9
-	 */
-	iter(): IterableIterator<IsOk extends true ? this : INone, IsOk extends true ? this : INone>;
-
-	/**
 	 * Inspect the result value if Err
 	 * @param fn - function to inspect the error
 	 * @returns {this} this result instance
@@ -239,6 +227,16 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * @since v1.0.8
 	 */
 	inspectErr(fn: (value: ErrType) => void): this;
+
+	/**
+	 * Iterate over the result value
+	 * @returns {IterableIterator<this>} iterable iterator of the result value
+	 * @example
+	 * Ok<number>(2).iter().next().value; // Ok<number>(2)
+	 * Err<Error>(new Error('broken')).iter().next().done; // true (no values to iterate)
+	 * @since v1.0.9
+	 */
+	iter(): IterableIterator<IsOk extends true ? this : INone, IsOk extends true ? this : INone>;
 
 	/**
 	 * Convert result to option and discard the error type

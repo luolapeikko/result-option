@@ -1,6 +1,7 @@
 export * from './Err.mjs';
 export * from './ErrInstance.mjs';
 export * from './JsonResult.mjs';
+export * from './matchResult.mjs';
 export * from './Ok.mjs';
 export * from './OkInstance.mjs';
 export * from './Result.mjs';

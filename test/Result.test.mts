@@ -6,6 +6,7 @@ import {
 	type IErr,
 	type IOk,
 	type IResult,
+	matchResult,
 	None,
 	Ok,
 	Result,
@@ -85,7 +86,7 @@ describe('FunctionResult', function () {
 			expect(result.unwrap()).to.be.equal(value);
 			expect(result.unwrapOr('world')).to.be.equal(value);
 			expect(
-				result.match({
+				matchResult(result, {
 					Ok: (value) => `${value} world`,
 					Err: (err) => `${err.message} world`,
 				}),
@@ -222,12 +223,6 @@ describe('FunctionResult', function () {
 			expect(result.unwrapOr('world')).to.be.equal('world');
 			expect(result.unwrapOrElse(() => 'world')).to.be.equal('world');
 			expect(result.unwrapOrValueOf(String)).to.be.equal('');
-			expect(
-				result.match({
-					Ok: (value) => `${value} world`,
-					Err: (err) => `${err.message} world`,
-				}),
-			).to.be.equal('oops world');
 			let exception: unknown;
 			try {
 				result.unwrap();
@@ -451,6 +446,35 @@ describe('FunctionResult', function () {
 			expect(Result({$class: 'Result::Ok', value: 'hello'}).toJSON()).to.be.eql({$class: 'Result::Ok', value: 'hello'});
 			expect(Result({$class: 'Result::Err', value: 'error'}).toJSON()).to.be.eql({$class: 'Result::Err', value: 'error'});
 			expect(() => Result(null as any)).to.throw(TypeError, 'Invalid Result type');
+		});
+	});
+	describe('matchResult', function () {
+		it('should match Ok result', function () {
+			const result = Ok('hello') as IResult<string, Error>;
+			expect(
+				matchResult(result, {
+					Ok: (value) => `${value} world`,
+					Err: (err) => `${err.message} world`,
+				}),
+			).to.be.equal('hello world');
+		});
+		it('should match Ok result', function () {
+			const result = Ok('hello');
+			expect(
+				matchResult(result, {
+					Ok: (value) => `${value} world`,
+					Err: (err) => `${JSON.stringify(err)} world`,
+				}),
+			).to.be.equal('hello world');
+		});
+		it('should match Err result', function () {
+			const result = Err(new Error('oops'));
+			expect(
+				matchResult(result, {
+					Ok: (value) => `${value} world`,
+					Err: (err) => `${err.message} world`,
+				}),
+			).to.be.equal('oops world');
 		});
 	});
 });

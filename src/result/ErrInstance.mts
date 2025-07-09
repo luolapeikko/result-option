@@ -1,4 +1,4 @@
-import {type ConstructorWithValueOf, type IJsonErr, type IResult, type IResultBuild, type ResultMatchSolver} from '../interfaces/index.mjs';
+import {type ConstructorWithValueOf, type IJsonErr, type IResult, type IResultBuild} from '../interfaces/index.mjs';
 import {type INone, None} from '../option/index.mjs';
 import {isJsonErr} from './JsonResult.mjs';
 
@@ -103,11 +103,7 @@ export class ErrInstance<ErrType> implements IResultBuild<false, never, ErrType>
 		return this;
 	}
 
-	public match<OkOutput, ErrOutput>(solver: ResultMatchSolver<unknown, ErrType, OkOutput, ErrOutput>): ErrOutput {
-		return solver.Err(this.error);
-	}
-
-	public map<NewOkType>(_callbackFunc: (val: never) => NewOkType): ErrInstance<ErrType> {
+	public map<NewOkType>(_callbackFunc: (val: never) => NewOkType): this {
 		return this;
 	}
 

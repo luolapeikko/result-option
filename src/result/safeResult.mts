@@ -1,6 +1,8 @@
 import {type IResult, type IResultOrOkType} from '../interfaces/IResultImplementation.mjs';
 import {Err} from './Err.mjs';
+import {isResult} from './index.mjs';
 import {Ok} from './Ok.mjs';
+import {type OkInstance} from './OkInstance.mjs';
 
 /**
  * build safe wrapper for callback function
@@ -19,7 +21,11 @@ export function wrapFnResult<TArgs extends any[], OkType, ErrType>(
 ): (...args: TArgs) => IResult<OkType, ErrType> {
 	return (...args: TArgs): IResult<OkType, ErrType> => {
 		try {
-			return Ok(func(...args));
+			const data = func(...args);
+			if (isResult(data)) {
+				return data;
+			}
+			return Ok(data);
 		} catch (err) {
 			return Err(err as ErrType);
 		}
@@ -60,7 +66,7 @@ export function safeResultBuilder<TArgs extends any[], OkType, ErrType>(
  */
 export function safeResult<OkType = unknown, ErrType = unknown>(func: () => IResultOrOkType<OkType, ErrType>): IResult<OkType, ErrType> {
 	try {
-		return Ok(func());
+		return Ok(func()) as OkInstance<OkType>;
 	} catch (err) {
 		return Err(err as ErrType);
 	}

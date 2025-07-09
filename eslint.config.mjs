@@ -124,6 +124,7 @@ export default tseslint.config(
 			'sonarjs/different-types-comparison': 'off',
 			'sonarjs/no-try-promise': 'off',
 			'sonarjs/deprecation': 'off',
+			'sonarjs/function-return-type': 'off'
 		},
 	},
 	{
