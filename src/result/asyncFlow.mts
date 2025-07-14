@@ -25,24 +25,28 @@ type Fn<I extends Res, O extends Res> = I extends OkInstance<infer V> ? (input: 
  * );
  * @since v1.2.1
  */
-export function resultAsyncFlow<A extends Res>(v: A): A | Promise<A>;
-export function resultAsyncFlow<A extends Res, B extends Res>(v: A, f0: Fn<A, B>): Promise<Out<[A, B]>> | Out<[A, B]>;
-export function resultAsyncFlow<A extends Res, B extends Res, C extends Res>(v: A, f0: Fn<A, B>, f1: Fn<B, C>): Promise<Out<[A, B, C]>> | Out<[A, B, C]>;
+export function resultAsyncFlow<A extends Res>(v: A | Promise<A>): A | Promise<A>;
+export function resultAsyncFlow<A extends Res, B extends Res>(v: A | Promise<A>, f0: Fn<A, B>): Promise<Out<[A, B]>> | Out<[A, B]>;
+export function resultAsyncFlow<A extends Res, B extends Res, C extends Res>(
+	v: A | Promise<A>,
+	f0: Fn<A, B>,
+	f1: Fn<B, C>,
+): Promise<Out<[A, B, C]>> | Out<[A, B, C]>;
 export function resultAsyncFlow<A extends Res, B extends Res, C extends Res, D extends Res>(
-	v: A,
+	v: A | Promise<A>,
 	f0: Fn<A, B>,
 	f1: Fn<B, C>,
 	f2: Fn<C, D>,
 ): Promise<Out<[A, B, C, D]>> | Out<[A, B, C, D]>;
 export function resultAsyncFlow<A extends Res, B extends Res, C extends Res, D extends Res, E extends Res>(
-	v: A,
+	v: A | Promise<A>,
 	f0: Fn<A, B>,
 	f1: Fn<B, C>,
 	f2: Fn<C, D>,
 	f3: Fn<D, E>,
 ): Promise<Out<[A, B, C, D, E]>> | Out<[A, B, C, D, E]>;
 export function resultAsyncFlow<A extends Res, B extends Res, C extends Res, D extends Res, E extends Res, F extends Res>(
-	v: A,
+	v: A | Promise<A>,
 	f0: Fn<A, B>,
 	f1: Fn<B, C>,
 	f2: Fn<C, D>,
@@ -50,7 +54,7 @@ export function resultAsyncFlow<A extends Res, B extends Res, C extends Res, D e
 	f4: Fn<E, F>,
 ): Promise<Out<[A, B, C, D, E, F]>> | Out<[A, B, C, D, E, F]>;
 export function resultAsyncFlow<A extends Res, B extends Res, C extends Res, D extends Res, E extends Res, F extends Res, G extends Res>(
-	v: A,
+	v: A | Promise<A>,
 	f0: Fn<A, B>,
 	f1: Fn<B, C>,
 	f2: Fn<C, D>,
@@ -59,7 +63,7 @@ export function resultAsyncFlow<A extends Res, B extends Res, C extends Res, D e
 	f5: Fn<F, G>,
 ): Promise<Out<[A, B, C, D, E, F, G]>> | Out<[A, B, C, D, E, F, G]>;
 export function resultAsyncFlow<A extends Res, B extends Res, C extends Res, D extends Res, E extends Res, F extends Res, G extends Res, H extends Res>(
-	v: A,
+	v: A | Promise<A>,
 	f0: Fn<A, B>,
 	f1: Fn<B, C>,
 	f2: Fn<C, D>,
@@ -79,7 +83,7 @@ export function resultAsyncFlow<
 	H extends Res,
 	I extends Res,
 >(
-	v: A,
+	v: A | Promise<A>,
 	f0: Fn<A, B>,
 	f1: Fn<B, C>,
 	f2: Fn<C, D>,
@@ -101,7 +105,7 @@ export function resultAsyncFlow<
 	I extends Res,
 	J extends Res,
 >(
-	v: A,
+	v: A | Promise<A>,
 	f0: Fn<A, B>,
 	f1: Fn<B, C>,
 	f2: Fn<C, D>,
@@ -125,7 +129,7 @@ export function resultAsyncFlow<
 	J extends Res,
 	K extends Res,
 >(
-	v: A,
+	v: A | Promise<A>,
 	f0: Fn<A, B>,
 	f1: Fn<B, C>,
 	f2: Fn<C, D>,
@@ -137,7 +141,7 @@ export function resultAsyncFlow<
 	f8: Fn<I, J>,
 	f9: Fn<J, K>,
 ): Promise<Out<[A, B, C, D, E, F, G, H, I, J, K]>> | Out<[A, B, C, D, E, F, G, H, I, J, K]>;
-export function resultAsyncFlow(val: Res, ...ops: Fn<Res, Res>[]): IResult<unknown, unknown> | Promise<IResult<unknown, unknown>> {
+export function resultAsyncFlow(val: Res | Promise<Res>, ...ops: Fn<Res, Res>[]): IResult<unknown, unknown> | Promise<IResult<unknown, unknown>> {
 	if (ops.length === 0) {
 		return val;
 	}
