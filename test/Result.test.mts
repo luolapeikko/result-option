@@ -10,6 +10,8 @@ import {
 	None,
 	Ok,
 	Result,
+	resultAsyncFlow,
+	resultFlow,
 	safeAsyncResult,
 	safeResult,
 	Some,
@@ -475,6 +477,118 @@ describe('FunctionResult', function () {
 					Err: (err) => `${err.message} world`,
 				}),
 			).to.be.equal('oops world');
+		});
+	});
+	describe('resultFlow', function () {
+		it('should run flow of results to single Ok', function () {
+			expect(resultFlow(Ok('hello')).ok()).to.be.equal('hello');
+		});
+		it('should run flow of results to Ok', function () {
+			expect(
+				resultFlow(
+					Ok('hello'),
+					(value) => Ok(`${value} world`),
+					(value) => Ok(value.length),
+					(value) => Ok(value.toString()),
+				).ok(),
+			).to.be.equal('11');
+		});
+		it('should run flow of results to last Error', function () {
+			const res = resultFlow(
+				Ok('hello'),
+				(value) => Ok(`${value} world`),
+				(value) => Ok(value.length),
+				(_value) => Err(new Error('oops')),
+			);
+			expect(res.err()?.message).to.be.equal('oops');
+		});
+		it('should run flow of results to last Error', function () {
+			const res = resultFlow(
+				Err(new Error('oops')) as IResult<string, Error>,
+				(value) => Ok(`${value} world`),
+				(value) => Ok(value.length),
+				(value) => Ok(value.toString()),
+			);
+			expect(res.err()?.message).to.be.equal('oops');
+		});
+		it('should throw uncontrolled error in flow', function () {
+			expect(() =>
+				resultFlow(
+					Ok('hello'),
+					(value) => Ok(`${value} world`),
+					(value) => Ok(value.length),
+					(_value) => {
+						throw new Error('oops');
+					},
+				),
+			).to.throw('Fatal Uncontrolled error: oops');
+			expect(() =>
+				resultFlow(
+					Ok('hello'),
+					(value) => Ok(`${value} world`),
+					(value) => Ok(value.length),
+					(_value) => {
+						// eslint-disable-next-line @typescript-eslint/only-throw-error
+						throw 'oops';
+					},
+				),
+			).to.throw('Fatal Uncontrolled error: "oops"');
+		});
+	});
+	describe('resultAsyncFlow', function () {
+		it('should run flow of results to single Ok', async function () {
+			const res = await resultAsyncFlow(Ok('hello'));
+			expect(res.ok()).toBe('hello');
+		});
+		it('should run flow of results to Ok', async function () {
+			const res = await resultAsyncFlow(
+				Ok('hello'),
+				(value) => Promise.resolve(Ok(`${value} world`)),
+				(value) => Promise.resolve(Ok(value.length)),
+				(value) => Promise.resolve(Ok(value.toString())),
+			);
+			expect(res.ok()).to.be.equal('11');
+		});
+		it('should run flow of results to last Error', async function () {
+			const res = await resultAsyncFlow(
+				Ok('hello'),
+				(value) => Promise.resolve(Ok(`${value} world`)),
+				(value) => Promise.resolve(Ok(value.length)),
+				(_value) => Promise.resolve(Err(new Error('oops'))),
+			);
+			expect(res.err()?.message).to.be.equal('oops');
+		});
+		it('should run flow of results to last Error', async function () {
+			const res = await resultAsyncFlow(
+				Err(new Error('oops')) as IResult<string, Error>,
+				(value) => Promise.resolve(Ok(`${value} world`)),
+				(value) => Promise.resolve(Ok(value.length)),
+				(value) => Promise.resolve(Ok(value.toString())),
+			);
+			expect(res.err()?.message).to.be.equal('oops');
+		});
+		it('should throw uncontrolled error in flow', async function () {
+			await expect(
+				resultAsyncFlow(
+					Ok('hello'),
+					(value) => Promise.resolve(Ok(`${value} world`)),
+					(value) => Promise.resolve(Ok(value.length)),
+					(_value) => {
+						throw new Error('oops');
+					},
+				),
+			).rejects.toThrowError('Fatal Uncontrolled error: oops');
+			await expect(
+				resultAsyncFlow(
+					Ok('hello'),
+					(value) => Promise.resolve(Ok(`${value} world`)),
+					(value) => Promise.resolve(Ok(value.length)),
+					(_value) => {
+						// eslint-disable-next-line @typescript-eslint/only-throw-error
+						throw 'oops';
+					},
+				),
+			).rejects.toThrowError('Fatal Uncontrolled error: "oops"');
 		});
 	});
 });
