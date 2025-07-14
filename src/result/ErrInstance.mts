@@ -112,6 +112,11 @@ export class ErrInstance<ErrType> implements IResultBuild<false, never, ErrType>
 	}
 
 	public inspect(_fn: (value: never) => void): this {
+		// if we have NodeJS inspect call we return undefined
+		/* c8 ignore next 3 */
+		if (typeof _fn !== 'function') {
+			return undefined as unknown as this;
+		}
 		return this;
 	}
 

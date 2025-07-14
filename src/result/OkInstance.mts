@@ -98,6 +98,11 @@ export class OkInstance<OkType> implements IResultBuild<true, OkType, never> {
 	}
 
 	public inspect(fn: (value: OkType) => void): this {
+		// if we have NodeJS inspect call we return undefined
+		/* c8 ignore next 3 */
+		if (typeof fn !== 'function') {
+			return undefined as unknown as this;
+		}
 		fn(this.value);
 		return this;
 	}
