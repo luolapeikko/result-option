@@ -7,7 +7,7 @@ on:
 
 env:
   # Setting an environment variable with the value of a configuration variable
-  CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+  QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   PACKAGE_NAME: 'unknown'
   PACKAGE_VERSION: 'unknown'
@@ -59,16 +59,19 @@ jobs:
         if: env.HAVE_LINT_SCRIPT == 'true'
         run: ${{ env.NPM }} run lint
 
+      - name: Run coverage
+        if: env.HAVE_COVERAGE_SCRIPT == 'true'
+        run: ${{ env.NPM }} run coverage
+
       - name: Run and publish code coverage
         if: |
           github.ref == 'refs/heads/main' &&
-          env.CC_TEST_REPORTER_ID != '' &&
+          env.QLTY_COVERAGE_TOKEN != '' &&
           env.HAVE_COVERAGE_SCRIPT == 'true'
-        uses: paambaati/codeclimate-action@v5.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ env.CC_TEST_REPORTER_ID }}
+        uses: qltysh/qlty-action/coverage@v1
         with:
-          coverageCommand: ${{ env.NPM }} run coverage
+          token: ${{env.QLTY_COVERAGE_TOKEN}}
+          files: coverage/lcov.info
 
       # npm publish when PR done
       - name: Publish ${{env.PACKAGE_NAME}} ${{env.PACKAGE_VERSION}}
