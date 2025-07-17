@@ -1,9 +1,8 @@
 import {describe, expect, it} from 'vitest';
 import {
 	Err,
-	ErrInstance,
 	fromJsonResult,
-	type IErr,
+	IErr,
 	type IOk,
 	type IResult,
 	matchResult,
@@ -204,6 +203,15 @@ describe('FunctionResult', function () {
 			expect(Err(1).isErrAnd((v) => v === 1)).to.be.eq(true);
 			expect(Err(1).isOkAnd((v) => v === 1)).to.be.eq(false);
 		});
+		it('should test Ok void', function () {
+			const res: IOk<void> = Ok();
+			expect(res.isOk).to.be.eq(true);
+			expect(res.isErr).to.be.eq(false);
+			expect(res.ok()).to.be.equal(undefined);
+			expect(res.err()).to.be.equal(undefined);
+			expect(res.unwrap()).to.be.equal(undefined);
+			expect(res.unwrapOr('world')).to.be.equal(undefined);
+		});
 	});
 	describe('Err', function () {
 		it('should create a error result from Err', function () {
@@ -326,6 +334,15 @@ describe('FunctionResult', function () {
 		it('should give "No error was set" error if error is undefined', function () {
 			expect(() => Err<undefined>(undefined).unwrap()).to.throw('Result: No error was set');
 		});
+		it('should test Err void', function () {
+			const res: IErr<void> = Err();
+			expect(res.isOk).to.be.eq(false);
+			expect(res.isErr).to.be.eq(true);
+			expect(res.ok()).to.be.equal(undefined);
+			expect(res.err()).to.be.eql(undefined);
+			expect(() => res.unwrap()).to.throw(undefined);
+			expect(res.unwrapOr('world')).to.be.equal('world');
+		});
 	});
 	describe('eq', function () {
 		it('should eq results', function () {
@@ -437,7 +454,7 @@ describe('FunctionResult', function () {
 			expect(Err({} as unknown as Error).toString()).to.be.equal(`Err(Object: '{}')`);
 		});
 		it('should convert null error instance to string', function () {
-			const brokenErr = new ErrInstance(null);
+			const brokenErr = new IErr(null);
 			expect(brokenErr.toString()).to.be.equal(`Err(UnknownErrorInstance: 'null')`);
 		});
 	});

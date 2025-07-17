@@ -3,11 +3,13 @@ import {type ISome, Some} from '../option/index.mjs';
 import {isJsonOk} from './JsonResult.mjs';
 
 /**
- * Ok Result instance
+ * Result Ok instance.
+ *
+ * Note: this class should not be used directly, use {@link Ok} function instead
  * @template OkType - Ok type
  * @since v1.0.0
  */
-export class OkInstance<OkType> implements IResultBuild<true, OkType, never> {
+export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 	private readonly value: OkType;
 	public constructor(value: OkType | IJsonOk<OkType>) {
 		this.value = isJsonOk<OkType, unknown>(value) ? value.value : value;
@@ -37,8 +39,8 @@ export class OkInstance<OkType> implements IResultBuild<true, OkType, never> {
 		return undefined;
 	}
 
-	public map<NewOkType>(callbackFunc: (val: OkType) => NewOkType): OkInstance<NewOkType> {
-		return new OkInstance(callbackFunc(this.value));
+	public map<NewOkType>(callbackFunc: (val: OkType) => NewOkType): IOk<NewOkType> {
+		return new IOk(callbackFunc(this.value));
 	}
 
 	public mapErr<NewErrType>(_callbackFunc: (val: never) => NewErrType): this {
@@ -85,8 +87,8 @@ export class OkInstance<OkType> implements IResultBuild<true, OkType, never> {
 		return value;
 	}
 
-	public clone(): OkInstance<OkType> {
-		return new OkInstance(this.value);
+	public clone(): IOk<OkType> {
+		return new IOk(this.value);
 	}
 
 	public andThen<OutResult extends IResult<unknown, unknown>>(callbackFunc: (val: OkType) => OutResult): OutResult {

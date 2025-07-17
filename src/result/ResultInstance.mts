@@ -1,6 +1,6 @@
 import {type IResult} from '../interfaces/index.mjs';
-import {ErrInstance} from './ErrInstance.mjs';
-import {OkInstance} from './OkInstance.mjs';
+import {IErr} from './ErrInstance.mjs';
+import {IOk} from './OkInstance.mjs';
 
 /**
  * Type guard for Result interface
@@ -11,5 +11,5 @@ import {OkInstance} from './OkInstance.mjs';
  * @since v0.6.5
  */
 export function isResult<OkType = unknown, ErrType = unknown>(value: unknown): value is IResult<OkType, ErrType> {
-	return value instanceof OkInstance || value instanceof ErrInstance;
+	return value instanceof IOk || value instanceof IErr;
 }

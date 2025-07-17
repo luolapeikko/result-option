@@ -1,5 +1,7 @@
-import {type IErr, type IJsonErr, type IJsonOk, type IOk, type IResult} from '../interfaces/index.mjs';
+import {type IJsonErr, type IJsonOk, type IResult} from '../interfaces/index.mjs';
+import {type IErr} from './ErrInstance.mjs';
 import {fromJsonResult, isJsonResult} from './JsonResult.mjs';
+import {type IOk} from './OkInstance.mjs';
 import {isResult} from './ResultInstance.mjs';
 
 /**

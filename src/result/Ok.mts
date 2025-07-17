@@ -1,5 +1,5 @@
-import {type IJsonOk, type IOk, type IResult} from '../interfaces/index.mjs';
-import {OkInstance} from './OkInstance.mjs';
+import {type IJsonOk, type IResult} from '../interfaces/index.mjs';
+import {IOk} from './OkInstance.mjs';
 import {isResult} from './ResultInstance.mjs';
 
 /**
@@ -12,11 +12,15 @@ import {isResult} from './ResultInstance.mjs';
  * Ok<number>(2) // Result<number, unknown>
  * @since v1.0.0
  */
+export function Ok(): IOk<void>;
 export function Ok<OkType, _ErrType = unknown>(value: OkType | IOk<OkType> | IJsonOk<OkType>): IOk<OkType>;
 export function Ok<OkType, ErrType = unknown>(value: OkType | IResult<OkType, ErrType> | IJsonOk<OkType>): IResult<OkType, ErrType>;
-export function Ok<OkType, ErrType = unknown>(value: OkType | IResult<OkType, ErrType> | IJsonOk<OkType>): IResult<OkType, ErrType> {
+export function Ok<OkType, ErrType = unknown>(value?: OkType | IResult<OkType, ErrType> | IJsonOk<OkType>): IResult<OkType, ErrType> {
+	if (value === undefined) {
+		return new IOk<void>(undefined) as IResult<OkType, ErrType>;
+	}
 	if (isResult(value)) {
 		return value;
 	}
-	return new OkInstance<OkType>(value);
+	return new IOk<OkType>(value);
 }

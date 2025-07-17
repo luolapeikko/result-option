@@ -3,11 +3,13 @@ import {type INone, None} from '../option/index.mjs';
 import {isJsonErr} from './JsonResult.mjs';
 
 /**
- * Err Result instance
+ * Result Err instance.
+ *
+ * Note: this class should not be used directly, use {@link Err} function instead
  * @template ErrType error type
  * @since v1.0.0
  */
-export class ErrInstance<ErrType> implements IResultBuild<false, never, ErrType> {
+export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 	private readonly error: ErrType;
 	private originalStack: string | undefined;
 	public constructor(error: ErrType | IJsonErr<ErrType>) {
@@ -91,8 +93,8 @@ export class ErrInstance<ErrType> implements IResultBuild<false, never, ErrType>
 		return this;
 	}
 
-	public clone(): ErrInstance<ErrType> {
-		return new ErrInstance(this.error);
+	public clone(): IErr<ErrType> {
+		return new IErr(this.error);
 	}
 
 	public andThen<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (val: never) => OutResult): this {
@@ -107,8 +109,8 @@ export class ErrInstance<ErrType> implements IResultBuild<false, never, ErrType>
 		return this;
 	}
 
-	public mapErr<NewErrType>(fn: (value: ErrType) => NewErrType): ErrInstance<NewErrType> {
-		return new ErrInstance(fn(this.error));
+	public mapErr<NewErrType>(fn: (value: ErrType) => NewErrType): IErr<NewErrType> {
+		return new IErr(fn(this.error));
 	}
 
 	public inspect(_fn: (value: never) => void): this {

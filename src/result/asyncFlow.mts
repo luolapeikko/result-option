@@ -1,14 +1,14 @@
-import {type ErrInstance, type IResult, type OkInstance} from '../index.mjs';
+import {type IErr, type IOk, type IResult} from '../index.mjs';
 
 type Res = IResult<unknown, unknown>;
 type LastElement<Arr extends Res[]> = Arr extends [...Res[], infer B] ? B : never;
-type OnlyErrs<T> = T extends ErrInstance<infer E> ? E : never;
-type ExtractOk<T> = T extends OkInstance<infer V> ? V : never;
-type ExtractError<T> = T extends ErrInstance<infer E> ? E : never;
+type OnlyErrs<T> = T extends IErr<infer E> ? E : never;
+type ExtractOk<T> = T extends IOk<infer V> ? V : never;
+type ExtractError<T> = T extends IErr<infer E> ? E : never;
 type BuildOut<All extends IResult<any, any>, Last extends IResult<any, any>> = IResult<ExtractOk<Last>, OnlyErrs<All> | ExtractError<Last>>;
 type Out<All extends Res[]> = BuildOut<All[number], LastElement<All>>;
 
-type Fn<I extends Res, O extends Res> = I extends OkInstance<infer V> ? (input: V) => O | Promise<O> : never;
+type Fn<I extends Res, O extends Res> = I extends IOk<infer V> ? (input: V) => O | Promise<O> : never;
 
 /**
  * Run a flow of results
@@ -142,16 +142,13 @@ export function resultAsyncFlow<
 	f9: Fn<J, K>,
 ): Promise<Out<[A, B, C, D, E, F, G, H, I, J, K]>> | Out<[A, B, C, D, E, F, G, H, I, J, K]>;
 export function resultAsyncFlow(val: Res | Promise<Res>, ...ops: Fn<Res, Res>[]): IResult<unknown, unknown> | Promise<IResult<unknown, unknown>> {
-	if (ops.length === 0) {
-		return val;
-	}
-	return ops.reduce<IResult<unknown, unknown> | Promise<IResult<unknown, unknown>>>(async (acc, op) => {
+	return ops.reduce<IResult<unknown, unknown> | Promise<IResult<unknown, unknown>>>(async (acc, fn) => {
 		const res = await acc;
 		if (res.isErr) {
 			return acc; // If any operation returns an error, propagate it
 		}
 		try {
-			acc = await op(res.ok());
+			acc = await fn(res.ok());
 		} catch (e) {
 			if (e instanceof Error) {
 				e.message = `Fatal Uncontrolled error: ${e.message}`;

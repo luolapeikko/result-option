@@ -1,7 +1,7 @@
 import {type IOption} from '../option/OptionInstance.mjs';
+import {type IErr, type IOk} from '../result/index.mjs';
 import {type IJsonNone, type IJsonSome} from './IJsonOption.mjs';
 import {type OptionMatchSolver} from './IMatch.mjs';
-import {type IErr, type IOk} from './IResultImplementation.mjs';
 import {type ConstructorWithValueOf} from './ValueOf.mjs';
 
 /**

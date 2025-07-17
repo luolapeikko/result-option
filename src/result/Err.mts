@@ -1,5 +1,5 @@
-import {type IErr, type IJsonErr, type IResult} from '../interfaces/index.mjs';
-import {ErrInstance} from './ErrInstance.mjs';
+import {type IJsonErr, type IResult} from '../interfaces/index.mjs';
+import {IErr} from './ErrInstance.mjs';
 import {isResult} from './ResultInstance.mjs';
 
 /**
@@ -13,11 +13,15 @@ import {isResult} from './ResultInstance.mjs';
  * Err(new Error('Fatal')); // Result<unknown, Error>
  * @since v1.0.0
  */
+export function Err(): IErr<void>;
 export function Err<ErrType, _OkType = unknown>(error: ErrType | IErr<ErrType> | IJsonErr<ErrType>): IErr<ErrType>;
 export function Err<ErrType, OkType = unknown>(error: ErrType | IResult<OkType, ErrType> | IJsonErr<ErrType>): IResult<OkType, ErrType>;
-export function Err<ErrType, OkType = unknown>(error: ErrType | IResult<OkType, ErrType> | IJsonErr<ErrType>): IResult<OkType, ErrType> {
+export function Err<ErrType, OkType = unknown>(error?: ErrType | IResult<OkType, ErrType> | IJsonErr<ErrType>): IResult<OkType, ErrType> {
+	if (error === undefined) {
+		return new IErr<void>(undefined) as IResult<OkType, ErrType>;
+	}
 	if (isResult(error)) {
 		return error;
 	}
-	return new ErrInstance<ErrType>(error);
+	return new IErr<ErrType>(error);
 }

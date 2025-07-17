@@ -1,6 +1,8 @@
-import {type IErr, type IJsonErr, type IJsonOk, type IJsonResult, type IOk, type IResult} from '../interfaces/index.mjs';
+import {type IJsonErr, type IJsonOk, type IJsonResult, type IResult} from '../interfaces/index.mjs';
 import {Err} from './Err.mjs';
+import {type IErr} from './ErrInstance.mjs';
 import {Ok} from './Ok.mjs';
+import {type IOk} from './OkInstance.mjs';
 
 const resultOkClass = 'Result::Ok';
 const resultErrClass = 'Result::Err';

@@ -1,4 +1,4 @@
-import {type ErrInstance, type OkInstance} from '../index.mjs';
+import {type IErr, type IOk} from '../index.mjs';
 import {type INone, type ISome} from '../option/index.mjs';
 import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk} from './index.mjs';
 
@@ -265,18 +265,6 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 }
 
 /**
- * Error result type
- * @since v1.0.0
- */
-export type IErr<ErrType = unknown> = ErrInstance<ErrType>;
-
-/**
- * Ok result type
- * @since v1.0.0
- */
-export type IOk<OkType = unknown> = OkInstance<OkType>;
-
-/**
  * Result type, this type contains types for both Ok and Err
  * @template OkType Type of the return value, default is unknown
  * @template ErrType Type of the error, default is unknown
@@ -295,10 +283,10 @@ export type IOk<OkType = unknown> = OkInstance<OkType>;
  * }
  * @since v1.0.0
  */
-export type IResult<OkType = unknown, ErrType = unknown> = ErrInstance<ErrType> | OkInstance<OkType>;
+export type IResult<OkType = unknown, ErrType = unknown> = IErr<ErrType> | IOk<OkType>;
 
 /**
- * Utility type for OkType or Result
+ * Utility type for OkType or Result<OkType, ErrType>
  * @template OkType Type of the return value
  * @template ErrType Type of the error, default is unknown
  * @since v1.0.0
