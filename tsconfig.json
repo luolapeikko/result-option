@@ -31,6 +31,6 @@
 		"entryPoints": ["src/index.mts"],
 		"out": "docs"
 	},
-	"include": ["src/**/*", "src/**/**/*"],
-	"exclude": ["node_modules", "**/*.spec.ts", "test"]
+	"include": ["src"],
+	"exclude": ["node_modules", "dist", "test"]
 }

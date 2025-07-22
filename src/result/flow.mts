@@ -1,11 +1,9 @@
-import {type IErr, type IOk, type IResult} from '../index.mjs';
+import {type IOk, type IResult} from '../index.mjs';
+import {type InferErrValue, type InferOkValue} from './types.mjs';
 
 type Res = IResult<unknown, unknown>;
 type LastElement<Arr extends Res[]> = Arr extends [...Res[], infer B] ? B : never;
-type OnlyErrs<T> = T extends IErr<infer E> ? E : never;
-type ExtractOk<T> = T extends IOk<infer V> ? V : never;
-type ExtractError<T> = T extends IErr<infer E> ? E : never;
-type BuildOut<All extends IResult<any, any>, Last extends IResult<any, any>> = IResult<ExtractOk<Last>, OnlyErrs<All> | ExtractError<Last>>;
+type BuildOut<All extends IResult<any, any>, Last extends IResult<any, any>> = IResult<InferOkValue<Last>, InferErrValue<All> | InferErrValue<Last>>;
 type Out<All extends Res[]> = BuildOut<All[number], LastElement<All>>;
 
 type Fn<I extends Res, O extends Res> = I extends IOk<infer V> ? (input: V) => O : never;

@@ -15,5 +15,5 @@ npm install @luolapeikko/result-option
 ```
 
 ## [Documentation](https://luolapeikko.github.io/result-option/)
-- [Result](https://luolapeikko.github.io/result-option/types/Result.html)
-- [Option](https://luolapeikko.github.io/result-option/types/Option.html)
+- [Result](https://luolapeikko.github.io/result-option/types/IResult.html)
+- [Option](https://luolapeikko.github.io/result-option/types/IOption.html)

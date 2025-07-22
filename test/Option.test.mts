@@ -1,20 +1,10 @@
 import {describe, expect, it} from 'vitest';
-import {
-	Err,
-	type INone,
-	type IOption,
-	type ISome,
-	nanOption,
-	None,
-	nullishOptionWrap,
-	Ok,
-	Option,
-	Some,
-	undefinedOptionWrap,
-	wrapFnOption,
-	wrapPromiseFnOption,
-} from '../src/index.mjs';
-import {exactType} from './helper.mjs';
+import {Err, type INone, type IOption, type ISome, None, Ok, Option, Some} from '../src/index.mjs';
+
+const some1 = Option.from<number>(Some(1));
+const some2 = Option.from<string>(Some('2'));
+const some3 = Option.from<Date>(Some(new Date(0)));
+const none1 = Option.from<Date>(None());
 
 describe('Option', function () {
 	describe('Some', function () {
@@ -51,13 +41,6 @@ describe('Option', function () {
 					'other',
 				),
 			).to.be.equal('other');
-			// Some and None type validation
-			const option = Some(1) as IOption<number>;
-			if (option.isSome) {
-				exactType(option, Some<number>(1));
-			} else {
-				exactType(option, None<number>());
-			}
 			// const value check
 			const constValue = 'demo' as const;
 			expect(Some(constValue).isSome).to.be.eq(true);
@@ -108,39 +91,26 @@ describe('Option', function () {
 			expect(demoValue).to.be.equal('another');
 		});
 	});
-	describe('undefinedOptionWrap', function () {
-		it('should build option with undefinedOptionWrap', function () {
+	describe('Option.fromNullish', function () {
+		it('should build option with Option.fromNullish', function () {
 			const values = ['one', 'two', 'three', undefined] as const;
 			type Values = (typeof values)[number];
 			const check = (value: string): IOption<Values> => {
-				return undefinedOptionWrap(values.find((v) => v === value));
+				return Option.fromNullish(values.find((v) => v === value));
 			};
 			expect(check('one').isSome).to.be.eq(true);
 			expect(check('two').isSome).to.be.eq(true);
 			expect(check('three').isSome).to.be.eq(true);
 			expect(check('four').isSome).to.be.eq(false);
-		});
-	});
-	describe('nullishOptionWrap', function () {
-		it('should build option with nullishOptionWrap', function () {
-			const values = ['one', 'two', 'three', null, undefined] as const;
-			type Values = (typeof values)[number];
-			const check = (value: string): IOption<Values> => {
-				return nullishOptionWrap(values.find((v) => v === value));
-			};
-			expect(check('one').isSome).to.be.eq(true);
-			expect(check('two').isSome).to.be.eq(true);
-			expect(check('three').isSome).to.be.eq(true);
-			expect(check('four').isSome).to.be.eq(false);
-			expect(nullishOptionWrap<number>(NaN).isSome).to.be.eq(false);
+			expect(Option.fromNullish(NaN).isSome).to.be.eq(false);
 		});
 	});
 	describe('nanOptionWrap', function () {
 		it('should build option with nanOptionWrap', function () {
-			expect(nanOption(1).isSome).to.be.eq(true);
-			expect(nanOption(2).isSome).to.be.eq(true);
-			expect(nanOption(3).isSome).to.be.eq(true);
-			expect(nanOption(parseInt('hello', 10)).isSome).to.be.eq(false);
+			expect(Option.fromNum(1).isSome).to.be.eq(true);
+			expect(Option.fromNum(2).isSome).to.be.eq(true);
+			expect(Option.fromNum(3).isSome).to.be.eq(true);
+			expect(Option.fromNum(parseInt('hello', 10)).isSome).to.be.eq(false);
 		});
 	});
 	describe('eq', function () {
@@ -272,12 +242,8 @@ describe('Option', function () {
 	});
 	describe('toString', function () {
 		it('should give string value', function () {
-			expect(None<string>().toOptionString()).to.be.eq('None()');
-			expect(Some(2).toOptionString()).to.be.eq('Some(2)');
-		});
-		it('should give string value', function () {
-			expect(None<string>().toString()).to.be.eq('None');
-			expect(Some(2).toString()).to.be.eq('2');
+			expect(None<string>().toString()).to.be.eq('None()');
+			expect(Some(2).toString()).to.be.eq('Some(2)');
 		});
 	});
 	describe('toJSON', function () {
@@ -288,29 +254,59 @@ describe('Option', function () {
 			const someJson = someValue.toJSON();
 			expect(noneJson).to.be.eql({$class: 'Option::None'});
 			expect(someJson).to.be.eql({$class: 'Option::Some', value: 2});
-			expect(Option(noneValue).isNone).to.be.eq(true);
-			expect(Option(someValue).isSome).to.be.eq(true);
-			expect(Option(noneJson).isNone).to.be.eq(true);
-			expect(Option(someJson).isSome).to.be.eq(true);
-			expect(() => Option(null as any).isSome).to.throw('Invalid Option instance');
+			expect(Option.from(noneValue).isNone).to.be.eq(true);
+			expect(Option.from(someValue).isSome).to.be.eq(true);
+			expect(Option.from(noneJson).isNone).to.be.eq(true);
+			expect(Option.from(someJson).isSome).to.be.eq(true);
+			expect(() => Option.from(null as any).isSome).to.throw('Invalid Option instance');
 			expect(None(noneJson).isNone).to.be.eq(true);
 			expect(Some(someJson).isSome).to.be.eq(true);
 		});
 	});
 	describe('wrap', function () {
 		it('should handle wrapped option', function () {
-			const test = wrapFnOption(() => 'hello world')();
+			const test = Option.wrapFn(() => 'hello world')();
 			expect(test.isSome).to.be.eq(true);
-			const errTest = wrapFnOption(() => {
+			const errTest = Option.wrapFn(() => {
 				throw new Error('broken');
 			})();
 			expect(errTest.isNone).to.be.eq(true);
 		});
 		it('should handle wrapped Promise option', async function () {
-			const test = await wrapPromiseFnOption(() => Promise.resolve('hello world'))();
+			const test = await Option.wrapAsyncFn(() => Promise.resolve('hello world'))();
 			expect(test.isSome).to.be.eq(true);
-			const errTest = await wrapPromiseFnOption(() => Promise.reject(new Error('broken')))();
+			const errTest = await Option.wrapAsyncFn(() => Promise.reject(new Error('broken')))();
 			expect(errTest.isNone).to.be.eq(true);
+		});
+	});
+	describe('Test Option.all', function () {
+		it('should be valid all result type and Some instance', function () {
+			expect(Option.all(some1, some2, some3)).to.be.eql(Some([1, '2', new Date(0)]));
+			expect(
+				Option.all(
+					() => some1,
+					() => some2,
+					() => some3,
+				),
+			).to.be.eql(Some([1, '2', new Date(0)]));
+		});
+		it('should be valid all none type and None instance', function () {
+			expect(Option.all(some1, some2, none1)).to.be.eql(none1);
+		});
+	});
+	describe('Test Option.asyncAll', function () {
+		it('should be valid all some type and Some instance', async function () {
+			await expect(Option.asyncAll(some1, some2, some3)).resolves.eql(Some([1, '2', new Date(0)]));
+			await expect(
+				Option.asyncAll(
+					() => Promise.resolve(some1),
+					() => Promise.resolve(some2),
+					() => Promise.resolve(some3),
+				),
+			).resolves.eql(Some([1, '2', new Date(0)]));
+		});
+		it('should be valid all none type and None instance', async function () {
+			await expect(Option.asyncAll(some1, some2, none1)).resolves.eql(none1);
 		});
 	});
 });

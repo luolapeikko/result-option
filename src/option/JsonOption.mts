@@ -8,6 +8,8 @@ export const optionSomeClass = 'Option::Some';
 
 /**
  * Build Option from JsonOption
+ * @param {IJsonOption<SomeType>} json
+ * @returns {IOption<SomeType>}
  * @since v1.0.0
  */
 export function fromJsonOption<SomeType>(json: IJsonNone): INone<SomeType>;
@@ -23,6 +25,8 @@ export function fromJsonOption<SomeType>(json: IJsonOption<SomeType>): IOption<S
 
 /**
  * Type guard for JsonOption
+ * @param {unknown} json
+ * @returns {json is IJsonOption<SomeType>}
  * @since v1.0.0
  */
 export function isJsonOption<SomeType>(json: unknown): json is IJsonOption<SomeType> {
@@ -31,6 +35,8 @@ export function isJsonOption<SomeType>(json: unknown): json is IJsonOption<SomeT
 
 /**
  * Type guard for JsonSome
+ * @param {unknown} json
+ * @returns {json is IJsonSome<SomeType>}
  * @since v1.0.0
  */
 export function isJsonSome<SomeType>(json: unknown): json is IJsonSome<SomeType> {
@@ -39,6 +45,8 @@ export function isJsonSome<SomeType>(json: unknown): json is IJsonSome<SomeType>
 
 /**
  * Type guard for JsonNone
+ * @param {unknown} json
+ * @returns {json is IJsonNone}
  * @since v1.0.0
  */
 export function isJsonNone(json: unknown): json is IJsonNone {
@@ -47,6 +55,9 @@ export function isJsonNone(json: unknown): json is IJsonNone {
 
 /**
  * Build JsonSome from value
+ * @template SomeType
+ * @param {SomeType} value
+ * @returns {IJsonSome<SomeType>}
  * @since v1.0.0
  */
 export function buildJsonSome<SomeType>(value: SomeType): IJsonSome<SomeType> {
@@ -55,6 +66,7 @@ export function buildJsonSome<SomeType>(value: SomeType): IJsonSome<SomeType> {
 
 /**
  * Build JsonNone
+ * @returns {IJsonNone}
  * @since v1.0.0
  */
 export function buildJsonNone(): IJsonNone {

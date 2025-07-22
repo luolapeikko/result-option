@@ -1,33 +1,21 @@
 import {describe, expect, it} from 'vitest';
-import {
-	Err,
-	fromJsonResult,
-	IErr,
-	type IOk,
-	type IResult,
-	matchResult,
-	None,
-	Ok,
-	Result,
-	resultAsyncFlow,
-	resultFlow,
-	safeAsyncResult,
-	safeResult,
-	Some,
-	wrapFnPromiseResult,
-	wrapFnResult,
-} from '../src/index.mjs';
+import {Err, fromJsonResult, IErr, type IOk, type IResult, None, Ok, Result, Some} from '../src/index.mjs';
 
 const stE = new Error('oops');
 
-const testFunction = wrapFnResult((value: string) => {
+const ok1 = Result.from<number, Error>(Ok(1));
+const ok2 = Result.from<string, Error>(Ok('2'));
+const ok3 = Result.from<Date, Error>(Ok(new Date(0)));
+const err1 = Result.from<Date, Error>(Err(new Error('broken')));
+
+const testFunction = Result.wrapFn((value: string) => {
 	if (value === 'error') {
 		throw stE;
 	}
 	return value;
 });
 
-const testAsyncFunction = wrapFnPromiseResult((value: string) => {
+const testAsyncFunction = Result.wrapAsyncFn((value: string) => {
 	if (value === 'error') {
 		return Promise.reject(stE);
 	}
@@ -77,39 +65,6 @@ describe('FunctionResult', function () {
 			}
 		});
 
-		it('should resolve a value result from safeResult', function () {
-			const value = 'hello';
-			const result: IResult<string, Error> = safeResult<string, Error>(() => value);
-			expect(result.isOk).to.be.eq(true);
-			expect(result.isErr).to.be.eq(false);
-			expect(result.ok()).to.be.equal(value);
-			expect(result.err()).to.be.equal(undefined);
-			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOr('world')).to.be.equal(value);
-			expect(
-				matchResult(result, {
-					Ok: (value) => `${value} world`,
-					Err: (err) => `${err.message} world`,
-				}),
-			).to.be.equal(`${value} world`);
-		});
-
-		it('should resolve a value result from safeResult with Ok', function () {
-			const value = 'hello';
-			const result: IResult<string> = safeResult<string>(() => Ok(value));
-			const iter = result.iter();
-			expect(result.isOk).to.be.eq(true);
-			expect(result.isErr).to.be.eq(false);
-			expect(result.ok()).to.be.equal(value);
-			expect(result.err()).to.be.equal(undefined);
-			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOr('world')).to.be.equal(value);
-			expect(result.unwrapOrElse(() => 'world')).to.be.equal(value);
-			expect(result.unwrapOrValueOf(String)).to.be.equal(value);
-			expect(iter.next().value).to.be.equal(result);
-			expect(iter.next().done).to.be.equal(true);
-		});
-
 		it('should resolve with safeResultBuilder function', function () {
 			const value = 'hello';
 			const result: IResult<string> = testFunction(value);
@@ -120,37 +75,7 @@ describe('FunctionResult', function () {
 			expect(result.unwrap()).to.be.equal(value);
 			expect(result.unwrapOr('world')).to.be.equal(value);
 		});
-		it('should resolve with safeAsyncResult Promise', async function () {
-			const value = 'hello';
-			const result: IResult<string> = await safeAsyncResult(Promise.resolve(value));
-			expect(result.isOk).to.be.eq(true);
-			expect(result.isErr).to.be.eq(false);
-			expect(result.ok()).to.be.equal(value);
-			expect(result.err()).to.be.equal(undefined);
-			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOr('world')).to.be.equal(value);
-		});
-		it('should resolve with safeAsyncResult callback Promise', async function () {
-			const value = 'hello';
-			const result: IResult<string> = await safeAsyncResult(() => Promise.resolve(value));
-			expect(result.isOk).to.be.eq(true);
-			expect(result.isErr).to.be.eq(false);
-			expect(result.ok()).to.be.equal(value);
-			expect(result.err()).to.be.equal(undefined);
-			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOr('world')).to.be.equal(value);
-		});
 
-		it('should resolve with safeAsyncResult callback Promise with Ok', async function () {
-			const value = 'hello';
-			const result: IResult<string> = await safeAsyncResult(() => Promise.resolve(Ok(value)));
-			expect(result.isOk).to.be.eq(true);
-			expect(result.isErr).to.be.eq(false);
-			expect(result.ok()).to.be.equal(value);
-			expect(result.err()).to.be.equal(undefined);
-			expect(result.unwrap()).to.be.equal(value);
-			expect(result.unwrapOr('world')).to.be.equal(value);
-		});
 		it('should resolve with safeAsyncResultBuilder function', async function () {
 			const value = 'hello';
 			const result: IResult<string> = await testAsyncFunction(value);
@@ -164,7 +89,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with dual safeResult chain', function () {
 			const value = 'hello';
-			const callback = wrapFnResult((v: string) => testFunction(v));
+			const callback = Result.wrapFn((v: string) => testFunction(v));
 			const result: IResult<string> = callback(value);
 			expect(result.isOk).to.be.eq(true);
 			expect(result.isErr).to.be.eq(false);
@@ -176,7 +101,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with dual safeAsyncResult chain', async function () {
 			const value = 'hello';
-			const callback = wrapFnPromiseResult((v: string) => testAsyncFunction(v));
+			const callback = Result.wrapAsyncFn((v: string) => testAsyncFunction(v));
 			const result: IResult<string> = await callback(value);
 			expect(result.isOk).to.be.eq(true);
 			expect(result.isErr).to.be.eq(false);
@@ -188,7 +113,7 @@ describe('FunctionResult', function () {
 
 		it('should resolve with dual safeAsyncResult chain', async function () {
 			const value = 'hello';
-			const callback = wrapFnPromiseResult((v: string) => testFunction(v) as unknown as Promise<IResult<string>>);
+			const callback = Result.wrapAsyncFn((v: string) => testFunction(v) as unknown as Promise<IResult<string>>);
 			const result: IResult<string> = await callback(value);
 			expect(result.isOk).to.be.eq(true);
 			expect(result.isErr).to.be.eq(false);
@@ -245,30 +170,6 @@ describe('FunctionResult', function () {
 			expect(iter.next().done).to.be.equal(true);
 		});
 
-		it('should create a error result from safeResult', function () {
-			const result = safeResult<string>(function () {
-				throw stE;
-			});
-			expect(result.isOk).to.be.eq(false);
-			expect(result.isErr).to.be.eq(true);
-			expect(result.ok()).to.be.equal(undefined);
-			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(stE);
-			expect(result.unwrapOr('world')).to.be.equal('world');
-		});
-
-		it('should create a error result from safeResult with Err', function () {
-			const result = safeResult<string>(function () {
-				return Err(stE);
-			});
-			expect(result.isOk).to.be.eq(false);
-			expect(result.isErr).to.be.eq(true);
-			expect(result.ok()).to.be.equal(undefined);
-			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(stE);
-			expect(result.unwrapOr('world')).to.be.equal('world');
-		});
-
 		it('should create a error result from safeResultBuilder', function () {
 			const result = testFunction('error');
 			expect(result.isOk).to.be.eq(false);
@@ -281,30 +182,6 @@ describe('FunctionResult', function () {
 
 		it('should create a error result from safeResultAsyncBuilder', async function () {
 			const result = await testAsyncFunction('error');
-			expect(result.isOk).to.be.eq(false);
-			expect(result.isErr).to.be.eq(true);
-			expect(result.ok()).to.be.equal(undefined);
-			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(stE);
-			expect(result.unwrapOr('world')).to.be.equal('world');
-		});
-
-		it('should create a error result from safeAsyncResult', async function () {
-			const result = await safeAsyncResult<string>(function () {
-				throw stE;
-			});
-			expect(result.isOk).to.be.eq(false);
-			expect(result.isErr).to.be.eq(true);
-			expect(result.ok()).to.be.equal(undefined);
-			expect(result.err()).to.be.eql(stE);
-			expect(() => result.unwrap()).to.throw(stE);
-			expect(result.unwrapOr('world')).to.be.equal('world');
-		});
-
-		it('should create a error result from safeAsyncResult with Err', async function () {
-			const result = await safeAsyncResult<string>(function () {
-				return Promise.resolve(Err(stE));
-			});
 			expect(result.isOk).to.be.eq(false);
 			expect(result.isErr).to.be.eq(true);
 			expect(result.ok()).to.be.equal(undefined);
@@ -460,18 +337,18 @@ describe('FunctionResult', function () {
 	});
 	describe('Result', function () {
 		it('should convert Result to JSON', function () {
-			expect(Result(Ok<string>('hello')).toJSON()).to.be.eql({$class: 'Result::Ok', value: 'hello'});
-			expect(Result(Err('error')).toJSON()).to.be.eql({$class: 'Result::Err', value: 'error'});
-			expect(Result({$class: 'Result::Ok', value: 'hello'}).toJSON()).to.be.eql({$class: 'Result::Ok', value: 'hello'});
-			expect(Result({$class: 'Result::Err', value: 'error'}).toJSON()).to.be.eql({$class: 'Result::Err', value: 'error'});
-			expect(() => Result(null as any)).to.throw(TypeError, 'Invalid Result type');
+			expect(Result.from(Ok<string>('hello')).toJSON()).to.be.eql({$class: 'Result::Ok', value: 'hello'});
+			expect(Result.from(Err('error')).toJSON()).to.be.eql({$class: 'Result::Err', value: 'error'});
+			expect(Result.from({$class: 'Result::Ok', value: 'hello'}).toJSON()).to.be.eql({$class: 'Result::Ok', value: 'hello'});
+			expect(Result.from({$class: 'Result::Err', value: 'error'}).toJSON()).to.be.eql({$class: 'Result::Err', value: 'error'});
+			expect(() => Result.from(null as any)).to.throw(TypeError, 'Invalid Result type');
 		});
 	});
 	describe('matchResult', function () {
 		it('should match Ok result', function () {
 			const result = Ok('hello') as IResult<string, Error>;
 			expect(
-				matchResult(result, {
+				Result.match(result, {
 					Ok: (value) => `${value} world`,
 					Err: (err) => `${err.message} world`,
 				}),
@@ -480,7 +357,7 @@ describe('FunctionResult', function () {
 		it('should match Ok result', function () {
 			const result = Ok('hello');
 			expect(
-				matchResult(result, {
+				Result.match(result, {
 					Ok: (value) => `${value} world`,
 					Err: (err) => `${JSON.stringify(err)} world`,
 				}),
@@ -489,7 +366,7 @@ describe('FunctionResult', function () {
 		it('should match Err result', function () {
 			const result = Err(new Error('oops'));
 			expect(
-				matchResult(result, {
+				Result.match(result, {
 					Ok: (value) => `${value} world`,
 					Err: (err) => `${err.message} world`,
 				}),
@@ -498,11 +375,11 @@ describe('FunctionResult', function () {
 	});
 	describe('resultFlow', function () {
 		it('should run flow of results to single Ok', function () {
-			expect(resultFlow(Ok('hello')).ok()).to.be.equal('hello');
+			expect(Result.flow(Ok('hello')).ok()).to.be.equal('hello');
 		});
 		it('should run flow of results to Ok', function () {
 			expect(
-				resultFlow(
+				Result.flow(
 					Ok('hello'),
 					(value) => Ok(`${value} world`),
 					(value) => Ok(value.length),
@@ -511,7 +388,7 @@ describe('FunctionResult', function () {
 			).to.be.equal('11');
 		});
 		it('should run flow of results to last Error', function () {
-			const res = resultFlow(
+			const res = Result.flow(
 				Ok('hello'),
 				(value) => Ok(`${value} world`),
 				(value) => Ok(value.length),
@@ -520,7 +397,7 @@ describe('FunctionResult', function () {
 			expect(res.err()?.message).to.be.equal('oops');
 		});
 		it('should run flow of results to last Error', function () {
-			const res = resultFlow(
+			const res = Result.flow(
 				Err(new Error('oops')) as IResult<string, Error>,
 				(value) => Ok(`${value} world`),
 				(value) => Ok(value.length),
@@ -530,7 +407,7 @@ describe('FunctionResult', function () {
 		});
 		it('should throw uncontrolled error in flow', function () {
 			expect(() =>
-				resultFlow(
+				Result.flow(
 					Ok('hello'),
 					(value) => Ok(`${value} world`),
 					(value) => Ok(value.length),
@@ -540,7 +417,7 @@ describe('FunctionResult', function () {
 				),
 			).to.throw('Fatal Uncontrolled error: oops');
 			expect(() =>
-				resultFlow(
+				Result.flow(
 					Ok('hello'),
 					(value) => Ok(`${value} world`),
 					(value) => Ok(value.length),
@@ -554,11 +431,11 @@ describe('FunctionResult', function () {
 	});
 	describe('resultAsyncFlow', function () {
 		it('should run flow of results to single Ok', async function () {
-			const res = await resultAsyncFlow(Ok('hello'));
+			const res = await Result.asyncFlow(Ok('hello'));
 			expect(res.ok()).toBe('hello');
 		});
 		it('should run flow of results to Ok', async function () {
-			const res = await resultAsyncFlow(
+			const res = await Result.asyncFlow(
 				Ok('hello'),
 				(value) => Promise.resolve(Ok(`${value} world`)),
 				(value) => Promise.resolve(Ok(value.length)),
@@ -567,7 +444,7 @@ describe('FunctionResult', function () {
 			expect(res.ok()).to.be.equal('11');
 		});
 		it('should run flow of results to last Error', async function () {
-			const res = await resultAsyncFlow(
+			const res = await Result.asyncFlow(
 				Ok('hello'),
 				(value) => Promise.resolve(Ok(`${value} world`)),
 				(value) => Promise.resolve(Ok(value.length)),
@@ -576,7 +453,7 @@ describe('FunctionResult', function () {
 			expect(res.err()?.message).to.be.equal('oops');
 		});
 		it('should run flow of results to last Error', async function () {
-			const res = await resultAsyncFlow(
+			const res = await Result.asyncFlow(
 				Err(new Error('oops')) as IResult<string, Error>,
 				(value) => Promise.resolve(Ok(`${value} world`)),
 				(value) => Promise.resolve(Ok(value.length)),
@@ -586,7 +463,7 @@ describe('FunctionResult', function () {
 		});
 		it('should throw uncontrolled error in flow', async function () {
 			await expect(
-				resultAsyncFlow(
+				Result.asyncFlow(
 					Ok('hello'),
 					(value) => Promise.resolve(Ok(`${value} world`)),
 					(value) => Promise.resolve(Ok(value.length)),
@@ -596,7 +473,7 @@ describe('FunctionResult', function () {
 				),
 			).rejects.toThrowError('Fatal Uncontrolled error: oops');
 			await expect(
-				resultAsyncFlow(
+				Result.asyncFlow(
 					Ok('hello'),
 					(value) => Promise.resolve(Ok(`${value} world`)),
 					(value) => Promise.resolve(Ok(value.length)),
@@ -606,6 +483,36 @@ describe('FunctionResult', function () {
 					},
 				),
 			).rejects.toThrowError('Fatal Uncontrolled error: "oops"');
+		});
+	});
+	describe('Test resultAll', function () {
+		it('should be valid all result type and Ok', function () {
+			expect(Result.all(ok1, ok2, ok3)).to.be.eql(Ok([1, '2', new Date(0)]));
+			expect(
+				Result.all(
+					() => ok1,
+					() => ok2,
+					() => ok3,
+				),
+			).to.be.eql(Ok([1, '2', new Date(0)]));
+		});
+		it('should be valid all result type and Err', function () {
+			expect(Result.all(ok1, ok2, err1)).to.be.eql(err1);
+		});
+	});
+	describe('Test resultAsyncAll', function () {
+		it('should be valid all result type and Ok', async function () {
+			await expect(Result.asyncAll(ok1, ok2, ok3)).resolves.eql(Ok([1, '2', new Date(0)]));
+			await expect(
+				Result.asyncAll(
+					() => Promise.resolve(ok1),
+					() => Promise.resolve(ok2),
+					() => Promise.resolve(ok3),
+				),
+			).resolves.eql(Ok([1, '2', new Date(0)]));
+		});
+		it('should be valid all result type and Err', async function () {
+			await expect(Result.asyncAll(ok1, ok2, err1)).resolves.eql(err1);
 		});
 	});
 });

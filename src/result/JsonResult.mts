@@ -9,6 +9,10 @@ const resultErrClass = 'Result::Err';
 
 /**
  * Type guard for IJsonResult
+ * @template OkType
+ * @template ErrType
+ * @param {unknown} json
+ * @returns {json is IJsonResult<OkType, ErrType>}
  * @since v0.6.6
  */
 export function isJsonResult<OkType, ErrType>(json: unknown): json is IJsonResult<OkType, ErrType> {
@@ -17,6 +21,10 @@ export function isJsonResult<OkType, ErrType>(json: unknown): json is IJsonResul
 
 /**
  * Type guard for IJsonOk
+ * @template OkType
+ * @template ErrType
+ * @param {unknown} json
+ * @returns {json is IJsonOk<OkType>}
  * @since v0.6.6
  */
 export function isJsonOk<OkType, ErrType>(json: unknown): json is IJsonOk<OkType> {
@@ -25,6 +33,10 @@ export function isJsonOk<OkType, ErrType>(json: unknown): json is IJsonOk<OkType
 
 /**
  * Type guard for IJsonErr
+ * @template OkType
+ * @template ErrType
+ * @param {unknown} json
+ * @returns {json is IJsonErr<ErrType>}
  * @since v0.6.6
  */
 export function isJsonErr<OkType, ErrType>(json: unknown): json is IJsonErr<ErrType> {
@@ -33,6 +45,8 @@ export function isJsonErr<OkType, ErrType>(json: unknown): json is IJsonErr<ErrT
 
 /**
  * wrap Result from JsonResult, IOk or IErr
+ * @param {IJsonResult<OkType, ErrType>} json
+ * @returns {IResult<OkType, ErrType>}
  * @since v1.0.0
  */
 export function fromJsonResult<_OkType, ErrType>(json: IJsonErr<ErrType>): IErr<ErrType>;

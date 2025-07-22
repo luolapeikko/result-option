@@ -129,20 +129,14 @@ export class OptionBuilder<IsSome extends boolean, SomeType = unknown> implement
 	public toJSON(): MappedType<IsSome, IJsonSome<SomeType>, IJsonNone> {
 		return asMapped<IsSome, IJsonSome<SomeType>, IJsonNone>(this._isSome, buildJsonSome(this.value), buildJsonNone());
 	}
-
-	public toOptionString(): MappedType<IsSome, `Some(${string})`, 'None()'> {
+	
+	public toString(): MappedType<IsSome, `Some(${string})`, 'None()'> {
 		return asMapped<IsSome, `Some(${string})`, 'None()'>(this._isSome, `Some(${String(this.value)})`, 'None()');
-	}
-
-	public toString(): string {
-		if (!this._isSome) {
-			return 'None';
-		}
-		return String(this.value);
 	}
 
 	/**
 	 * Change the value to None
+	 * @returns {SomeType | undefined}
 	 */
 	private removeValue(): SomeType | undefined {
 		const value = this.value;

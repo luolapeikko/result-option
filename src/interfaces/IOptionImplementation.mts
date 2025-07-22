@@ -12,6 +12,10 @@ export type MappedType<IsTrue extends boolean, TrueType, FalseType> = {true: Tru
 
 /**
  * function to resolve the mapped type
+ * @param {IsTrue} isTrue - boolean to resolve the type
+ * @param {TrueType} trueValue - type to return if isTrue is true
+ * @param {FalseType} falseValue - type to return if isTrue is false
+ * @returns {MappedType<IsTrue, TrueType, FalseType>}
  * @since v1.0.0
  */
 export function asMapped<IsTrue extends boolean, TrueType, FalseType>(
@@ -226,20 +230,13 @@ export interface IOptionImplementation<IsTrue extends boolean, SomeType> {
 	 * None().toJSON() // {$class: 'Option::None'}
 	 */
 	toJSON(): MappedType<IsTrue, IJsonSome<SomeType>, IJsonNone>;
+
 	/**
 	 * Convert Option to string
 	 * @returns {string} string representation of the Option
 	 * @example
-	 * Some(2).toOptionString() // 'Some(2)'
-	 * None().toOptionString() // 'None()'
+	 * Some(2).toString() // 'Some(2)'
+	 * None().toString() // 'None()'
 	 */
-	toOptionString(): MappedType<IsTrue, `Some(${string})`, 'None()'>;
-	/**
-	 * Convert Option to string
-	 * @returns {string} string representation of the Option
-	 * @example
-	 * Some(2).toString() // '2'
-	 * None().toString() // 'None'
-	 */
-	toString(): string;
+	toString() : MappedType<IsTrue, `Some(${string})`, 'None()'>;
 }
