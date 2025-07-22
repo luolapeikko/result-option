@@ -265,6 +265,7 @@ export class Result {
 	 * @template ErrType - Err type
 	 * @param {() => IResultOrOkType<OkType, ErrType>} func - callback function
 	 * @returns {IResult<OkType, ErrType>} result
+	 * @since v2.0.1
 	 */
 	public static async safeAsyncCall<OkType, ErrType>(
 		func: () => IResultOrOkType<OkType, ErrType> | Promise<IResultOrOkType<OkType, ErrType>>,
