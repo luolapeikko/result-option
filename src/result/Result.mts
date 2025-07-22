@@ -235,6 +235,51 @@ export class Result {
 		}
 	}
 
+	/**
+	 * Function to match the value or error with try catch
+	 * @example
+	 * const result = Result.safeCall<unknown, SyntaxError>(() => JSON.parse('{ "hello": "world" }'));
+	 * @template OkType - Ok type
+	 * @template ErrType - Err type
+	 * @param {() => IResultOrOkType<OkType, ErrType>} func - callback function
+	 * @returns {IResult<OkType, ErrType>} result
+	 * @since v2.0.1
+	 */
+	public static safeCall<OkType, ErrType>(func: () => IResultOrOkType<OkType, ErrType>): IResult<OkType, ErrType> {
+		try {
+			const data = func();
+			if (isResult(data)) {
+				return data;
+			}
+			return Ok(data);
+		} catch (err) {
+			return Err(err as ErrType);
+		}
+	}
+
+	/**
+	 * Async function to match the value or error with try catch
+	 * @example
+	 * const result = await Result.safeAsyncCall<unknown, SyntaxError>(() => JSON.parse('{ "hello": "world" }'));
+	 * @template OkType - Ok type
+	 * @template ErrType - Err type
+	 * @param {() => IResultOrOkType<OkType, ErrType>} func - callback function
+	 * @returns {IResult<OkType, ErrType>} result
+	 */
+	public static async safeAsyncCall<OkType, ErrType>(
+		func: () => IResultOrOkType<OkType, ErrType> | Promise<IResultOrOkType<OkType, ErrType>>,
+	): Promise<IResult<OkType, ErrType>> {
+		try {
+			const data = await func();
+			if (isResult(data)) {
+				return data;
+			}
+			return Ok(data);
+		} catch (err) {
+			return Err(err as ErrType);
+		}
+	}
+
 	/* c8 ignore next 3 */
 	private constructor() {
 		// empty

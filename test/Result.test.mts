@@ -343,6 +343,22 @@ describe('FunctionResult', function () {
 			expect(Result.from({$class: 'Result::Err', value: 'error'}).toJSON()).to.be.eql({$class: 'Result::Err', value: 'error'});
 			expect(() => Result.from(null as any)).to.throw(TypeError, 'Invalid Result type');
 		});
+		it('should make safeCall', function () {
+			expect(Result.safeCall(() => 'hello')).to.be.eql(Ok('hello'));
+			expect(
+				Result.safeCall(() => {
+					throw new Error('error');
+				}),
+			).to.be.eql(Err(new Error('error')));
+		});
+		it('should make safeCall', async function () {
+			await expect(Result.safeAsyncCall(() => 'hello')).resolves.eql(Ok('hello'));
+			await expect(
+				Result.safeAsyncCall(() => {
+					throw new Error('error');
+				}),
+			).resolves.eql(Err(new Error('error')));
+		});
 	});
 	describe('matchResult', function () {
 		it('should match Ok result', function () {
