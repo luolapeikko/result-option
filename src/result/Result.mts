@@ -150,6 +150,7 @@ export class Result {
 	 * @template T
 	 * @yields {IResult<T>}
 	 * @param {AsyncIterable<T>} iterable
+	 * @since v2.0.2
 	 */
 	public static async *asyncIterator<T, Err = unknown>(iterable: AsyncIterable<T> | Iterable<T>): AsyncIterable<IResult<T, Err>> {
 		try {
@@ -166,6 +167,7 @@ export class Result {
 	 * @template T
 	 * @yields {IResult<T>}
 	 * @param {Iterable<T>} iterable
+	 * @since v2.0.2
 	 */
 	public static *iterator<T, Err = unknown>(iterable: Iterable<T>): Iterable<IResult<T, Err>> {
 		try {
@@ -177,6 +179,17 @@ export class Result {
 		}
 	}
 
+	/**
+	 * Resolve iterable of IResult to single IOk array result or IErr
+	 * @example
+	 * const iterable = [Ok('hello'), Ok('world')];
+	 * const output: IResult<string[], Error> = Result.asArray(iterable);
+	 * @template OkType - Ok type
+	 * @template ErrType - Err type
+	 * @param {Iterable<IResult<OkType, ErrType>>} iterable - Iterable of IResult
+	 * @returns {IResult<OkType[], ErrType>} - returns IOk or IErr
+	 * @since v2.0.2
+	 */
 	public static asArray<OkType, ErrType = unknown>(iterable: Iterable<IResult<OkType, ErrType>>): IResult<OkType[], ErrType> {
 		const output: OkType[] = [];
 		for (const res of iterable) {
@@ -188,6 +201,17 @@ export class Result {
 		return Ok(output);
 	}
 
+	/**
+	 * Resolve async iterable or iterable of IResult to single IOk array result or IErr
+	 * @example
+	 * const iterable = [Ok('hello'), Ok('world')];
+	 * const output: Promise<IResult<string[], Error>> = await Result.asAsyncArray(iterable);
+	 * @template OkType - Ok type
+	 * @template ErrType - Err type
+	 * @param {AsyncIterable<IResult<OkType, ErrType>> | Iterable<IResult<OkType, ErrType>>} iterable - AsyncIterable or Iterable of IResult
+	 * @returns {Promise<IResult<OkType[], ErrType>>} - returns Promise of IOk or IErr
+	 * @since v2.0.2
+	 */
 	public static async asAsyncArray<OkType, ErrType = unknown>(
 		iterable: AsyncIterable<IResult<OkType, ErrType>> | Iterable<IResult<OkType, ErrType>>,
 	): Promise<IResult<OkType[], ErrType>> {
