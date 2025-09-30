@@ -146,6 +146,62 @@ export class Result {
 	}
 
 	/**
+	 * yields Ok from async iterable or Err from thrown error;
+	 * @template T
+	 * @yields {IResult<T>}
+	 * @param {AsyncIterable<T>} iterable
+	 */
+	public static async *asyncIterator<T, Err = unknown>(iterable: AsyncIterable<T> | Iterable<T>): AsyncIterable<IResult<T, Err>> {
+		try {
+			for await (const res of iterable) {
+				yield Ok(res);
+			}
+		} catch (err) {
+			yield Err(err as Err);
+		}
+	}
+
+	/**
+	 * yields Ok from iterable or Err from thrown error;
+	 * @template T
+	 * @yields {IResult<T>}
+	 * @param {Iterable<T>} iterable
+	 */
+	public static *iterator<T, Err = unknown>(iterable: Iterable<T>): Iterable<IResult<T, Err>> {
+		try {
+			for (const res of iterable) {
+				yield Ok(res);
+			}
+		} catch (err) {
+			yield Err(err as Err);
+		}
+	}
+
+	public static asArray<OkType, ErrType = unknown>(iterable: Iterable<IResult<OkType, ErrType>>): IResult<OkType[], ErrType> {
+		const output: OkType[] = [];
+		for (const res of iterable) {
+			if (res.isErr) {
+				return res;
+			}
+			output.push(res.ok());
+		}
+		return Ok(output);
+	}
+
+	public static async asAsyncArray<OkType, ErrType = unknown>(
+		iterable: AsyncIterable<IResult<OkType, ErrType>> | Iterable<IResult<OkType, ErrType>>,
+	): Promise<IResult<OkType[], ErrType>> {
+		const output: OkType[] = [];
+		for await (const res of iterable) {
+			if (res.isErr) {
+				return res;
+			}
+			output.push(res.ok());
+		}
+		return Ok(output);
+	}
+
+	/**
 	 * build safe Result wrapper for callback function
 	 * @example
 	 * const hello = Result.wrapFn((value: string) => `${value} world`);

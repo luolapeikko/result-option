@@ -130,7 +130,6 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	andThen<OutResult extends IResult<unknown, unknown>>(
 		callbackFunc: (val: IsOk extends true ? OkType : never) => OutResult,
 	): IsOk extends true ? OutResult : this;
-
 	/**
 	 * Method to combine two results, if the first result is true use the value to build a new result from Promise, otherwise return the error
 	 * @param callbackFunc - callback to build a new result
@@ -140,7 +139,7 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * await Err<'broken'>('broken').andThen<IResult<number>>((val) => Promise.resolve(Ok(val + 1))) // Err<'broken'>('broken')
 	 */
 	andThenPromise<OutResult extends IResult<unknown, unknown>>(
-		callbackFunc: (val: IsOk extends true ? OkType : never) => Promise<OutResult>,
+		callbackFunc: (val: IsOk extends true ? OkType : never) => OutResult | Promise<OutResult>,
 	): IsOk extends true ? Promise<OutResult> : this;
 	/**
 	 * Method to combine two results, if the first result is false return the second result, otherwise return the first result
@@ -172,7 +171,7 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * await Err<number>(2).orElsePromise<IResult<number>>((errValue) => Promise.resolve(Ok(errValue * 2))) // Ok<number>(4)
 	 */
 	orElsePromise<OutResult extends IResult<unknown, unknown>>(
-		callbackFunc: (value: IsOk extends true ? never : ErrType) => Promise<OutResult>,
+		callbackFunc: (value: IsOk extends true ? never : ErrType) => OutResult | Promise<OutResult>,
 	): IsOk extends true ? this : Promise<OutResult>;
 	/**
 	 * Method to clone an result

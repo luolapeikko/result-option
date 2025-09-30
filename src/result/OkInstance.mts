@@ -79,7 +79,7 @@ export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 		return this;
 	}
 
-	public orElsePromise<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (value: never) => Promise<OutResult>): this {
+	public orElsePromise<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (value: never) => OutResult | Promise<OutResult>): this {
 		return this;
 	}
 
@@ -95,8 +95,8 @@ export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 		return callbackFunc(this.value);
 	}
 
-	public andThenPromise<OutResult extends IResult<unknown, unknown>>(callbackFunc: (val: OkType) => Promise<OutResult>): Promise<OutResult> {
-		return callbackFunc(this.value);
+	public async andThenPromise<OutResult extends IResult<unknown, unknown>>(callbackFunc: (val: OkType) => OutResult | Promise<OutResult>): Promise<OutResult> {
+		return await callbackFunc(this.value);
 	}
 
 	public inspect(fn: (value: OkType) => void): this {

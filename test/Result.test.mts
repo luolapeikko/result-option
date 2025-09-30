@@ -254,6 +254,8 @@ describe('FunctionResult', function () {
 			expect(errResult.orElse<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Ok(4))).to.be.eq(true);
 			expect((await orResult.orElsePromise<IResult<number>>((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Ok(2))).to.be.eq(true);
 			expect((await errResult.orElsePromise<IResult<number>>((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Ok(4))).to.be.eq(true);
+			expect((await orResult.orElsePromise<IResult<number>>((okValue: number) => Ok(okValue + 2))).eq(Ok(2))).to.be.eq(true);
+			expect((await errResult.orElsePromise<IResult<number>>((okValue: number) => Ok(okValue + 2))).eq(Ok(4))).to.be.eq(true);
 		});
 	});
 	describe('andThen', function () {
@@ -264,6 +266,8 @@ describe('FunctionResult', function () {
 			expect(errResult.andThen<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Err(2))).to.be.eq(true);
 			expect((await orResult.andThenPromise<IResult<number>>((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Ok(4))).to.be.eq(true);
 			expect((await errResult.andThenPromise<IResult<number>>((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Err(2))).to.be.eq(true);
+			expect((await orResult.andThenPromise<IResult<number>>((okValue: number) => Ok(okValue + 2))).eq(Ok(4))).to.be.eq(true);
+			expect((await errResult.andThenPromise<IResult<number>>((okValue: number) => Ok(okValue + 2))).eq(Err(2))).to.be.eq(true);
 		});
 	});
 	describe('clone', function () {
@@ -529,6 +533,46 @@ describe('FunctionResult', function () {
 		});
 		it('should be valid all result type and Err', async function () {
 			await expect(Result.asyncAll(ok1, ok2, err1)).resolves.eql(err1);
+		});
+	});
+	describe('Test iterable', function () {
+		it('should build valid result instances', async function () {
+			expect(Array.from(Result.iterator([1, 2, 3]))).to.be.eql([Ok(1), Ok(2), Ok(3)]);
+		});
+	});
+	describe('Test async iterable', function () {
+		it('should build valid result instances', async function () {
+			const asyncIterable: AsyncIterable<number> = {
+				async *[Symbol.asyncIterator]() {
+					yield 1;
+					yield 2;
+					yield 3;
+				},
+			};
+			await expect(Result.asAsyncArray(Result.asyncIterator(asyncIterable))).resolves.eql(Ok([1, 2, 3]));
+		});
+		it('should build valid result instances', async function () {
+			const asyncIterable: AsyncIterable<number> = {
+				async *[Symbol.asyncIterator]() {
+					yield 1;
+					throw new Error('oops');
+				},
+			};
+			await expect(Result.asAsyncArray(Result.asyncIterator(asyncIterable))).resolves.eql(Err(new Error('oops')));
+		});
+	});
+	describe('Test asArray', function () {
+		it('should build valid Ok array', async function () {
+			expect(Result.asArray(Result.iterator([1, 2, 3]))).to.be.eql(Ok([1, 2, 3]));
+		});
+		it('should build valid Err', async function () {
+			const syncIterable: Iterable<number> = {
+				*[Symbol.iterator]() {
+					yield 1;
+					throw new Error('oops');
+				},
+			};
+			expect(Result.asArray(Result.iterator(syncIterable))).to.be.eql(Err(new Error('oops')));
 		});
 	});
 });

@@ -85,8 +85,8 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 		return callbackFunc(this.error);
 	}
 
-	public orElsePromise<OutResult extends IResult<unknown, unknown>>(callbackFunc: (value: ErrType) => Promise<OutResult>): Promise<OutResult> {
-		return callbackFunc(this.error);
+	public async orElsePromise<OutResult extends IResult<unknown, unknown>>(callbackFunc: (value: ErrType) => OutResult | Promise<OutResult>): Promise<OutResult> {
+		return await callbackFunc(this.error);
 	}
 
 	public and<CompareResult extends IResult>(_value: CompareResult): this {
@@ -101,7 +101,7 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 		return this;
 	}
 
-	public andThenPromise<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (val: never) => Promise<OutResult>): this {
+	public andThenPromise<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (val: never) => OutResult | Promise<OutResult>): this {
 		return this;
 	}
 
