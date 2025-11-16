@@ -109,6 +109,11 @@ export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 		return this;
 	}
 
+	public inspectOk(fn: (value: OkType) => void): this {
+		fn(this.value);
+		return this;
+	}
+
 	public inspectErr(_fn: (value: never) => void): this {
 		return this;
 	}

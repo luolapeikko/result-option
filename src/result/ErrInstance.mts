@@ -122,6 +122,10 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 		return this;
 	}
 
+	public inspectOk(_fn: (value: never) => void): this {
+		return this;
+	}
+
 	public inspectErr(fn: (value: ErrType) => void): this {
 		fn(this.error);
 		return this;

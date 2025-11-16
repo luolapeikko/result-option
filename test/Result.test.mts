@@ -45,7 +45,7 @@ describe('FunctionResult', function () {
 			let inspectValue: string | undefined;
 			let inspectErrValue: Error | undefined;
 			const result = Ok<string, Error>(value)
-				.inspect((value) => (inspectValue = value))
+				.inspectOk((value) => (inspectValue = value))
 				.inspectErr((value) => (inspectErrValue = value)) as IResult<string, Error>;
 			expect(inspectValue).to.be.equal(value);
 			expect(inspectErrValue).to.be.equal(undefined);

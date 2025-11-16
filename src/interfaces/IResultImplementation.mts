@@ -209,6 +209,7 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 
 	/**
 	 * Inspect the result value if Ok
+	 * @deprecated use {@link inspectOk} instead as inspect might be overridden by NodeJS inspect setup.
 	 * @param fn - function to inspect the value
 	 * @returns {this} this result instance
 	 * @example
@@ -216,6 +217,16 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * @since v1.0.8
 	 */
 	inspect(fn: (value: OkType) => void): this;
+
+	/**
+	 * Inspect the result value if Ok
+	 * @param fn - function to inspect the value
+	 * @returns {this} this result instance
+	 * @example
+	 * Ok<number>(2).inspectOk((value) => console.log('Value:', value)).unwrap() // logs 'Value: 2' and returns 2
+	 * @since v2.0.3
+	 */
+	inspectOk(fn: (value: OkType) => void): this;
 
 	/**
 	 * Inspect the result value if Err
