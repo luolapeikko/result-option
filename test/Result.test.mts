@@ -575,4 +575,74 @@ describe('FunctionResult', function () {
 			expect(Result.asArray(Result.iterator(syncIterable))).to.be.eql(Err(new Error('oops')));
 		});
 	});
+	describe('Test asyncTupleFlow', function () {
+		it('should run async tuple flow of results to Ok', async function () {
+			const res = await Result.asyncTupleFlow(
+				Ok('hello'),
+				(hello) => Promise.resolve(Ok(`${hello} world`)),
+				(hello, helloWorld) => Ok(helloWorld.length),
+				(hello, helloWorld, length) => Ok(`${helloWorld}:${length.toString()}`),
+			);
+			expect(res.ok()).toBe('hello world:11');
+		});
+		it('should throw uncontrolled error in asyncTupleFlow', async function () {
+			await expect(
+				Result.asyncTupleFlow(
+					Ok('hello'),
+					(value) => Ok(`${value} world`),
+					(value) => Ok(value.length),
+					(_value) => {
+						throw new Error('oops');
+					},
+				),
+			).rejects.toThrowError('Fatal Uncontrolled error: oops');
+		});
+		it('should throw uncontrolled error in asyncTupleFlow (not valid error)', async function () {
+			await expect(
+				Result.asyncTupleFlow(
+					Ok('hello'),
+					(value) => Ok(`${value} world`),
+					(value) => Ok(value.length),
+					(_value) => {
+						throw 'oops';
+					},
+				),
+			).rejects.toThrowError('Fatal Uncontrolled error: "oops"');
+		});
+	});
+	describe('Test tupleFlow', function () {
+		it('should run async tuple flow of results to Ok', async function () {
+			const res = Result.tupleFlow(
+				Ok('hello'),
+				(hello) => Ok(`${hello} world`),
+				(hello, helloWorld) => Ok(helloWorld.length),
+				(hello, helloWorld, length) => Ok(`${helloWorld}:${length.toString()}`),
+			);
+			expect(res.ok()).toBe('hello world:11');
+		});
+		it('should throw uncontrolled error in tupleFlow', async function () {
+			expect(() =>
+				Result.tupleFlow(
+					Ok('hello'),
+					(value) => Ok(`${value} world`),
+					(value) => Ok(value.length),
+					(_value) => {
+						throw new Error('oops');
+					},
+				),
+			).toThrowError('Fatal Uncontrolled error: oops');
+		});
+		it('should throw uncontrolled error in tupleFlow (not valid error)', async function () {
+			expect(() =>
+				Result.tupleFlow(
+					Ok('hello'),
+					(value) => Ok(`${value} world`),
+					(value) => Ok(value.length),
+					(_value) => {
+						throw 'oops';
+					},
+				),
+			).toThrowError('Fatal Uncontrolled error: "oops"');
+		});
+	});
 });

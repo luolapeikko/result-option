@@ -6,7 +6,9 @@ import {resultFlow} from './flow.mjs';
 import {fromJsonResult, isJsonResult} from './JsonResult.mjs';
 import {Ok} from './Ok.mjs';
 import {type IOk} from './OkInstance.mjs';
+import {resultAsyncTupleFlow} from './asyncTupleFlow.mjs';
 import {isResult} from './ResultInstance.mjs';
+import {resultTupleFlow} from './tupleFlow.mjs';
 
 type Res = IResult<unknown, unknown>;
 
@@ -67,6 +69,23 @@ export class Result {
 	public static readonly flow: typeof resultFlow = resultFlow;
 
 	/**
+	 * Run a flow of callback results
+	 * @example
+	 * const res: IResult<string> = Result.tupleFlow(
+	 *   Ok('hello'),
+	 *   (hello) => Ok(`${hello} world`),
+	 *   (hello, helloWorld) => Ok(helloWorld.length),
+	 *   (hello, helloWorld, length) => Ok(`${helloWorld}:${length.toString()}`),
+	 * );
+	 * @template A type of the initial result
+	 * @param {A} v initial result
+	 * @returns {IResult} as final result
+	 * @throws {Error} if uncontrolled error from callback
+	 * @since v2.1.0
+	 */
+	public static readonly tupleFlow: typeof resultTupleFlow = resultTupleFlow;
+
+	/**
 	 * Run a flow of async and sync callback results
 	 * @template A type of the initial result
 	 * @param {A} v initial result
@@ -82,6 +101,23 @@ export class Result {
 	 * @since v2.0.0
 	 */
 	public static readonly asyncFlow: typeof resultAsyncFlow = resultAsyncFlow;
+
+	/**
+	 * Run a flow of async and sync callback results
+	 * @template A type of the initial result
+	 * @param {A} v initial result
+	 * @returns {IResult} as final result
+	 * @throws {Error} if uncontrolled error from callback
+	 * @example
+	 * const res: Promise<IResult<string>> = Result.asyncTupleFlow(
+	 *   Ok('hello'),
+	 *   (hello) => Promise.resolve(Ok(`${hello} world`)),
+	 *   (hello, helloWorld) => Ok(helloWorld.length),
+	 *   (hello, helloWorld, length) => Ok(`${helloWorld}:${length.toString()}`),
+	 * );
+	 * @since v2.1.0
+	 */
+	public static readonly asyncTupleFlow: typeof resultAsyncTupleFlow = resultAsyncTupleFlow;
 
 	/**
 	 * Build IResult from IResult or IJsonResult.

@@ -42,13 +42,33 @@ describe('Result type tests', function () {
 				),
 			);
 		});
-		it('should be valid result from last flow result', function () {
+		it('should be valid result from last tupleFlow result', function () {
+			assertType<IResult<string, Error>>(
+				Result.tupleFlow(
+					ok1,
+					(one) => Ok(`${one} world`),
+					(one, oneWorld) => Ok(oneWorld.length),
+					(one, oneWorld, length) => Ok(length.toString()),
+				),
+			);
+		});
+		it('should be valid result from last asyncFlow result', function () {
 			assertType<Promise<IResult<string, Error>>>(
 				Result.asyncFlow(
 					ok1,
 					(value) => Ok(`${value} world`),
 					(value) => Ok(value.length),
 					(value) => Ok(value.toString()),
+				),
+			);
+		});
+		it('should be valid result from last asyncTupleFlow result', function () {
+			assertType<Promise<IResult<string, Error>>>(
+				Result.asyncTupleFlow(
+					ok1,
+					(one) => Ok(`${one} world`),
+					(one, oneWorld) => Ok(oneWorld.length),
+					(one, oneWorld, length) => Ok(length.toString()),
 				),
 			);
 		});
