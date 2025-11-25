@@ -6,7 +6,7 @@ type LastElement<Arr extends Res[]> = Arr extends [...Res[], infer B] ? B : neve
 type BuildOut<All extends IResult<any, any>, Last extends IResult<any, any>> = IResult<InferOkValue<Last>, InferErrValue<All> | InferErrValue<Last>>;
 type Out<All extends Res[]> = BuildOut<All[number], LastElement<All>>;
 type UnResultArgs<T extends Res[]> = {
-	[K in keyof T]: T[K] extends IOk<infer Ok> ? Ok : never;
+	[K in keyof T]: T[K] extends IResult<infer Ok> ? Ok : T[K] extends IOk<infer Ok> ? Ok : never;
 };
 type Fn<I extends Res[], O extends Res> = (...args: UnResultArgs<I>) => O | Promise<O>;
 
