@@ -9,6 +9,7 @@ import {type IOk} from './OkInstance.mjs';
 import {resultAsyncTupleFlow} from './asyncTupleFlow.mjs';
 import {isResult} from './ResultInstance.mjs';
 import {resultTupleFlow} from './tupleFlow.mjs';
+import type {WrapAsyncFnReturn, WrapFnReturn} from './types.mjs';
 
 type Res = IResult<unknown, unknown>;
 
@@ -267,54 +268,52 @@ export class Result {
 	 * const hello = Result.wrapFn((value: string) => `${value} world`);
 	 * // hello: (value: string) => IResult<string, unknown>
 	 * // example of strict generics usage (to set correct error type)
-	 * const jsonParse = Result.wrapFn<Parameters<typeof JSON.parse>, ReturnType<typeof JSON.parse>, SyntaxError>(JSON.parse);
+	 * const jsonParse = Result.wrapFn<SyntaxError, typeof JSON.parse>(JSON.parse);
 	 * const res: IResult<any, SyntaxError> = jsonParse('{ "hello": "world" }');
-	 * @template TArgs function arguments
-	 * @template OkType return type
 	 * @template ErrType error type
-	 * @param {(...args: TArgs) => IResultOrOkType<OkType, ErrType>} func callback function
-	 * @returns {(...args: TArgs) => IResult<OkType, ErrType>} wrapped function which returns Result
-	 * @since v2.0.0
+	 * @template Fn function type
+	 * @param {Fn} func callback function
+	 * @returns {WrapFnReturn<Fn, ErrType>} wrapped function which returns Result
+	 * @since v2.2.0
 	 */
-	public static wrapFn<TArgs extends any[], OkType, ErrType>(
-		func: (...args: TArgs) => IResultOrOkType<OkType, ErrType>,
-	): (...args: TArgs) => IResult<OkType, ErrType> {
-		return (...args: TArgs): IResult<OkType, ErrType> => {
+	public static wrapFn<ErrType = unknown, Fn extends (...args: any[]) => any = (...args: any[]) => any>(
+		func: Fn,
+	): WrapFnReturn<Fn, ErrType> {
+		return ((...args: any[]): IResult<any, ErrType> => {
 			try {
 				const data = func(...args);
 				if (isResult(data)) {
-					return data;
+					return data as IResult<any, ErrType>;
 				}
 				return Ok(data);
 			} catch (err) {
 				return Err(err as ErrType);
 			}
-		};
+		}) as WrapFnReturn<Fn, ErrType>;
 	}
 
 	/**
 	 * build safe Result wrapper for async callback function
 	 * @example
-	 * const writeFile = Result.wrapAsyncFn<Parameters<typeof fs.promises.writeFile>, void, Error>(fs.promises.writeFile);
-	 * const result: IResult<void, Error> = await writeFile('test.txt', 'hello world');
-	 * @template TArgs function arguments
-	 * @template OkType return type
+	 * const writeFile = Result.wrapAsyncFn<NodeJS.ErrnoException, typeof fs.promises.writeFile>(fs.promises.writeFile);
+	 * const result: IResult<void, NodeJS.ErrnoException> = await writeFile('test.txt', 'hello world');
 	 * @template ErrType error type
-	 * @param {(...args: TArgs) => Promise<IResultOrOkType<OkType, ErrType>>} func async Promise or callback function
-	 * @returns {(...args: TArgs) => Promise<IResult<OkType, ErrType>>} wrapped function which returns Result Promise
-	 * @since v2.0.0
+	 * @template Fn function type
+	 * @param {Fn} func async Promise or callback function
+	 * @returns {WrapAsyncFnReturn<Fn, ErrType>} wrapped function which returns Result Promise
+	 * @since v2.2.0
 	 */
-	public static wrapAsyncFn<TArgs extends any[], OkType, ErrType>(
-		func: (...args: TArgs) => Promise<IResultOrOkType<OkType, ErrType>>,
-	): (...args: TArgs) => Promise<IResult<OkType, ErrType>> {
-		return async (...args: TArgs): Promise<IResult<OkType, ErrType>> => {
+	public static wrapAsyncFn<ErrType = Error, Fn extends (...args: any[]) => any = (...args: any[]) => any>(
+		func: Fn,
+	): WrapAsyncFnReturn<Fn, ErrType> {
+		return (async (...args: any[]): Promise<IResult<any, ErrType>> => {
 			try {
-				return promiseSettledAsResult(func(...args));
+				return await promiseSettledAsResult(func(...args));
 				/* c8 ignore next 3 */
 			} catch (err) {
 				return Err(err as ErrType);
 			}
-		};
+		}) as WrapAsyncFnReturn<Fn, ErrType>;
 	}
 
 	/**
@@ -389,7 +388,7 @@ export class Result {
 		try {
 			const data = await func();
 			if (isResult(data)) {
-				return data;
+				return data as IResult<OkType, ErrType>;
 			}
 			return Ok(data);
 		} catch (err) {
