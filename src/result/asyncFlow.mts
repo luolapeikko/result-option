@@ -1,4 +1,4 @@
-import {type IOk, type IResult} from '../index.mjs';
+import {type IOkBuilder, type IResult} from '../index.mjs';
 import {type InferErrValue, type InferOkValue} from './types.mjs';
 
 type Res = IResult<unknown, unknown>;
@@ -6,7 +6,7 @@ type LastElement<Arr extends Res[]> = Arr extends [...Res[], infer B] ? B : neve
 type BuildOut<All extends IResult<any, any>, Last extends IResult<any, any>> = IResult<InferOkValue<Last>, InferErrValue<All> | InferErrValue<Last>>;
 type Out<All extends Res[]> = BuildOut<All[number], LastElement<All>>;
 
-type Fn<I extends Res, O extends Res> = I extends IOk<infer V> ? (input: V) => O | Promise<O> : never;
+type Fn<I extends Res, O extends Res> = I extends IOkBuilder<infer V, any> ? (input: V) => O | Promise<O> : never;
 
 /**
  * Run a flow of results

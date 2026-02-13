@@ -1,4 +1,5 @@
 export * from './asyncFlow.mjs';
+export * from './AsyncResult.mjs';
 export * from './Err.mjs';
 export * from './ErrInstance.mjs';
 export * from './flow.mjs';
@@ -6,5 +7,7 @@ export * from './JsonResult.mjs';
 export * from './Ok.mjs';
 export * from './OkInstance.mjs';
 export * from './Result.mjs';
+export * from './ResultError.mjs';
 export * from './ResultInstance.mjs';
+export * from './tupleFlow.mjs';
 export * from './types.mjs';

@@ -1,5 +1,6 @@
-import {type ConstructorWithValueOf, type IJsonOk, type IResult, type IResultBuild} from '../interfaces/index.mjs';
+import {AwaitableIResult, IOkBuilder, type ConstructorWithValueOf, type IJsonOk, type IResult} from '../interfaces/index.mjs';
 import {type ISome, Some} from '../option/index.mjs';
+import { AsyncResult } from './AsyncResult.mjs';
 import {isJsonOk} from './JsonResult.mjs';
 
 /**
@@ -9,10 +10,10 @@ import {isJsonOk} from './JsonResult.mjs';
  * @template OkType - Ok type
  * @since v1.0.0
  */
-export class IOk<OkType> implements IResultBuild<true, OkType, never> {
-	private readonly value: OkType;
+export class IOk<OkType, ErrType = never> implements IOkBuilder<OkType, ErrType> {
+	readonly #value: OkType;
 	public constructor(value: OkType | IJsonOk<OkType>) {
-		this.value = isJsonOk<OkType, unknown>(value) ? value.value : value;
+		this.#value = isJsonOk<OkType, unknown>(value) ? value.value : value;
 	}
 
 	public get isOk(): true {
@@ -20,7 +21,7 @@ export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 	}
 
 	public isOkAnd(callbackFunc: (value: OkType) => boolean): boolean {
-		return callbackFunc(this.value);
+		return callbackFunc(this.#value);
 	}
 
 	public isErrAnd(_callbackFunc: (value: never) => boolean): false {
@@ -28,7 +29,7 @@ export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 	}
 
 	public ok(): OkType {
-		return this.value;
+		return this.#value;
 	}
 
 	public get isErr(): false {
@@ -40,7 +41,7 @@ export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 	}
 
 	public map<NewOkType>(callbackFunc: (val: OkType) => NewOkType): IOk<NewOkType> {
-		return new IOk(callbackFunc(this.value));
+		return new IOk(callbackFunc(this.#value));
 	}
 
 	public mapErr<NewErrType>(_callbackFunc: (val: never) => NewErrType): this {
@@ -48,69 +49,70 @@ export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 	}
 
 	public toOption(): ISome<OkType> {
-		return Some(this.value);
+		return Some(this.#value);
 	}
 
 	public unwrap(): OkType {
-		return this.value;
+		return this.#value;
 	}
 
 	public unwrapOr<DefaultType>(_defaultValue: DefaultType): OkType {
-		return this.value;
+		return this.#value;
 	}
 
-	public unwrapOrElse<DefaultType>(_callbackFunc: () => DefaultType): OkType {
-		return this.value;
+	public unwrapOrElse<OutType>(_orElseCallback: (value: ErrType) => OutType): OkType {
+		return this.#value;
 	}
 
 	public unwrapOrValueOf<ValueType>(_constructorValueOf: ConstructorWithValueOf<ValueType>): OkType {
-		return this.value;
+		return this.#value;
 	}
 
 	public eq(other: IResult): boolean {
-		return this.value === other.ok();
+		return this.#value === other.ok();
 	}
 
-	public or<CompareType>(_value: IResult<CompareType>): this {
+	public or<NextOkType, NextErrType>(_other: IResult<NextOkType, NextErrType>): this;
+	public or<NextOkType, NextErrType>(_other: Promise<IResult<NextOkType, NextErrType>>): Promise<this>;
+	public or<NextOkType, NextErrType>(_other: AwaitableIResult<NextOkType, NextErrType>): this | Promise<this> {
 		return this;
 	}
 
-	public orElse<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (value: never) => OutResult): this {
+	public orElse<NextOkType, NextErrType = never>(_orElseCallback: (value: ErrType) => IResult<NextOkType, NextErrType>): this;
+	public orElse<NextOkType, NextErrType = never>(_orElseCallback: (value: ErrType) => Promise<IResult<NextOkType, NextErrType>>): Promise<this>;
+	public orElse<NextOkType, NextErrType = never>(_orElseCallback: (value: ErrType) => AwaitableIResult<NextOkType, NextErrType>): this | Promise<this> {
 		return this;
 	}
 
-	public orElsePromise<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (value: never) => OutResult | Promise<OutResult>): this {
-		return this;
-	}
-
-	public and<CompareType>(value: IResult<CompareType>): IResult<CompareType> {
-		return value;
+	public and<NxOkType, NxErrType>(other: IResult<NxOkType, NxErrType>): IResult<NxOkType, ErrType | NxErrType>;
+	public and<NxOkType, NxErrType>(other: Promise<IResult<NxOkType, NxErrType>>): AsyncResult<NxOkType, ErrType | NxErrType>;
+	public and<NxOkType, NxErrType>(
+		other: IResult<NxOkType, NxErrType> | Promise<IResult<NxOkType, NxErrType>>,
+	): IResult<NxOkType, ErrType | NxErrType> | AsyncResult<NxOkType, ErrType | NxErrType> {
+		if (other instanceof Promise) {
+			return new AsyncResult<NxOkType, ErrType | NxErrType>(other);
+		}
+		return other;
 	}
 
 	public clone(): IOk<OkType> {
-		return new IOk(this.value);
+		return new IOk(this.#value);
 	}
 
-	public andThen<OutResult extends IResult<unknown, unknown>>(callbackFunc: (val: OkType) => OutResult): OutResult {
-		return callbackFunc(this.value);
-	}
-
-	public async andThenPromise<OutResult extends IResult<unknown, unknown>>(callbackFunc: (val: OkType) => OutResult | Promise<OutResult>): Promise<OutResult> {
-		return await callbackFunc(this.value);
-	}
-
-	public inspect(fn: (value: OkType) => void): this {
-		// if we have NodeJS inspect call we return undefined
-		/* c8 ignore next 3 */
-		if (typeof fn !== 'function') {
-			return undefined as unknown as this;
+	public andThen<NxOkType, NxErrType = never>(cb: (value: OkType) => IResult<NxOkType, NxErrType>): IResult<NxOkType, ErrType | NxErrType>;
+	public andThen<NxOkType, NxErrType = never>(cb: (value: OkType) => Promise<IResult<NxOkType, NxErrType>>): AsyncResult<NxOkType, ErrType | NxErrType>;
+	public andThen<NxOkType, NxErrType = never>(
+		cb: (value: OkType) => IResult<NxOkType, NxErrType> | Promise<IResult<NxOkType, NxErrType>>,
+	): IResult<NxOkType, ErrType | NxErrType> | AsyncResult<NxOkType, ErrType | NxErrType> {
+		const next = cb(this.#value);
+		if (next instanceof Promise) {
+			return new AsyncResult<NxOkType, ErrType | NxErrType>(next);
 		}
-		fn(this.value);
-		return this;
+		return next;
 	}
 
 	public inspectOk(fn: (value: OkType) => void): this {
-		fn(this.value);
+		fn(this.#value);
 		return this;
 	}
 
@@ -118,22 +120,22 @@ export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 		return this;
 	}
 
-	public *iter(): IterableIterator<this> {
+	public *iter(): IterableIterator<ISome<OkType>> {
 		let isDone = false;
 		while (!isDone) {
-			yield this;
+			yield this.toOption();
 			isDone = true;
 		}
 	}
 
 	public toString(): `Ok(${string})` {
-		return `Ok(${String(this.value)})`;
+		return `Ok(${String(this.#value)})`;
 	}
 
 	public toJSON(): IJsonOk<OkType> {
 		return {
 			$class: 'Result::Ok',
-			value: this.value,
+			value: this.#value,
 		};
 	}
 }

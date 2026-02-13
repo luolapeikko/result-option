@@ -1,25 +1,25 @@
-import {type IErr} from './ErrInstance.mjs';
-import {type IOk} from './OkInstance.mjs';
+import {type IErrBuilder} from '../interfaces/IResultImplementation.mjs';
+import {type IOkBuilder} from '../interfaces/IResultImplementation.mjs';
 import {type IResult} from '../interfaces/IResultImplementation.mjs';
 
 /**
  * Infer the type of the error value from IErr
  * @since v2.0.0
  */
-export type InferErrValue<T> = T extends IErr<infer E> ? E : never;
+export type InferErrValue<T> = T extends IErrBuilder<infer E, any> ? E : never;
 
 /**
  * Infer the type of the ok value from IOk
  * @since v2.0.0
  */
-export type InferOkValue<T> = T extends IOk<infer V> ? V : never;
+export type InferOkValue<T> = T extends IOkBuilder<infer V, any> ? V : never;
 
 /**
  * Unwrap IResult type to get the Ok value type (similar to Awaited for Promise)
  * Handles both IOk instances and IResult union types by extracting the Ok type
  * @since v2.2.0
  */
-export type UnwrapResult<T> = T extends IOk<infer V> ? V : T extends IErr<any> ? never : T;
+export type UnwrapResult<T> = T extends IOkBuilder<infer V, any> ? V : T extends IErrBuilder<any, any> ? never : T;
 
 /**
  * Preserve function overloads when wrapping with Result for sync functions

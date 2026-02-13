@@ -1,6 +1,136 @@
 import {type IErr, type IOk} from '../index.mjs';
 import {type INone, type ISome} from '../option/index.mjs';
+import type { AsyncResult } from '../result/AsyncResult.mjs';
 import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk} from './index.mjs';
+
+
+/**
+ * Awaitable Result type, this type contains types for both Ok and Err and can be used with async/await
+ * @since v3.0.0
+ */
+export type AwaitableIResult<OkType, ErrType> = IResult<OkType, ErrType> | Promise<IResult<OkType, ErrType>> | AsyncResult<OkType, ErrType>;
+
+/**
+ * Ok interface, this is the main interface for the Ok type and contains all the methods for both Ok and Err
+ * @template OkType - Ok type
+ * @template ErrType - Err type
+ * @since v3.0.0
+ */
+export interface IOkBuilder<OkType, ErrType = never> {
+	readonly isOk: true;
+	readonly isErr: false;
+	ok(): OkType;
+	isOkAnd(callback: (value: OkType) => boolean): boolean;
+	isErrAnd(callback: (value: ErrType) => boolean): false;
+	err(): undefined;
+	and<NextOkType, NextErrType = never>(
+		other: AwaitableIResult<NextOkType, NextErrType>,
+	): IResult<NextOkType, ErrType | NextErrType> | AsyncResult<NextOkType, ErrType | NextErrType>;
+	andThen<NextOkType, NextErrType = never>(
+		callback: (value: OkType) => AwaitableIResult<NextOkType, NextErrType>,
+	): IResult<OkType | NextOkType, ErrType | NextErrType> | AsyncResult<OkType | NextOkType, ErrType | NextErrType>;
+	map<OutType>(callback: (value: OkType) => OutType): IResult<OutType, ErrType>;
+	mapErr<OutType>(callback: (value: ErrType) => OutType): this;
+	or<NextOkType, NextErrType>(other: AwaitableIResult<NextOkType, NextErrType>): this;
+	orElse<NextOkType, NextErrType = never>(callback: (value: ErrType) => AwaitableIResult<NextOkType, NextErrType>): this;
+	unwrap(): OkType;
+	unwrapOr<OutType>(defaultValue: OutType): OkType;
+	unwrapOrElse<OutType>(orElseCallback: (value: ErrType) => OutType): OkType;
+	unwrapOrValueOf<ValueType>(BaseConstructor: ConstructorWithValueOf<ValueType>): OkType;
+	eq(other: IResult<unknown, unknown>): boolean;
+	clone(): IResult<OkType, ErrType>;
+	inspectOk(fn: (value: OkType) => void): this;
+	inspectErr(fn: (value: ErrType) => void): this;
+	toString(): `Ok(${string})`;
+	toJSON(): {
+		$class: 'Result::Ok';
+		value: OkType;
+	};
+	toOption(): ISome<OkType>;
+	iter(): IterableIterator<ISome<OkType>, ISome<OkType>>;
+}
+
+/**
+ * Err interface, this is the main interface for the Err type and contains all the methods for both Ok and Err
+ * @template ErrType - Err type
+ * @template OkType - Ok type
+ * @since v3.0.0
+ */
+export interface IErrBuilder<ErrType, OkType = never> {
+	readonly isOk: false;
+	readonly isErr: true;
+	ok(): undefined;
+	isOkAnd(callback: (value: OkType) => boolean): false;
+	isErrAnd(callback: (value: ErrType) => boolean): boolean;
+	err(): ErrType;
+	and<NextOkType, NextErrType = never>(other: AwaitableIResult<NextOkType, NextErrType>): IErrBuilder<ErrType, NextOkType | OkType>;
+	andThen<NextOkType, NextErrType = never>(callback: (value: OkType) => AwaitableIResult<NextOkType, NextErrType>): IErrBuilder<ErrType, NextOkType | OkType>;
+	map<OutType>(callback: (value: OkType) => OutType): this;
+	mapErr<OutType>(callback: (value: ErrType) => OutType): IResult<OkType, OutType>;
+	or<NextOkType, NextErrType>(
+		other: AwaitableIResult<NextOkType, NextErrType>,
+	): IResult<OkType | NextOkType, NextErrType> | AsyncResult<OkType | NextOkType, NextErrType>;
+	orElse<NextOkType, NextErrType = never>(
+		orElseCallback: (value: ErrType) => AwaitableIResult<NextOkType, NextErrType>,
+	): IResult<OkType | NextOkType, NextErrType> | AsyncResult<OkType | NextOkType, NextErrType>;
+	unwrap(): never;
+	unwrapOr<OutType>(defaultValue: OutType): OutType;
+	unwrapOrElse<OutType>(orElseCallback: (value: ErrType) => OutType): OutType;
+	unwrapOrValueOf<OutType>(BaseConstructor: ConstructorWithValueOf<OutType>): OutType;
+	eq(other: IResult<unknown, unknown>): boolean;
+	clone(): IResult<OkType, ErrType>;
+	inspectOk(fn: (value: OkType) => void): this;
+	inspectErr(fn: (value: ErrType) => void): this;
+	toString(): `Err(${string})`;
+	toJSON(): {
+		$class: 'Result::Err';
+		value: ErrType;
+	};
+	toOption(): INone<never>;
+	iter(): IterableIterator<INone<never>, INone<never>>;
+}
+
+/**
+ * Async Result interface, this is the main interface for the Result type and contains all the methods for both Ok and Err
+ * @template OkType - Ok type
+ * @template ErrType - Err type
+ * @since v3.0.0
+ */
+export interface IAsyncResult<OkType, ErrType> {
+	isOk: Promise<boolean>;
+	isErr: Promise<boolean>;
+	ok(): Promise<OkType | undefined>;
+	isOkAnd(callback: (value: OkType) => boolean): Promise<boolean>;
+	isErrAnd(callback: (value: ErrType) => boolean): Promise<boolean>;
+	err(): Promise<ErrType | undefined>;
+	and<NextOkType, NextErrType>(other: AwaitableIResult<NextOkType, NextErrType>): AsyncResult<NextOkType, ErrType | NextErrType>;
+	andThen<NextOkType, NextErrType>(callback: (value: OkType) => AwaitableIResult<NextOkType, NextErrType>): AsyncResult<NextOkType, ErrType | NextErrType>;
+	map<OutType>(callback: (value: OkType) => OutType | Promise<OutType>): AsyncResult<OutType, ErrType>;
+	mapErr<OutType>(callback: (value: ErrType) => OutType | Promise<OutType>): AsyncResult<OkType, OutType>;
+	or<NextOkType, NextErrType>(other: AwaitableIResult<NextOkType, NextErrType>): AsyncResult<OkType | NextOkType, NextErrType>;
+	orElse<NextOkType, NextErrType>(orElseCallback: (value: ErrType) => AwaitableIResult<NextOkType, NextErrType>): AsyncResult<OkType | NextOkType, NextErrType>;
+	unwrap(): Promise<OkType>;
+	unwrapOr<OutType>(defaultValue: OutType): Promise<OkType | OutType>;
+	unwrapOrElse<OutType>(orElseCallback: (value: ErrType) => OutType): Promise<OkType | OutType>;
+	unwrapOrValueOf<OutType>(BaseConstructor: ConstructorWithValueOf<OutType>): Promise<OkType | OutType>;
+	eq(other: IResult<unknown, unknown>): Promise<boolean>;
+	clone(): AsyncResult<OkType, ErrType>;
+	inspectOk(fn: (value: OkType) => void): this;
+	inspectErr(fn: (value: ErrType) => void): this;
+	toString(): Promise<`Ok(${string})` | `Err(${string})`>;
+	toJSON(): Promise<
+		| {
+				$class: 'Result::Ok';
+				value: OkType;
+		  }
+		| {
+				$class: 'Result::Err';
+				value: ErrType;
+		  }
+	>;
+	toOption(): Promise<ISome<OkType> | INone<never>>;
+	iter(): AsyncIterableIterator<ISome<OkType> | INone<never>, ISome<OkType> | INone<never>>;
+}
 
 /**
  * Result builder interface
@@ -246,7 +376,7 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 	 * Err<Error>(new Error('broken')).iter().next().done; // true (no values to iterate)
 	 * @since v1.0.9
 	 */
-	iter(): IterableIterator<IsOk extends true ? this : INone, IsOk extends true ? this : INone>;
+	iter(): IterableIterator<IsOk extends true ? ISome<OkType> : INone, IsOk extends true ? ISome<OkType> : INone>;
 
 	/**
 	 * Convert result to option and discard the error type
@@ -293,7 +423,7 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
  * }
  * @since v1.0.0
  */
-export type IResult<OkType = unknown, ErrType = unknown> = IErr<ErrType> | IOk<OkType>;
+export type IResult<OkType = unknown, ErrType = unknown> = IErrBuilder<ErrType> | IOkBuilder<OkType>;
 
 /**
  * Utility type for OkType or Result<OkType, ErrType>

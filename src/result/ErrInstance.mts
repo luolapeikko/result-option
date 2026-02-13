@@ -1,6 +1,8 @@
-import {type ConstructorWithValueOf, type IJsonErr, type IResult, type IResultBuild} from '../interfaces/index.mjs';
+import {type ConstructorWithValueOf, type IJsonErr, type IResult, AwaitableIResult, IErrBuilder} from '../interfaces/index.mjs';
 import {type INone, None} from '../option/index.mjs';
+import { AsyncResult } from './AsyncResult.mjs';
 import {isJsonErr} from './JsonResult.mjs';
+import { isErr, ResultError } from './ResultError.mjs';
 
 /**
  * Result Err instance.
@@ -9,11 +11,11 @@ import {isJsonErr} from './JsonResult.mjs';
  * @template ErrType error type
  * @since v1.0.0
  */
-export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
-	private readonly error: ErrType;
+export class IErr<ErrType, OkType = never> implements IErrBuilder<ErrType, OkType> {
+	readonly #value: ErrType;
 	private originalStack: string | undefined;
 	public constructor(error: ErrType | IJsonErr<ErrType>) {
-		this.error = isJsonErr(error) ? error.value : error;
+		this.#value = isJsonErr(error) ? error.value : error;
 	}
 
 	public get isOk(): false {
@@ -25,7 +27,7 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 	}
 
 	public isErrAnd(callbackFunc: (value: ErrType) => boolean): boolean {
-		return callbackFunc(this.error);
+		return callbackFunc(this.#value);
 	}
 
 	public ok(): undefined {
@@ -37,7 +39,7 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 	}
 
 	public err(): ErrType {
-		return this.error;
+		return this.#value;
 	}
 
 	public toOption(): INone<never> {
@@ -45,28 +47,15 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 	}
 
 	public unwrap(): never {
-		if (this.error instanceof Error && 'captureStackTrace' in Error) {
-			// Preserve the original stack trace if available
-			this.originalStack ??= (this.error.stack ?? '')
-				.split('\n')
-				.map((line, idx) => (idx === 0 ? line : `    ${line}`))
-				.join('\n');
-			Error.captureStackTrace(this.error); // Capture the current stack trace
-			// Append the original stack trace to the error
-			if (this.originalStack) {
-				this.error.stack = this.error.stack + '\n    Caused by: ' + this.originalStack;
-			}
-		}
-		// eslint-disable-next-line @typescript-eslint/only-throw-error
-		throw this.error;
+		throw isErr(this.#value) ? new ResultError(this.#value) : this.#value;
 	}
 
 	public unwrapOr<DefaultType>(defaultValue: DefaultType): DefaultType {
 		return defaultValue;
 	}
 
-	public unwrapOrElse<DefaultType>(callbackFunc: () => DefaultType): DefaultType {
-		return callbackFunc();
+	public unwrapOrElse<OutType>(orElseCallback: (value: ErrType) => OutType): OutType {
+		return orElseCallback(this.#value);
 	}
 
 	public unwrapOrValueOf<ValueType>(BaseConstructor: ConstructorWithValueOf<ValueType>): ValueType {
@@ -74,34 +63,46 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 	}
 
 	public eq(other: IResult): boolean {
-		return this.error === other.err();
+		return this.#value === other.err();
 	}
 
-	public or<CompareResult extends IResult>(value: CompareResult): CompareResult {
-		return value;
+	public or<NextOkType, NextErrType>(other: IResult<NextOkType, NextErrType>): IResult<OkType | NextOkType, NextErrType>;
+	public or<NextOkType, NextErrType>(other: Promise<IResult<NextOkType, NextErrType>>): AsyncResult<OkType | NextOkType, NextErrType>;
+	public or<NextOkType, NextErrType>(
+		other: AwaitableIResult<NextOkType, NextErrType>,
+	): IResult<OkType | NextOkType, NextErrType> | AsyncResult<OkType | NextOkType, NextErrType> {
+		const next = other;
+		if (next instanceof Promise) {
+			return new AsyncResult<OkType | NextOkType, NextErrType>(next);
+		}
+		return next;
 	}
 
-	public orElse<OutResult extends IResult<unknown, unknown>>(callbackFunc: (value: ErrType) => OutResult): OutResult {
-		return callbackFunc(this.error);
+	public orElse<NextOkType, NextErrType = never>(cb: (value: ErrType) => IResult<NextOkType, NextErrType>): IResult<OkType | NextOkType, NextErrType>;
+	public orElse<NextOkType, NextErrType = never>(cb: (value: ErrType) => Promise<IResult<NextOkType, NextErrType>>): AsyncResult<OkType | NextOkType, NextErrType>;
+	public orElse<NextOkType, NextErrType = never>(
+		cb: (value: ErrType) => AwaitableIResult<NextOkType, NextErrType>,
+	): IResult<OkType | NextOkType, NextErrType> | AsyncResult<OkType | NextOkType, NextErrType> {
+		const next = cb(this.#value);
+		if (next instanceof Promise) {
+			return new AsyncResult<OkType | NextOkType, NextErrType>(next);
+		}
+		return next;
 	}
 
-	public async orElsePromise<OutResult extends IResult<unknown, unknown>>(callbackFunc: (value: ErrType) => OutResult | Promise<OutResult>): Promise<OutResult> {
-		return await callbackFunc(this.error);
-	}
-
-	public and<CompareResult extends IResult>(_value: CompareResult): this {
+	public and<NextOkType, NextErrType>(_other: IResult<NextOkType, NextErrType>): IErrBuilder<ErrType, NextOkType | OkType>;
+	public and<NextOkType, NextErrType>(_other: Promise<IResult<NextOkType, NextErrType>>): Promise<IErrBuilder<ErrType, NextOkType | OkType>>;
+	public and<NextOkType, NextErrType>(_other: AwaitableIResult<NextOkType, NextErrType>): IErrBuilder<ErrType, NextOkType | OkType> | Promise<IErrBuilder<ErrType, NextOkType | OkType>> {
 		return this;
 	}
 
 	public clone(): IErr<ErrType> {
-		return new IErr(this.error);
+		return new IErr(this.#value);
 	}
 
-	public andThen<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (val: never) => OutResult): this {
-		return this;
-	}
-
-	public andThenPromise<OutResult extends IResult<unknown, unknown>>(_callbackFunc: (val: never) => OutResult | Promise<OutResult>): this {
+	public andThen<NextOkType, NextErrType>(_cb: (value: OkType) => IResult<NextOkType, NextErrType>): IErrBuilder<ErrType, NextOkType | OkType>;
+	public andThen<NextOkType, NextErrType>(_cb: (value: OkType) => Promise<IResult<NextOkType, NextErrType>>): Promise<IErrBuilder<ErrType, NextOkType | OkType>>;
+	public andThen<NextOkType, NextErrType>(_cb: (value: OkType) => AwaitableIResult<NextOkType, NextErrType>): IErrBuilder<ErrType, NextOkType | OkType> | Promise<IErrBuilder<ErrType, NextOkType | OkType>> {
 		return this;
 	}
 
@@ -110,16 +111,7 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 	}
 
 	public mapErr<NewErrType>(fn: (value: ErrType) => NewErrType): IErr<NewErrType> {
-		return new IErr(fn(this.error));
-	}
-
-	public inspect(_fn: (value: never) => void): this {
-		// if we have NodeJS inspect call we return undefined
-		/* c8 ignore next 3 */
-		if (typeof _fn !== 'function') {
-			return undefined as unknown as this;
-		}
-		return this;
+		return new IErr(fn(this.#value));
 	}
 
 	public inspectOk(_fn: (value: never) => void): this {
@@ -127,11 +119,11 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 	}
 
 	public inspectErr(fn: (value: ErrType) => void): this {
-		fn(this.error);
+		fn(this.#value);
 		return this;
 	}
 
-	public *iter(): IterableIterator<INone> {
+	public *iter(): IterableIterator<INone<never>> {
 		let isDone = false;
 		while (!isDone) {
 			yield None();
@@ -146,21 +138,21 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 	public toJSON(): IJsonErr<ErrType> {
 		return {
 			$class: 'Result::Err',
-			value: this.error,
+			value: this.#value,
 		};
 	}
 
 	private getErrorInstanceName(): string {
-		if (typeof this.error === 'object' && this.error !== null) {
-			return this.error.constructor.name;
+		if (typeof this.#value === 'object' && this.#value !== null) {
+			return this.#value.constructor.name;
 		}
 		return 'UnknownErrorInstance';
 	}
 
 	private getErrorInstanceMessage(): string {
-		if (this.error instanceof Error) {
-			return `: '${this.error.message}'`;
+		if (this.#value instanceof Error) {
+			return `: '${this.#value.message}'`;
 		}
-		return `: '${JSON.stringify(this.error)}'`;
+		return `: '${JSON.stringify(this.#value)}'`;
 	}
 }

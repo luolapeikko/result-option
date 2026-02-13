@@ -144,7 +144,11 @@ export function resultAsyncTupleFlow<
 export function resultAsyncTupleFlow(val: Res | Promise<Res>, ...ops: Fn<Res[], Res>[]): IResult<unknown, unknown> | Promise<IResult<unknown, unknown>> {
 	const resolvedArgs: unknown[] = [];
 	return ops.reduce<IResult<unknown, unknown> | Promise<IResult<unknown, unknown>>>(async (acc, fn) => {
-		return (await acc).andThenPromise(async (res) => {
+		const result = await acc;
+		if (result.isErr) {
+			return result;
+		}
+		return result.andThen(async (res) => {
 			try {
 				resolvedArgs.push(res);
 				acc = await fn(...(resolvedArgs as unknown as Parameters<typeof fn>));

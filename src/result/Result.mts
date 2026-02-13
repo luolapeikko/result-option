@@ -41,7 +41,7 @@ async function promiseSettledAsResult<OkType = unknown, ErrType = unknown>(
 ): Promise<IResult<OkType, ErrType>> {
 	const result = (await Promise.allSettled([callPromise]))[0];
 	if (result.status === 'fulfilled') {
-		return Ok(result.value);
+		return Ok<OkType, ErrType>(result.value);
 	} else {
 		return Err(result.reason as ErrType);
 	}
@@ -128,9 +128,9 @@ export class Result {
 	 * @returns {IResult<OkType, ErrType>} IResult
 	 * @since v2.0.0
 	 */
-	public static from<OkType = unknown, ErrType = unknown>(value: IOk<OkType> | IErr<ErrType> | IJsonOk<OkType> | IJsonErr<ErrType>): IResult<OkType, ErrType> {
+	public static from<OkType = never, ErrType = never>(value: IOk<OkType> | IErr<ErrType> | IJsonOk<OkType> | IJsonErr<ErrType>): IResult<OkType, ErrType> {
 		if (isResult(value)) {
-			return value;
+			return value as IResult<OkType, ErrType>;
 		}
 		if (isJsonResult(value)) {
 			return fromJsonResult<OkType, ErrType>(value);
@@ -227,7 +227,7 @@ export class Result {
 	 * @returns {IResult<OkType[], ErrType>} - returns IOk or IErr
 	 * @since v2.0.2
 	 */
-	public static asArray<OkType, ErrType = unknown>(iterable: Iterable<IResult<OkType, ErrType>>): IResult<OkType[], ErrType> {
+	public static asArray<OkType, ErrType = never>(iterable: Iterable<IResult<OkType, ErrType>>): IResult<OkType[], ErrType> {
 		const output: OkType[] = [];
 		for (const res of iterable) {
 			if (res.isErr) {
@@ -249,7 +249,7 @@ export class Result {
 	 * @returns {Promise<IResult<OkType[], ErrType>>} - returns Promise of IOk or IErr
 	 * @since v2.0.2
 	 */
-	public static async asAsyncArray<OkType, ErrType = unknown>(
+	public static async asAsyncArray<OkType, ErrType = never>(
 		iterable: AsyncIterable<IResult<OkType, ErrType>> | Iterable<IResult<OkType, ErrType>>,
 	): Promise<IResult<OkType[], ErrType>> {
 		const output: OkType[] = [];
@@ -276,7 +276,7 @@ export class Result {
 	 * @returns {WrapFnReturn<Fn, ErrType>} wrapped function which returns Result
 	 * @since v2.2.0
 	 */
-	public static wrapFn<ErrType = unknown, Fn extends (...args: any[]) => any = (...args: any[]) => any>(
+	public static wrapFn<ErrType = never, Fn extends (...args: any[]) => any = (...args: any[]) => any>(
 		func: Fn,
 	): WrapFnReturn<Fn, ErrType> {
 		return ((...args: any[]): IResult<any, ErrType> => {
@@ -303,7 +303,7 @@ export class Result {
 	 * @returns {WrapAsyncFnReturn<Fn, ErrType>} wrapped function which returns Result Promise
 	 * @since v2.2.0
 	 */
-	public static wrapAsyncFn<ErrType = Error, Fn extends (...args: any[]) => any = (...args: any[]) => any>(
+	public static wrapAsyncFn<ErrType = never, Fn extends (...args: any[]) => any = (...args: any[]) => any>(
 		func: Fn,
 	): WrapAsyncFnReturn<Fn, ErrType> {
 		return (async (...args: any[]): Promise<IResult<any, ErrType>> => {

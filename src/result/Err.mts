@@ -16,9 +16,9 @@ import {isResult} from './ResultInstance.mjs';
 export function Err(): IErr<void>;
 export function Err<ErrType, _OkType = unknown>(error: ErrType | IErr<ErrType> | IJsonErr<ErrType>): IErr<ErrType>;
 export function Err<ErrType, OkType = unknown>(error: ErrType | IResult<OkType, ErrType> | IJsonErr<ErrType>): IResult<OkType, ErrType>;
-export function Err<ErrType, OkType = unknown>(error?: ErrType | IResult<OkType, ErrType> | IJsonErr<ErrType>): IResult<OkType, ErrType> {
+export function Err<ErrType, OkType = unknown>(error?: ErrType | IResult<OkType, ErrType> | IJsonErr<ErrType>): IResult<OkType, ErrType> | IErr<void> {
 	if (error === undefined) {
-		return new IErr<void>(undefined) as IResult<OkType, ErrType>;
+		return new IErr<void>(undefined);
 	}
 	if (isResult(error)) {
 		return error;

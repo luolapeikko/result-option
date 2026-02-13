@@ -110,4 +110,22 @@ describe('Result type tests', function () {
 			);
 		});
 	});
+	describe('andThen chaining', function () {
+		it('should be valid type chain', function () {
+			const first = Ok(1);
+			const second = () => Err(new Error('error'));
+			const third = () => Ok(3);
+			assertType<IResult<number, Error>>(first.andThen(second));
+			assertType<IResult<number, Error>>(first.andThen(second).andThen(third));
+		});
+	});
+	describe('orElse', function () {
+		it('should be valid type chain', function () {
+			const first = Ok(1);
+			const second = () => Err(new Error('error'));
+			const third = () => Ok(3);
+			assertType<IResult<number, Error>>(first.orElse(second));
+			assertType<IResult<number, Error>>(first.orElse(second).orElse(third));
+		});
+	});
 });

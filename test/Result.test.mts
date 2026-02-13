@@ -144,7 +144,7 @@ describe('FunctionResult', function () {
 			let inspectValue: string | undefined;
 			let inspectErrValue: Error | undefined;
 			const result = Err(Err(stE)) // chaining Err
-				.inspect((value) => (inspectValue = value))
+				.inspectOk((value) => (inspectValue = value))
 				.inspectErr((value) => (inspectErrValue = value));
 			const iter = result.iter();
 			expect(inspectValue).to.be.equal(undefined);
@@ -250,24 +250,24 @@ describe('FunctionResult', function () {
 		it('should handle or else function', async function () {
 			const orResult = Ok(2) as IResult<number, number>;
 			const errResult = Err(2) as IResult<number, number>;
-			expect(orResult.orElse<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Ok(2))).to.be.eq(true);
-			expect(errResult.orElse<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Ok(4))).to.be.eq(true);
-			expect((await orResult.orElsePromise<IResult<number>>((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Ok(2))).to.be.eq(true);
-			expect((await errResult.orElsePromise<IResult<number>>((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Ok(4))).to.be.eq(true);
-			expect((await orResult.orElsePromise<IResult<number>>((okValue: number) => Ok(okValue + 2))).eq(Ok(2))).to.be.eq(true);
-			expect((await errResult.orElsePromise<IResult<number>>((okValue: number) => Ok(okValue + 2))).eq(Ok(4))).to.be.eq(true);
+			expect(orResult.orElse((okValue: number) => Ok(okValue + 2)).eq(Ok(2))).to.be.eq(true);
+			expect(errResult.orElse((okValue: number) => Ok(okValue + 2)).eq(Ok(4))).to.be.eq(true);
+			expect((await orResult.orElse((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Ok(2))).to.be.eq(true);
+			expect((await errResult.orElse((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Ok(4))).to.be.eq(true);
+			expect((await orResult.orElse((okValue: number) => Ok(okValue + 2))).eq(Ok(2))).to.be.eq(true);
+			expect((await errResult.orElse((okValue: number) => Ok(okValue + 2))).eq(Ok(4))).to.be.eq(true);
 		});
 	});
 	describe('andThen', function () {
 		it('should handle or else function', async function () {
 			const orResult = Ok(2) as IResult<number, number>;
 			const errResult = Err(2) as IResult<number, number>;
-			expect(orResult.andThen<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Ok(4))).to.be.eq(true);
-			expect(errResult.andThen<IResult<number>>((okValue: number) => Ok(okValue + 2)).eq(Err(2))).to.be.eq(true);
-			expect((await orResult.andThenPromise<IResult<number>>((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Ok(4))).to.be.eq(true);
-			expect((await errResult.andThenPromise<IResult<number>>((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Err(2))).to.be.eq(true);
-			expect((await orResult.andThenPromise<IResult<number>>((okValue: number) => Ok(okValue + 2))).eq(Ok(4))).to.be.eq(true);
-			expect((await errResult.andThenPromise<IResult<number>>((okValue: number) => Ok(okValue + 2))).eq(Err(2))).to.be.eq(true);
+			expect(orResult.andThen((okValue: number) => Ok(okValue + 2)).eq(Ok(4))).to.be.eq(true);
+			expect(errResult.andThen((okValue: number) => Ok(okValue + 2)).eq(Err(2))).to.be.eq(true);
+			expect((await orResult.andThen((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Ok(4))).to.be.eq(true);
+			expect((await errResult.andThen((okValue: number) => Promise.resolve(Ok(okValue + 2)))).eq(Err(2))).to.be.eq(true);
+			expect((await orResult.andThen((okValue: number) => Ok(okValue + 2))).eq(Ok(4))).to.be.eq(true);
+			expect((await errResult.andThen((okValue: number) => Ok(okValue + 2))).eq(Err(2))).to.be.eq(true);
 		});
 	});
 	describe('clone', function () {

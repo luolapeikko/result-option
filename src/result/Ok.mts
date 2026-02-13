@@ -15,9 +15,9 @@ import {isResult} from './ResultInstance.mjs';
 export function Ok(): IOk<void>;
 export function Ok<OkType, _ErrType = unknown>(value: OkType | IOk<OkType> | IJsonOk<OkType>): IOk<OkType>;
 export function Ok<OkType, ErrType = unknown>(value: OkType | IResult<OkType, ErrType> | IJsonOk<OkType>): IResult<OkType, ErrType>;
-export function Ok<OkType, ErrType = unknown>(value?: OkType | IResult<OkType, ErrType> | IJsonOk<OkType>): IResult<OkType, ErrType> {
+export function Ok<OkType, ErrType = unknown>(value?: OkType | IResult<OkType, ErrType> | IJsonOk<OkType>): IResult<OkType, ErrType> | IOk<void> {
 	if (value === undefined) {
-		return new IOk<void>(undefined) as IResult<OkType, ErrType>;
+		return new IOk<void>(undefined);
 	}
 	if (isResult(value)) {
 		return value;

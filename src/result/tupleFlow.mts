@@ -140,6 +140,9 @@ export function resultTupleFlow<
 export function resultTupleFlow(val: Res, ...ops: Fn<Res[], Res>[]): IResult<unknown, unknown> {
 	const resolvedArgs: unknown[] = [];
 	return ops.reduce<IResult<unknown, unknown>>((acc, fn) => {
+		if (acc.isErr) {
+			return acc;
+		}
 		return acc.andThen((res) => {
 			try {
 				resolvedArgs.push(res);
@@ -151,6 +154,6 @@ export function resultTupleFlow(val: Res, ...ops: Fn<Res[], Res>[]): IResult<unk
 				throw new Error(`Fatal Uncontrolled error: ${JSON.stringify(cause)}`, {cause});
 			}
 			return acc;
-		});
+		}) as IResult<unknown, unknown>;
 	}, val);
 }
