@@ -1,4 +1,4 @@
-import {type IJsonSome} from '../interfaces/IJsonOption.mjs';
+import type {IJsonSome} from '../interfaces/IJsonOption.mjs';
 import {isJsonSome} from './JsonOption.mjs';
 import {type ISome, isSome, OptionBuilder} from './OptionInstance.mjs';
 

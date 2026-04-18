@@ -1,4 +1,4 @@
-import {type IJsonOk, type IResult} from '../interfaces/index.mjs';
+import type {IJsonOk, IResult} from '../interfaces/index.mjs';
 import {IOk} from './OkInstance.mjs';
 import {isResult} from './ResultInstance.mjs';
 

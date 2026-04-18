@@ -1,6 +1,6 @@
-import {type IJsonNone, type IJsonOption, type IJsonSome} from '../interfaces/index.mjs';
+import type {IJsonNone, IJsonOption, IJsonSome} from '../interfaces/index.mjs';
 import {None} from './None.mjs';
-import {type INone, type IOption, type ISome} from './OptionInstance.mjs';
+import type {INone, IOption, ISome} from './OptionInstance.mjs';
 import {Some} from './Some.mjs';
 
 export const optionNoneClass = 'Option::None';

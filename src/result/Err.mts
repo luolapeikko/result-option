@@ -1,4 +1,4 @@
-import {type IJsonErr, type IResult} from '../interfaces/index.mjs';
+import type {IJsonErr, IResult} from '../interfaces/index.mjs';
 import {IErr} from './ErrInstance.mjs';
 import {isResult} from './ResultInstance.mjs';
 

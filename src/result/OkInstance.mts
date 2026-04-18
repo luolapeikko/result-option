@@ -1,4 +1,4 @@
-import {type ConstructorWithValueOf, type IJsonOk, type IResult, type IResultBuild} from '../interfaces/index.mjs';
+import type {ConstructorWithValueOf, IJsonOk, IResult, IResultBuild} from '../interfaces/index.mjs';
 import {type ISome, Some} from '../option/index.mjs';
 import {isJsonOk} from './JsonResult.mjs';
 
@@ -11,13 +11,13 @@ import {isJsonOk} from './JsonResult.mjs';
  */
 export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 	private readonly value: OkType;
+	public readonly isOk = true;	
+	public readonly isErr = false;
+
 	public constructor(value: OkType | IJsonOk<OkType>) {
 		this.value = isJsonOk<OkType, unknown>(value) ? value.value : value;
 	}
 
-	public get isOk(): true {
-		return true;
-	}
 
 	public isOkAnd(callbackFunc: (value: OkType) => boolean): boolean {
 		return callbackFunc(this.value);
@@ -31,9 +31,6 @@ export class IOk<OkType> implements IResultBuild<true, OkType, never> {
 		return this.value;
 	}
 
-	public get isErr(): false {
-		return false;
-	}
 
 	public err(): undefined {
 		return undefined;

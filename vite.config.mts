@@ -16,7 +16,6 @@ export default defineConfig({
 		},
 		include: ['test/**/*.test.mts', 'test/**/*.test.ts'],
 		typecheck: {
-			tsconfig: './tsconfig.test.json',
 			include: ['**/*.test-d.mts'],
 		},
 	},

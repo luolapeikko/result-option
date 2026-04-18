@@ -1,11 +1,11 @@
-import {type IJsonErr, type IJsonOk, type IResult, type IResultOrOkType} from '../interfaces/index.mjs';
+import type {IJsonErr, IJsonOk, IResult, IResultOrOkType} from '../interfaces/index.mjs';
 import {resultAsyncFlow} from './asyncFlow.mjs';
 import {Err} from './Err.mjs';
-import {type IErr} from './ErrInstance.mjs';
+import type {IErr} from './ErrInstance.mjs';
 import {resultFlow} from './flow.mjs';
 import {fromJsonResult, isJsonResult} from './JsonResult.mjs';
 import {Ok} from './Ok.mjs';
-import {type IOk} from './OkInstance.mjs';
+import type {IOk} from './OkInstance.mjs';
 import {resultAsyncTupleFlow} from './asyncTupleFlow.mjs';
 import {isResult} from './ResultInstance.mjs';
 import {resultTupleFlow} from './tupleFlow.mjs';
@@ -172,6 +172,7 @@ export class Result {
 	 */
 	public static async asyncAll<T extends any[]>(...args: AllAsyncArgs<T>): Promise<IResult<ExtractAllOkArray<T>, ExtractAllErrType<T[number]>>> {
 		const output = [] as ExtractAllOkArray<T>;
+		// oxlint-disable-next-line typescript/await-thenable
 		const results = await Promise.all(args.map((arg: Res | ((...args: any[]) => Res)) => (arg instanceof Function ? arg() : arg)));
 		for (const res of results) {
 			if (res.isErr) {
@@ -276,9 +277,7 @@ export class Result {
 	 * @returns {WrapFnReturn<Fn, ErrType>} wrapped function which returns Result
 	 * @since v2.2.0
 	 */
-	public static wrapFn<ErrType = unknown, Fn extends (...args: any[]) => any = (...args: any[]) => any>(
-		func: Fn,
-	): WrapFnReturn<Fn, ErrType> {
+	public static wrapFn<ErrType = unknown, Fn extends (...args: any[]) => any = (...args: any[]) => any>(func: Fn): WrapFnReturn<Fn, ErrType> {
 		return ((...args: any[]): IResult<any, ErrType> => {
 			try {
 				const data = func(...args);
@@ -303,9 +302,7 @@ export class Result {
 	 * @returns {WrapAsyncFnReturn<Fn, ErrType>} wrapped function which returns Result Promise
 	 * @since v2.2.0
 	 */
-	public static wrapAsyncFn<ErrType = Error, Fn extends (...args: any[]) => any = (...args: any[]) => any>(
-		func: Fn,
-	): WrapAsyncFnReturn<Fn, ErrType> {
+	public static wrapAsyncFn<ErrType = Error, Fn extends (...args: any[]) => any = (...args: any[]) => any>(func: Fn): WrapAsyncFnReturn<Fn, ErrType> {
 		return (async (...args: any[]): Promise<IResult<any, ErrType>> => {
 			try {
 				return await promiseSettledAsResult(func(...args));

@@ -1,3 +1,6 @@
 {
-	"typescript.experimental.useTsgo": true
+	"typescript.experimental.useTsgo": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.oxc": "always"
+	}
 }

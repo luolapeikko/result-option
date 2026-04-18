@@ -1,6 +1,6 @@
-import {type IErr} from './ErrInstance.mjs';
-import {type IOk} from './OkInstance.mjs';
-import {type IResult} from '../interfaces/IResultImplementation.mjs';
+import type {IErr} from './ErrInstance.mjs';
+import type {IOk} from './OkInstance.mjs';
+import type {IResult} from '../interfaces/IResultImplementation.mjs';
 
 /**
  * Infer the type of the error value from IErr

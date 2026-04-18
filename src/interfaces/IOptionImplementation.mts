@@ -1,8 +1,8 @@
-import {type IOption} from '../option/OptionInstance.mjs';
-import {type IErr, type IOk} from '../result/index.mjs';
-import {type IJsonNone, type IJsonSome} from './IJsonOption.mjs';
-import {type OptionMatchSolver} from './IMatch.mjs';
-import {type ConstructorWithValueOf} from './ValueOf.mjs';
+import type {IOption} from '../option/OptionInstance.mjs';
+import type {IErr, IOk} from '../result/index.mjs';
+import type {IJsonNone, IJsonSome} from './IJsonOption.mjs';
+import type {OptionMatchSolver} from './IMatch.mjs';
+import type {ConstructorWithValueOf} from './ValueOf.mjs';
 
 /**
  * MappedType is a type that maps a boolean to a type.

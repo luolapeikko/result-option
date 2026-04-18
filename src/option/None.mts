@@ -1,4 +1,4 @@
-import {type IJsonNone} from '../interfaces/IJsonOption.mjs';
+import type {IJsonNone} from '../interfaces/IJsonOption.mjs';
 import {isJsonNone} from './JsonOption.mjs';
 import {isNone, type INone, OptionBuilder} from './OptionInstance.mjs';
 

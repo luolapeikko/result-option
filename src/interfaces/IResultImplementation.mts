@@ -1,6 +1,6 @@
-import {type IErr, type IOk} from '../index.mjs';
-import {type INone, type ISome} from '../option/index.mjs';
-import {type ConstructorWithValueOf, type IJsonErr, type IJsonOk} from './index.mjs';
+import type {IErr, IOk} from '../index.mjs';
+import type {INone, ISome} from '../option/index.mjs';
+import type {ConstructorWithValueOf, IJsonErr, IJsonOk} from './index.mjs';
 
 /**
  * Result builder interface

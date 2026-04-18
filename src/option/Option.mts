@@ -1,4 +1,4 @@
-import {type IJsonOption} from '../interfaces/IJsonOption.mjs';
+import type {IJsonOption} from '../interfaces/IJsonOption.mjs';
 import {fromJsonOption, isJsonOption} from './JsonOption.mjs';
 import {None} from './None.mjs';
 import {type INone, type IOption, type ISome, isOption} from './OptionInstance.mjs';
@@ -146,6 +146,7 @@ export class Option {
 	 */
 	public static async asyncAll<T extends any[]>(...args: AllAsyncArgs<T>): Promise<ISome<ExtractAllSomeArray<T>> | INone> {
 		const output = [] as ExtractAllSomeArray<T>;
+		// oxlint-disable-next-line typescript/await-thenable
 		const someList = await Promise.all(args.map((arg: IOption<unknown> | ((...args: any[]) => IOption<unknown>)) => (arg instanceof Function ? arg() : arg)));
 		for (const some of someList) {
 			if (some.isNone) {

@@ -1,5 +1,5 @@
-import {type IOk, type IResult} from '../index.mjs';
-import {type InferErrValue, type InferOkValue} from './types.mjs';
+import type {IOk, IResult} from '../index.mjs';
+import type {InferErrValue, InferOkValue} from './types.mjs';
 
 type Res = IResult<unknown, unknown>;
 type LastElement<Arr extends Res[]> = Arr extends [...Res[], infer B] ? B : never;

@@ -1,4 +1,4 @@
-import {type ConstructorWithValueOf, type IJsonErr, type IResult, type IResultBuild} from '../interfaces/index.mjs';
+import type {ConstructorWithValueOf, IJsonErr, IResult, IResultBuild} from '../interfaces/index.mjs';
 import {type INone, None} from '../option/index.mjs';
 import {isJsonErr} from './JsonResult.mjs';
 
@@ -12,13 +12,12 @@ import {isJsonErr} from './JsonResult.mjs';
 export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 	private readonly error: ErrType;
 	private originalStack: string | undefined;
+	public readonly isOk = false;
+	public readonly isErr = true;
 	public constructor(error: ErrType | IJsonErr<ErrType>) {
 		this.error = isJsonErr(error) ? error.value : error;
 	}
 
-	public get isOk(): false {
-		return false;
-	}
 
 	public isOkAnd(_callbackFunc: (value: never) => boolean): false {
 		return false;
@@ -30,10 +29,6 @@ export class IErr<ErrType> implements IResultBuild<false, never, ErrType> {
 
 	public ok(): undefined {
 		return undefined;
-	}
-
-	public get isErr(): true {
-		return true;
 	}
 
 	public err(): ErrType {

@@ -1,4 +1,4 @@
-import {type IResult} from '../interfaces/index.mjs';
+import type {IResult} from '../interfaces/index.mjs';
 import {IErr} from './ErrInstance.mjs';
 import {IOk} from './OkInstance.mjs';
 

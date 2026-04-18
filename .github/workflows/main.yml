@@ -69,11 +69,10 @@ jobs:
       - name: Run and publish code coverage
         if: |
           github.ref == 'refs/heads/main' &&
-          env.QLTY_COVERAGE_TOKEN != '' &&
           env.HAVE_COVERAGE_SCRIPT == 'true'
         uses: qltysh/qlty-action/coverage@v1
         with:
-          token: ${{env.QLTY_COVERAGE_TOKEN}}
+          oidc: true
           files: coverage/lcov.info
 
       # npm publish when PR done

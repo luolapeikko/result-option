@@ -1,4 +1,4 @@
-import {type ConstructorWithValueOf, type IJsonNone, type IJsonSome, type OptionMatchSolver} from '../interfaces/index.mjs';
+import type {ConstructorWithValueOf, IJsonNone, IJsonSome, OptionMatchSolver} from '../interfaces/index.mjs';
 import {asMapped, type IOptionImplementation, type MappedType} from '../interfaces/IOptionImplementation.mjs';
 import {Err, type IErr, type IOk, Ok} from '../result/index.mjs';
 import {buildJsonNone, buildJsonSome} from './JsonOption.mjs';
