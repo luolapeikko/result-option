@@ -275,7 +275,7 @@ export interface IResultBuild<IsOk = true, OkType = unknown, ErrType = unknown> 
 }
 
 /**
- * Result type, this type contains types for both Ok and Err
+ * Result type, this type contains types for both [Ok](https://luolapeikko.github.io/result-option/classes/IOk.html) and [Err](https://luolapeikko.github.io/result-option/classes/IErr.html)
  * @template OkType Type of the return value, default is unknown
  * @template ErrType Type of the error, default is unknown
  * @example

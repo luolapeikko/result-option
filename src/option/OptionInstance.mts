@@ -156,7 +156,7 @@ export type ISome<SomeType> = OptionBuilder<true, SomeType>;
 export type INone<SomeType = unknown> = OptionBuilder<false, SomeType>;
 
 /**
- * IOption represents an optional value: every Option is either Some and contains a value and type, or None which does not any type.
+ * IOption represents an optional value: every [Option](https://luolapeikko.github.io/result-option/classes/OptionBuilder.html) is either Some and contains a value and type, or None which does not any type.
  * @template SomeType type of the value
  * @example
  * function divide(numerator: number, denominator: number): Option<number> {
