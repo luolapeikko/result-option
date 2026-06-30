@@ -38,6 +38,32 @@ export function typeTesting(data: Output): IResult<Output | undefined, Error> {
 	return Ok(privateProcessor(data));
 }
 
+function testTryFunction(data: string): IResult<unknown, SyntaxError> {
+	return Result.try<SyntaxError>(() => JSON.parse(data));
+}
+
+function testTryWithMapFunction(data: string): IResult<unknown, SyntaxError> {
+	return Result.try({try: () => JSON.parse(data), catch: (e) => e as SyntaxError});
+}
+
+function testTryPromiseFunction(data: string): Promise<IResult<unknown, SyntaxError>> {
+	return Result.tryPromise<SyntaxError>(async () => JSON.parse(data));
+}
+
+function testTryPromiseWithMapFunction(data: string): Promise<IResult<unknown, SyntaxError>> {
+	return Result.tryPromise({try: async () => JSON.parse(data), catch: (e) => e as SyntaxError});
+}
+
+function testAsyncCallback(isOk: boolean): Promise<IResult<Output, Error>> {
+	return Result.async<Output, Error>((resolve) => {
+		if (isOk) {
+			resolve(Ok('hello'));
+		} else {
+			resolve(Err(new Error('oops')));
+		}
+	});
+}
+
 describe('FunctionResult', function () {
 	describe('Ok', function () {
 		it('should resolve a value result from Ok Result', function () {
@@ -643,6 +669,52 @@ describe('FunctionResult', function () {
 					},
 				),
 			).toThrowError('Fatal Uncontrolled error: "oops"');
+		});
+	});
+	describe('Test try method', function () {
+		it('should run try method to Ok', async function () {
+			const res = testTryFunction('{"hello":"world"}');
+			expect(res.ok()).toBeDefined();
+		});
+		it('should run try method to Err', async function () {
+			const res = testTryFunction('{"hello":"world"');
+			expect(res.err()?.message).toBe("Expected ',' or '}' after property value in JSON at position 16 (line 1 column 17)");
+		});
+		it('should run try method with catch mapping to Ok', async function () {
+			const res = testTryWithMapFunction('{"hello":"world"}');
+			expect(res.ok()).toBeDefined();
+		});
+		it('should run try method with catch mapping to Err', function () {
+			const res = testTryWithMapFunction('{"hello":"world"');
+			expect(res.err()?.message).toBe("Expected ',' or '}' after property value in JSON at position 16 (line 1 column 17)");
+		});
+	});
+	describe('Test tryPromise method', function () {
+		it('should run tryPromise method to Ok', async function () {
+			const res = await testTryPromiseFunction('{"hello":"world"}');
+			expect(res.ok()).toBeDefined();
+		});
+		it('should run tryPromise method to Err', async function () {
+			const res = await testTryPromiseFunction('{"hello":"world"');
+			expect(res.err()?.message).toBe("Expected ',' or '}' after property value in JSON at position 16 (line 1 column 17)");
+		});
+		it('should run tryPromise method with catch mapping to Ok', async function () {
+			const res = await testTryPromiseWithMapFunction('{"hello":"world"}');
+			expect(res.ok()).toBeDefined();
+		});
+		it('should run tryPromise method with catch mapping to Err', async function () {
+			const res = await testTryPromiseWithMapFunction('{"hello":"world"');
+			expect(res.err()?.message).toBe("Expected ',' or '}' after property value in JSON at position 16 (line 1 column 17)");
+		});
+	});
+	describe('Test async callback', function () {
+		it('should run async callback to Ok', async function () {
+			const res = await testAsyncCallback(true);
+			expect(res.ok()).toBe('hello');
+		});
+		it('should run async callback to Err', async function () {
+			const res = await testAsyncCallback(false);
+			expect(res.err()?.message).toBe('oops');
 		});
 	});
 });

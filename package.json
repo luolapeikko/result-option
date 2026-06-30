@@ -38,24 +38,19 @@
 	"author": "mharj",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^24.12.4",
-		"@typescript/native-preview": "7.0.0-dev.20260518.1",
-		"@vitest/coverage-v8": "^4.1.6",
+		"@types/node": "^24.13.2",
+		"@typescript/native-preview": "7.0.0-dev.20260629.1",
+		"@vitest/coverage-v8": "^4.1.9",
 		"c8": "^11.0.0",
-		"oxlint": "^1.65.0",
+		"oxlint": "^1.72.0",
 		"oxlint-tsgolint": "^0.23.0",
-		"prettier": "^3.8.3",
+		"prettier": "^3.9.4",
 		"source-map-support": "^0.5.21",
-		"tsdown": "^0.22.0",
+		"tsdown": "^0.22.3",
 		"typedoc": "^0.28.19",
 		"typescript": "^6.0.3",
-		"vitest": "^4.1.6"
+		"vite": "^8.1.0",
+		"vitest": "^4.1.9"
 	},
-	"packageManager": "pnpm@10.33.4+sha512.1c67b3b359b2d408119ba1ed289f34b8fc3c6873412bec6fd264fbdc82489e510fcbecb9ce9d22dae7f3b76269d8441046014bdca53b9979cd7a561ad631b800",
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"esbuild",
-			"unrs-resolver"
-		]
-	}
+	"packageManager": "pnpm@10.34.3+sha512.f2c531b08829d7be7f03c90addc266615f9c5477463e4bf1d275cb263ce9ea57cf0d5599110d94649a9bb3fed9f0b5efcea74a7016b61532a24cb9ad87860c1d"
 }

@@ -290,6 +290,121 @@ export class Result {
 			}
 		}) as WrapFnReturn<Fn, ErrType>;
 	}
+	/**
+	 * Try to execute a function and return Result, if error is thrown it will be caught and returned as Err
+	 * @template ErrType error type
+	 * @template Fn function type
+	 * @param {Fn | {try: Fn; catch: (err: unknown) => ErrType}} func callback function or object with try and catch functions
+	 * @returns {IResult<ReturnType<Fn>, ErrType>} Result of the function execution
+	 * @example
+	 * function jsonParse(data: any): IResult<unknown, unknown> {
+	 *  return Result.try(() => JSON.parse(data));
+	 * }
+	 *
+	 * function jsonParse(data: any): IResult<unknown, SyntaxError> {
+	 *   return Result.try({
+	 *    try: () => JSON.parse(data),
+	 *    catch: (cause) => new SyntaxError(`Error: ${cause}`, { cause }),
+	 *   });
+	 * }
+	 * @since v2.3.0
+	 */
+	public static try<ErrType = unknown, Fn extends (...args: any[]) => any = (...args: any[]) => any>(func: Fn): IResult<ReturnType<Fn>, ErrType>;
+	public static try<ErrType = unknown, Fn extends (...args: any[]) => any = (...args: any[]) => any>(func: {
+		try: Fn;
+		catch: (err: unknown) => ErrType;
+	}): IResult<ReturnType<Fn>, ErrType>;
+	public static try<ErrType = unknown, Fn extends (...args: any[]) => any = (...args: any[]) => any>(
+		func: Fn | {try: Fn; catch: (err: unknown) => ErrType},
+	): IResult<ReturnType<Fn>, ErrType> {
+		try {
+			const data = typeof func === 'function' ? func() : func.try();
+			if (isResult(data)) {
+				return data as IResult<ReturnType<Fn>, ErrType>;
+			}
+			return Ok(data);
+		} catch (err) {
+			if (typeof func !== 'function' && func.catch) {
+				return Err(func.catch(err));
+			}
+			return Err(err as ErrType);
+		}
+	}
+
+	/**
+	 * Try to execute a Promise function and return Result, if error is thrown it will be caught and returned as Err
+	 * @template ErrType error type
+	 * @template Fn function type
+	 * @param {Fn | {try: Fn; catch: (err: unknown) => ErrType}} func callback function or object with try and catch functions
+	 * @returns {Promise<IResult<Awaited<ReturnType<Fn>>, ErrType>>} Promise of Result of the function execution
+	 * @example
+	 * async function getTodo(id: number): Promise<IResult<Response, unknown>> {
+	 *  return fetch(`https://jsonplaceholder.typicode.com/todos/${id}`)
+	 * }
+	 *
+	 * async function getTodo(id: number): Promise<IResult<Response, Error>> {
+	 *   return Result.tryPromise({
+	 *    try: () => fetch(`https://jsonplaceholder.typicode.com/todos/${id}`),
+	 *    catch: (cause) => new Error(`Error: ${cause}`, { cause }),
+	 *   });
+	 * }
+	 * @since v2.3.0
+	 */
+	public static tryPromise<ErrType = unknown, Fn extends (...args: any[]) => Promise<any> = (...args: any[]) => Promise<any>>(
+		func: Fn,
+	): Promise<IResult<Awaited<ReturnType<Fn>>, ErrType>>;
+	public static tryPromise<ErrType = unknown, Fn extends (...args: any[]) => Promise<any> = (...args: any[]) => Promise<any>>(func: {
+		try: Fn;
+		catch: (err: unknown) => ErrType;
+	}): Promise<IResult<Awaited<ReturnType<Fn>>, ErrType>>;
+	public static async tryPromise<ErrType = unknown, Fn extends (...args: any[]) => Promise<any> = (...args: any[]) => Promise<any>>(
+		func: Fn | {try: Fn; catch: (err: unknown) => ErrType},
+	): Promise<IResult<Awaited<ReturnType<Fn>>, ErrType>> {
+		try {
+			const data = typeof func === 'function' ? await func() : await func.try();
+			if (isResult(data)) {
+				return data as IResult<Awaited<ReturnType<Fn>>, ErrType>;
+			}
+			return Ok(data);
+		} catch (err) {
+			if (typeof func !== 'function' && func.catch) {
+				return Err(func.catch(err));
+			}
+			return Err(err as ErrType);
+		}
+	}
+
+	/**
+	 * Execute a callback function with a resolve function to return IResult, useful for async callbacks
+	 * @template OkType ok type
+	 * @template ErrType error type
+	 * @param {(resolve: (arg: IResult<OkType, ErrType>) => void) => void} callback - callback function with a resolve function to return IResult
+	 * @returns {Promise<IResult<OkType, ErrType>>} - Promise of IResult
+	 * @example
+	 * function readFile(filename: string): Promise<IResult<Buffer, NodeJS.ErrnoException>> {
+	 *   return Result.async<Buffer, NodeJS.ErrnoException>((resolve) => {
+	 *     fs.readFile(filename, (error, data) => {
+	 *       if (error) {
+	 *         resolve(Err(error));
+	 *       } else {
+	 *         resolve(Ok(data));
+	 *       }
+	 *     });
+	 *   });
+	 * }
+	 * @since v2.3.0
+	 */
+	public static async<OkType, ErrType = unknown>(callback: (resolve: (arg: IResult<OkType, ErrType>) => void) => void): Promise<IResult<OkType, ErrType>> {
+		let isDone = false;
+		return new Promise((promiseResolve) => {
+			callback((arg: IResult<OkType, ErrType>) => {
+				if (!isDone) {
+					isDone = true;
+					promiseResolve(arg);
+				}
+			});
+		});
+	}
 
 	/**
 	 * build safe Result wrapper for async callback function

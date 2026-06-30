@@ -43,7 +43,7 @@ describe('Result type tests', function () {
 			assertType<Promise<IResult<number, Error>>>(wrappedAsyncResultFn('test'));
 		});
 	});
-	
+
 	describe('Test Result.all and Result.asyncAll', function () {
 		it('should be valid all result type', function () {
 			assertType<IResult<[number, string, Date], Error>>(Result.all(ok1, ok2, ok3));
@@ -108,6 +108,18 @@ describe('Result type tests', function () {
 					(one, oneWorld, length) => Ok(length.toString()),
 				),
 			);
+		});
+	});
+	describe('Test Result.try', () => {
+		it('should be valid result type', function () {
+			assertType<IResult<string, unknown>>(Result.try(() => JSON.parse('') as string));
+			assertType<IResult<string, TypeError>>(Result.try({try: () => JSON.parse('') as string, catch: (e) => e as TypeError}));
+		});
+	});
+	describe('Test Result.tryPromise', function () {
+		it('should be valid result type', function () {
+			assertType<Promise<IResult<string, unknown>>>(Result.tryPromise(async () => JSON.parse('') as string));
+			assertType<Promise<IResult<string, TypeError>>>(Result.tryPromise({try: async () => JSON.parse('') as string, catch: (e) => e as TypeError}));
 		});
 	});
 });
