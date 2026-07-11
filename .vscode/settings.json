@@ -2,5 +2,8 @@
 	"js/ts.experimental.useTsgo": true,
 	"editor.codeActionsOnSave": {
 		"source.fixAll.oxc": "always"
-	}
+	},
+	"editor.defaultFormatter": "oxc.oxc-vscode",
+	"editor.formatOnSave": true,
+	"editor.formatOnSaveMode": "file"
 }

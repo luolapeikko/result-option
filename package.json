@@ -24,7 +24,7 @@
 		"pretest": "npm run build",
 		"coverage": "vitest test --typecheck --run --no-isolate --reporter=dot --coverage --coverage.reporter=lcov",
 		"lint": "oxlint",
-		"validate": "tsgo --noEmit"
+		"validate": "tsc --noEmit"
 	},
 	"files": [
 		"dist"
@@ -38,19 +38,23 @@
 	"author": "mharj",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^24.13.2",
-		"@typescript/native-preview": "7.0.0-dev.20260629.1",
-		"@vitest/coverage-v8": "^4.1.9",
+		"@types/node": "^24.13.3",
+		"@vitest/coverage-v8": "^4.1.10",
 		"c8": "^11.0.0",
-		"oxlint": "^1.72.0",
-		"oxlint-tsgolint": "^0.23.0",
-		"prettier": "^3.9.4",
+		"core-result": "^0.0.2",
+		"oxlint": "^1.73.0",
+		"oxlint-tsgolint": "^0.24.0",
+		"prettier": "^3.9.5",
 		"source-map-support": "^0.5.21",
-		"tsdown": "^0.22.3",
-		"typedoc": "^0.28.19",
-		"typescript": "^6.0.3",
-		"vite": "^8.1.0",
-		"vitest": "^4.1.9"
+		"tsdown": "^0.22.4",
+		"typedoc": "^0.28.20",
+		"@typescript/native": "npm:typescript@^7.0.2",
+		"typescript": "npm:@typescript/typescript6@^6.0.2",
+		"vite": "^8.1.4",
+		"vitest": "^4.1.10"
 	},
-	"packageManager": "pnpm@10.34.3+sha512.f2c531b08829d7be7f03c90addc266615f9c5477463e4bf1d275cb263ce9ea57cf0d5599110d94649a9bb3fed9f0b5efcea74a7016b61532a24cb9ad87860c1d"
+	"peerDependencies": {
+		"core-result": "^0.0.2"
+	},
+	"packageManager": "pnpm@10.34.5+sha512.a4ee05f2f73658255bd6a89859c065a45c28a57daefae2c893a168ee2b73168c37b91e83e57ea67654ad03f03031746430e8bce38e362e042605fb8abc80192e"
 }

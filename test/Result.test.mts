@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {Err, fromJsonResult, IErr, type IOk, type IResult, None, Ok, Result, Some} from '../src/index.mjs';
+import type {CoreResult} from 'core-result';
 
 const stE = new Error('oops');
 
@@ -62,6 +63,14 @@ function testAsyncCallback(isOk: boolean): Promise<IResult<Output, Error>> {
 			resolve(Err(new Error('oops')));
 		}
 	});
+}
+
+function testCoreResult(): CoreResult<string, Error> {
+	return {success: true, value: 'hello'};
+}
+
+function testCorePromiseResult(): Promise<CoreResult<string, Error>> {
+	return Promise.resolve({success: true, value: 'hello'});
 }
 
 describe('FunctionResult', function () {
@@ -715,6 +724,25 @@ describe('FunctionResult', function () {
 		it('should run async callback to Err', async function () {
 			const res = await testAsyncCallback(false);
 			expect(res.err()?.message).toBe('oops');
+		});
+	});
+	describe('Test core-result interop', function () {
+		it('should convert core-result to Result', function () {
+			const result = Result.from(testCoreResult());
+			expect(result.isOk).toBe(true);
+			expect(result.ok()).toBe('hello');
+		});
+		it('should wrap core-result function', function () {
+			const coreResult = Result.coreFn(testCoreResult);
+			const result = coreResult();
+			expect(result.isOk).toBe(true);
+			expect(result.ok()).toBe('hello');
+		});
+		it('should wrap core-result promise function', async function () {
+			const coreResultPromise = Result.corePromiseFn(testCorePromiseResult);
+			const result = await coreResultPromise();
+			expect(result.isOk).toBe(true);
+			expect(result.ok()).toBe('hello');
 		});
 	});
 });

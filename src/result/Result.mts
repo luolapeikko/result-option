@@ -1,5 +1,7 @@
+import type {CoreResult, InferCoreResultErr, InferCoreResultOk} from 'core-result';
 import type {IJsonErr, IJsonOk, IResult, IResultOrOkType} from '../interfaces/index.mjs';
 import {resultAsyncFlow} from './asyncFlow.mjs';
+import {type CoreFn, type CorePromiseFn, fromCoreResult, isCoreResult} from './coreResult.mjs';
 import {Err} from './Err.mjs';
 import type {IErr} from './ErrInstance.mjs';
 import {resultFlow} from './flow.mjs';
@@ -128,14 +130,31 @@ export class Result {
 	 * @returns {IResult<OkType, ErrType>} IResult
 	 * @since v2.0.0
 	 */
-	public static from<OkType = unknown, ErrType = unknown>(value: IOk<OkType> | IErr<ErrType> | IJsonOk<OkType> | IJsonErr<ErrType>): IResult<OkType, ErrType> {
+	public static from<OkType = unknown, ErrType = unknown>(
+		value: IOk<OkType> | IErr<ErrType> | IJsonOk<OkType> | IJsonErr<ErrType> | CoreResult<OkType, ErrType>,
+	): IResult<OkType, ErrType> {
 		if (isResult(value)) {
 			return value;
 		}
 		if (isJsonResult(value)) {
 			return fromJsonResult<OkType, ErrType>(value);
 		}
+		if (isCoreResult(value)) {
+			return fromCoreResult(value);
+		}
 		throw new TypeError(`Invalid Result type: ${JSON.stringify(value)}`);
+	}
+
+	public static coreFn<F extends CoreFn = CoreFn>(
+		fn: F,
+	): (...args: Parameters<F>) => IResult<InferCoreResultOk<ReturnType<F>>, InferCoreResultErr<ReturnType<F>>> {
+		return (...args: Parameters<F>) => fromCoreResult(fn(...args));
+	}
+
+	public static corePromiseFn<F extends CorePromiseFn = CorePromiseFn>(
+		fn: F,
+	): (...args: Parameters<F>) => Promise<IResult<InferCoreResultOk<Awaited<ReturnType<F>>>, InferCoreResultErr<Awaited<ReturnType<F>>>>> {
+		return (...args: Parameters<F>) => fn(...args).then(fromCoreResult);
 	}
 
 	/**
