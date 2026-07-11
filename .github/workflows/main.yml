@@ -39,6 +39,10 @@ jobs:
       - name: Install dependencies
         run: ${{ env.PACKAGE_MANAGER }} install
 
+      - name: Run unit tests
+        if: env.HAVE_TEST_SCRIPT == 'true'
+        run: ${{ env.PACKAGE_MANAGER }} test
+
       - name: Run validate
         if: env.HAVE_VALIDATE_SCRIPT == 'true'
         run: ${{ env.PACKAGE_MANAGER }} run validate
@@ -46,10 +50,6 @@ jobs:
       - name: Run linter checks
         if: env.HAVE_LINT_SCRIPT == 'true'
         run: ${{ env.PACKAGE_MANAGER }} run lint
-
-      - name: Run unit tests
-        if: env.HAVE_TEST_SCRIPT == 'true'
-        run: ${{ env.PACKAGE_MANAGER }} test
 
       - name: Run and publish code coverage
         if: |
