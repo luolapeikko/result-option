@@ -22,7 +22,6 @@
 		"prepublishOnly": "npm run build",
 		"test": "vitest test --typecheck --run --no-isolate --coverage",
 		"pretest": "npm run build",
-		"coverage": "vitest test --typecheck --run --no-isolate --reporter=dot --coverage --coverage.reporter=lcov",
 		"lint": "oxlint",
 		"validate": "tsc --noEmit"
 	},
