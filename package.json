@@ -37,20 +37,20 @@
 	"author": "mharj",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^24.19.0",
+		"@types/node": "^24.19.2",
 		"@typescript/native": "npm:typescript@^7.0.2",
-		"@vitest/coverage-v8": "^5.0.3",
+		"@vitest/coverage-v8": "^5.0.5",
 		"c8": "^12.0.0",
 		"core-result": "^0.0.3",
-		"oxlint": "^1.86.0",
-		"oxlint-tsgolint": "^7.0.2003",
-		"prettier": "^3.9.9",
+		"oxlint": "^1.89.0",
+		"oxlint-tsgolint": "^7.0.2004",
+		"prettier": "^3.9.10",
 		"source-map-support": "^0.5.21",
-		"tsdown": "^0.23.0",
+		"tsdown": "^0.23.1",
 		"typedoc": "^0.28.20",
 		"typescript": "npm:@typescript/typescript6@^6.0.2",
-		"vite": "^8.3.1",
-		"vitest": "^5.0.3"
+		"vite": "^8.3.4",
+		"vitest": "^5.0.5"
 	},
 	"peerDependencies": {
 		"core-result": "^0.0.2"

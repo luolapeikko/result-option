@@ -1,16 +1,9 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
 	"name": "@luolapeikko/result-option",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:5-24-trixie",
 	"customizations": {
 		"vscode": {
-			"extensions": [
-				"dbaeumer.vscode-eslint",
-				"esbenp.prettier-vscode",
-				"github.vscode-github-actions"
-			]
+			"extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "github.vscode-github-actions"]
 		}
 	},
 
@@ -26,7 +19,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "npm i"
+	"postCreateCommand": "pnpm i"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
